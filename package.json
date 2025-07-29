@@ -1,18 +1,19 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "zendesk-user-search",
+  "name": "zendesk-search",
   "version": "0.1.0",
-  "title": "Zendesk User Search",
-  "description": "Search for users in Zendesk.",
+  "title": "Zendesk Search",
+  "description": "Search for users and organizations in Zendesk.",
   "icon": "icon.png",
   "author": "gemini",
   "license": "MIT",
   "commands": [
     {
-      "name": "search-people",
-      "title": "Search People",
-      "description": "Search for users in Zendesk.",
-      "mode": "view"
+      "name": "search-zendesk",
+      "title": "Search Zendesk",
+      "description": "Search for users and organizations in Zendesk.",
+      "mode": "view",
+      "entrypoint": "src/search-zendesk.tsx"
     }
   ],
   "preferences": [
@@ -36,97 +37,6 @@
       "description": "Your Zendesk API token. Generate one in Zendesk Admin Center > Apps and Integrations > Zendesk API.",
       "type": "password",
       "required": true
-    },
-    {
-      "name": "showUserName",
-      "title": "Show User Name",
-      "description": "Display the user's name in the detail view.",
-      "type": "checkbox",
-      "default": true
-    },
-    {
-      "name": "showUserEmail",
-      "title": "Show User Email",
-      "description": "Display the user's email in the detail view.",
-      "type": "checkbox",
-      "default": true
-    },
-    {
-      "name": "showUserId",
-      "title": "Show User ID",
-      "description": "Display the user's ID in the detail view.",
-      "type": "checkbox",
-      "default": true
-    },
-    {
-      "name": "showUserCreatedAt",
-      "title": "Show Created At",
-      "description": "Display the user's creation timestamp in the detail view.",
-      "type": "checkbox",
-      "default": false
-    },
-    {
-      "name": "showUserUpdatedAt",
-      "title": "Show Updated At",
-      "description": "Display the user's last update timestamp in the detail view.",
-      "type": "checkbox",
-      "default": false
-    },
-    {
-      "name": "showUserTimeZone",
-      "title": "Show Time Zone",
-      "description": "Display the user's time zone in the detail view.",
-      "type": "checkbox",
-      "default": false
-    },
-    {
-      "name": "showUserLocale",
-      "title": "Show Locale",
-      "description": "Display the user's locale in the detail view.",
-      "type": "checkbox",
-      "default": false
-    },
-    {
-      "name": "showUserRole",
-      "title": "Show Role",
-      "description": "Display the user's role in the detail view.",
-      "type": "checkbox",
-      "default": false
-    },
-    {
-      "name": "showUserVerified",
-      "title": "Show Verified Status",
-      "description": "Display whether the user is verified in the detail view.",
-      "type": "checkbox",
-      "default": false
-    },
-    {
-      "name": "showUserActive",
-      "title": "Show Active Status",
-      "description": "Display whether the user is active in the detail view.",
-      "type": "checkbox",
-      "default": false
-    },
-    {
-      "name": "showUserDetails",
-      "title": "Show Details",
-      "description": "Display the user's details field in the detail view.",
-      "type": "checkbox",
-      "default": false
-    },
-    {
-      "name": "showUserNotes",
-      "title": "Show Notes",
-      "description": "Display the user's notes field in the detail view.",
-      "type": "checkbox",
-      "default": false
-    },
-    {
-      "name": "showUserPhone",
-      "title": "Show Phone",
-      "description": "Display the user's phone number in the detail view.",
-      "type": "checkbox",
-      "default": false
     }
   ],
   "dependencies": {
