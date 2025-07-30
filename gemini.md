@@ -7,7 +7,6 @@ This document outlines the approach for developing Raycast extensions, emphasizi
 1.  **Consult Raycast Documentation First:** Always refer to `https://developers.raycast.com/` for the most accurate and up-to-date information on APIs, components, and best practices.
 2.  **Iterative Development:** Build features incrementally, verifying each milestone before proceeding.
 3.  **Test-Driven Approach (where applicable):** Write tests for critical logic to ensure correctness and prevent regressions.
-4.  **Clear Planning:** Utilize `docs/technical_plan.md` and `docs/development_plan.md` for detailed planning and progress tracking.
 
 ## Development Workflow
 
@@ -23,8 +22,3 @@ Follow these steps for each development phase:
 -   Run `npm run lint` and `npm run fix-lint` to ensure code style and quality.
 -   Run `npm run build` to test the extension can be build in Raycast.
 -   If applicable, write and run unit tests.
--   Check off completed steps in `docs/development_plan.md`.
-
-## Current Status
-
-We have completed the initial setup and the "Hello World" phase. The project structure is now ready for further development as outlined in the `docs/development_plan.md`.

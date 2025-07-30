@@ -3,7 +3,7 @@
   "name": "zendesk-search",
   "version": "0.1.0",
   "title": "Zendesk Search",
-  "description": "Search for users and organizations in Zendesk.",
+  "description": "Search for users, organizations, and triggers in Zendesk.",
   "icon": "icon.png",
   "author": "gemini",
   "license": "MIT",

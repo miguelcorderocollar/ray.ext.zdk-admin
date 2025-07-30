@@ -6,6 +6,8 @@ import {
   ZendeskUser,
   searchZendeskOrganizations,
   ZendeskOrganization,
+  searchZendeskTriggers,
+  ZendeskTrigger,
 } from "./api/zendesk";
 import EditUserForm from "./components/EditUserForm";
 
@@ -29,9 +31,9 @@ function useDebounce<T>(value: T, delay: number): T {
 export default function SearchZendesk() {
   const [searchText, setSearchText] = useState("");
   const debouncedSearchText = useDebounce(searchText, 500);
-  const [results, setResults] = useState<ZendeskUser[] | ZendeskOrganization[]>([]);
+  const [results, setResults] = useState<ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchType, setSearchType] = useState<"users" | "organizations">("users");
+  const [searchType, setSearchType] = useState<"users" | "organizations" | "triggers">("users");
 
   useEffect(() => {
     async function performSearch() {
@@ -43,11 +45,13 @@ export default function SearchZendesk() {
 
       setIsLoading(true);
       try {
-        let searchResults: ZendeskUser[] | ZendeskOrganization[];
+        let searchResults: ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[];
         if (searchType === "users") {
           searchResults = await searchZendeskUsers(debouncedSearchText);
-        } else {
+        } else if (searchType === "organizations") {
           searchResults = await searchZendeskOrganizations(debouncedSearchText);
+        } else {
+          searchResults = await searchZendeskTriggers(debouncedSearchText);
         }
         setResults(searchResults);
       } catch (error: unknown) {
@@ -73,17 +77,24 @@ export default function SearchZendesk() {
       searchBarPlaceholder={
         searchType === "users"
           ? "Search Zendesk users by name, email, etc."
-          : "Search Zendesk organizations by name, domain, etc."
+          : searchType === "organizations"
+            ? "Search Zendesk organizations by name, domain, etc."
+            : "Search Zendesk triggers by name"
       }
       throttle
       searchBarAccessory={
         <List.Dropdown
-          onChange={(newValue) => setSearchType(newValue as "users" | "organizations")}
+          onChange={(newValue) => setSearchType(newValue as "users" | "organizations" | "triggers")}
           tooltip="Select Search Type"
           value={searchType}
         >
-          <List.Dropdown.Item title="Users" value="users" />
-          <List.Dropdown.Item title="Organizations" value="organizations" />
+          <List.Dropdown.Section title="Ticketing">
+            <List.Dropdown.Item title="Users" value="users" />
+            <List.Dropdown.Item title="Organizations" value="organizations" />
+          </List.Dropdown.Section>
+          <List.Dropdown.Section title="Admin">
+            <List.Dropdown.Item title="Triggers" value="triggers" />
+          </List.Dropdown.Section>
         </List.Dropdown>
       }
     >
@@ -92,7 +103,7 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : "Organizations"}`}
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : "Triggers"}`}
           description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}
@@ -198,7 +209,7 @@ export default function SearchZendesk() {
               }
             />
           );
-        } else {
+        } else if (searchType === "organizations") {
           const organization = item as ZendeskOrganization;
           const hasDetailsOrNotes = organization.details || organization.notes;
           const hasTimestamps = organization.created_at || organization.updated_at;
@@ -271,6 +282,62 @@ export default function SearchZendesk() {
                   <Action.CopyToClipboard
                     title="Copy Link"
                     content={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
+                  />
+                </ActionPanel>
+              }
+            />
+          );
+        } else {
+          const trigger = item as unknown as ZendeskTrigger;
+          return (
+            <List.Item
+              key={trigger.id}
+              title={trigger.title}
+              icon={undefined}
+              detail={
+                <List.Item.Detail
+                  metadata={
+                    <List.Item.Detail.Metadata>
+                      <List.Item.Detail.Metadata.Label title="Title" text={trigger.title} />
+                      <List.Item.Detail.Metadata.Label title="ID" text={trigger.id.toString()} />
+                      <List.Item.Detail.Metadata.Label title="Category ID" text={trigger.category_id} />
+                      <List.Item.Detail.Metadata.TagList title="Active">
+                        <List.Item.Detail.Metadata.TagList.Item
+                          text={trigger.active ? "Active" : "Inactive"}
+                          color={trigger.active ? Color.Green : Color.Red}
+                        />
+                      </List.Item.Detail.Metadata.TagList>
+                      {trigger.created_at && (
+                        <List.Item.Detail.Metadata.Label
+                          title="Created At"
+                          text={new Date(trigger.created_at).toLocaleString()}
+                        />
+                      )}
+                      {trigger.updated_at && (
+                        <List.Item.Detail.Metadata.Label
+                          title="Updated At"
+                          text={new Date(trigger.updated_at).toLocaleString()}
+                        />
+                      )}
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.Link
+                        title="Open in Zendesk"
+                        text="View Trigger"
+                        target={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers/${trigger.id}`}
+                      />
+                    </List.Item.Detail.Metadata>
+                  }
+                />
+              }
+              actions={
+                <ActionPanel>
+                  <Action.OpenInBrowser
+                    title="Open in Browser"
+                    url={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers/${trigger.id}`}
+                  />
+                  <Action.CopyToClipboard
+                    title="Copy URL to Clipboard"
+                    content={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers/${trigger.id}`}
                   />
                 </ActionPanel>
               }

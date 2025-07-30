@@ -62,6 +62,27 @@ interface ZendeskUserSearchResponse {
   count: number;
 }
 
+export interface ZendeskTrigger {
+  url: string;
+  id: number;
+  title: string;
+  active: boolean;
+  updated_at: string;
+  created_at: string;
+  default: boolean;
+  actions: Array<{ field: string; value: string | string[] }>;
+  conditions: { all: Array<unknown>; any: Array<unknown> };
+  description: string | null;
+  position: number;
+  raw_title: string;
+  category_id: string;
+}
+
+interface ZendeskTriggerSearchResponse {
+  triggers: ZendeskTrigger[];
+  count: number;
+}
+
 interface ZendeskOrganizationSearchResponse {
   results: ZendeskOrganization[];
   count: number;
@@ -122,6 +143,29 @@ export async function searchZendeskOrganizations(query: string): Promise<Zendesk
 
   const data = (await response.json()) as ZendeskOrganizationSearchResponse;
   return data.results;
+}
+
+export async function searchZendeskTriggers(query: string): Promise<ZendeskTrigger[]> {
+  const searchTerms = query;
+  const url = `${getZendeskUrl()}/triggers/search.json?query=${encodeURIComponent(searchTerms)}`;
+  console.log("Zendesk Trigger Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(),
+    "Content-Type": "application/json",
+  };
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: headers,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+  }
+
+  const data = (await response.json()) as ZendeskTriggerSearchResponse;
+  return data.triggers;
 }
 
 export async function updateUser(userId: number, updatedFields: Record<string, unknown>): Promise<ZendeskUser> {
