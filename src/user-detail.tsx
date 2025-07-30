@@ -6,35 +6,54 @@ interface UserDetailProps {
 }
 
 export default function UserDetail({ user }: UserDetailProps) {
+  const hasDetailsOrNotes = user.details || user.notes;
+  const hasTimestamps = user.created_at || user.updated_at;
+
   return (
     <Detail
       navigationTitle={user.name}
-      markdown={`
-${
-  user.photo?.content_url
-    ? `![](${user.photo.content_url})
-`
-    : ""
-}
-# ${user.name}
+      markdown={`# ${user.name}
 
-Email: ${user.email}
-ID: ${user.id}`}
+${user.photo?.content_url ? `![User Photo](${user.photo.content_url})` : ""}
+
+`}
       metadata={
         <Detail.Metadata>
-          <Detail.Metadata.Label title="Name" text={user.name} />
-          <Detail.Metadata.Label title="Email" text={user.email} />
           <Detail.Metadata.Label title="ID" text={user.id.toString()} />
-          {user.role && <Detail.Metadata.Label title="Role" text={user.role} />}
+          <Detail.Metadata.Label title="Email" text={user.email} />
           {user.phone && <Detail.Metadata.Label title="Phone" text={user.phone} />}
-          {user.details && <Detail.Metadata.Label title="Details" text={user.details} />}
-          {user.notes && <Detail.Metadata.Label title="Notes" text={user.notes} />}
-          {user.created_at && (
-            <Detail.Metadata.Label title="Created At" text={new Date(user.created_at).toLocaleString()} />
+          {user.role && (
+            <Detail.Metadata.TagList title="Role">
+              <Detail.Metadata.TagList.Item text={user.role} />
+            </Detail.Metadata.TagList>
           )}
-          {user.updated_at && (
-            <Detail.Metadata.Label title="Updated At" text={new Date(user.updated_at).toLocaleString()} />
+
+          {hasDetailsOrNotes && (
+            <>
+              <Detail.Metadata.Separator />
+              {user.details && <Detail.Metadata.Label title="Details" text={user.details} />}
+              {user.notes && <Detail.Metadata.Label title="Notes" text={user.notes} />}
+            </>
           )}
+
+          {hasTimestamps && (
+            <>
+              <Detail.Metadata.Separator />
+              {user.created_at && (
+                <Detail.Metadata.Label title="Created At" text={new Date(user.created_at).toLocaleString()} />
+              )}
+              {user.updated_at && (
+                <Detail.Metadata.Label title="Updated At" text={new Date(user.updated_at).toLocaleString()} />
+              )}
+            </>
+          )}
+
+          <Detail.Metadata.Separator />
+          <Detail.Metadata.Link
+            title="Open in Zendesk"
+            text="View User Profile"
+            target={`${getZendeskUrl().replace("/api/v2", "")}/agent/users/${user.id}`}
+          />
         </Detail.Metadata>
       }
       actions={
