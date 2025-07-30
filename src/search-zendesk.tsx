@@ -10,6 +10,8 @@ import {
   ZendeskTrigger,
   searchZendeskDynamicContent,
   ZendeskDynamicContent,
+  searchZendeskMacros,
+  ZendeskMacro,
 } from "./api/zendesk";
 import EditUserForm from "./components/EditUserForm";
 
@@ -33,13 +35,17 @@ function useDebounce<T>(value: T, delay: number): T {
 export default function SearchZendesk() {
   const [searchText, setSearchText] = useState("");
   const debouncedSearchText = useDebounce(searchText, 500);
-  const [results, setResults] = useState<ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[] | ZendeskDynamicContent[]>([]);
+  const [results, setResults] = useState<
+    ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[] | ZendeskDynamicContent[] | ZendeskMacro[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchType, setSearchType] = useState<"users" | "organizations" | "triggers" | "dynamic_content">("users");
+  const [searchType, setSearchType] = useState<"users" | "organizations" | "triggers" | "dynamic_content" | "macros">(
+    "users",
+  );
 
   useEffect(() => {
     async function performSearch() {
-      if (!debouncedSearchText && searchType !== "dynamic_content") {
+      if (!debouncedSearchText && searchType !== "dynamic_content" && searchType !== "macros") {
         setResults([]);
         setIsLoading(false);
         return;
@@ -47,13 +53,20 @@ export default function SearchZendesk() {
 
       setIsLoading(true);
       try {
-        let searchResults: ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[] | ZendeskDynamicContent[];
+        let searchResults:
+          | ZendeskUser[]
+          | ZendeskOrganization[]
+          | ZendeskTrigger[]
+          | ZendeskDynamicContent[]
+          | ZendeskMacro[];
         if (searchType === "users") {
           searchResults = await searchZendeskUsers(debouncedSearchText);
         } else if (searchType === "organizations") {
           searchResults = await searchZendeskOrganizations(debouncedSearchText);
         } else if (searchType === "dynamic_content") {
           searchResults = await searchZendeskDynamicContent(debouncedSearchText);
+        } else if (searchType === "macros") {
+          searchResults = await searchZendeskMacros(debouncedSearchText);
         } else {
           searchResults = await searchZendeskTriggers(debouncedSearchText);
         }
@@ -85,12 +98,16 @@ export default function SearchZendesk() {
             ? "Search Zendesk organizations by name, domain, etc."
             : searchType === "dynamic_content"
               ? "Search Zendesk dynamic content by name or content"
-              : "Search Zendesk triggers by name"
+              : searchType === "macros"
+                ? "Search Zendesk macros by name or description"
+                : "Search Zendesk triggers by name"
       }
       throttle
       searchBarAccessory={
         <List.Dropdown
-          onChange={(newValue) => setSearchType(newValue as "users" | "organizations" | "triggers" | "dynamic_content")}
+          onChange={(newValue) =>
+            setSearchType(newValue as "users" | "organizations" | "triggers" | "dynamic_content" | "macros")
+          }
           tooltip="Select Search Type"
           value={searchType}
         >
@@ -101,6 +118,7 @@ export default function SearchZendesk() {
           <List.Dropdown.Section title="Admin">
             <List.Dropdown.Item title="Triggers" value="triggers" />
             <List.Dropdown.Item title="Dynamic Content" value="dynamic_content" />
+            <List.Dropdown.Item title="Macros" value="macros" />
           </List.Dropdown.Section>
         </List.Dropdown>
       }
@@ -110,7 +128,7 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : "Triggers"}`}
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : "Triggers"}`}
           description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}
@@ -290,22 +308,31 @@ export default function SearchZendesk() {
                     title="Copy Link"
                     content={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
                   />
+                  <Action.OpenInBrowser
+                    title="Open General Configuration"
+                    url={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations`}
+                    shortcut={{ modifiers: ["cmd", "shift"], key: "o" }}
+                  />
                 </ActionPanel>
               }
             />
           );
         } else if (searchType === "dynamic_content") {
           const dynamicContent = item as ZendeskDynamicContent;
-          const nameParts = dynamicContent.name.split("::");
+          const nameParts = (dynamicContent.name ?? "").split("::");
           const title = nameParts.length > 1 ? nameParts[nameParts.length - 1] : dynamicContent.name;
           const tags = nameParts.length > 1 ? nameParts.slice(0, nameParts.length - 1) : [];
-          const defaultVariant = dynamicContent.variants.find(v => v.id === dynamicContent.default_locale_id);
+          const defaultVariant = dynamicContent.variants?.find((v) => v.id === dynamicContent.default_locale_id);
 
           return (
             <List.Item
               key={dynamicContent.id}
               title={title}
-              accessories={tags.map(tag => ({ text: tag }))}
+              accessories={
+                tags.length > 2
+                  ? [...tags.slice(0, 2).map((tag) => ({ text: tag })), { text: "..." }]
+                  : tags.map((tag) => ({ text: tag }))
+              }
               detail={
                 <List.Item.Detail
                   metadata={
@@ -313,11 +340,19 @@ export default function SearchZendesk() {
                       <List.Item.Detail.Metadata.Label title="Name" text={dynamicContent.name} />
                       <List.Item.Detail.Metadata.Label title="ID" text={dynamicContent.id.toString()} />
                       <List.Item.Detail.Metadata.Label title="Placeholder" text={dynamicContent.placeholder} />
-                      <List.Item.Detail.Metadata.Label title="Created At" text={new Date(dynamicContent.created_at).toLocaleString()} />
-                      <List.Item.Detail.Metadata.Label title="Updated At" text={new Date(dynamicContent.updated_at).toLocaleString()} />
-                      {defaultVariant && <List.Item.Detail.Metadata.Label title="Content" text={defaultVariant.content} />}
+                      <List.Item.Detail.Metadata.Label
+                        title="Created At"
+                        text={new Date(dynamicContent.created_at).toLocaleString()}
+                      />
+                      <List.Item.Detail.Metadata.Label
+                        title="Updated At"
+                        text={new Date(dynamicContent.updated_at).toLocaleString()}
+                      />
+                      {defaultVariant && (
+                        <List.Item.Detail.Metadata.Label title="Content" text={defaultVariant.content} />
+                      )}
                       <List.Item.Detail.Metadata.TagList title="Locales">
-                        {dynamicContent.variants.map(variant => (
+                        {dynamicContent.variants?.map((variant) => (
                           <List.Item.Detail.Metadata.TagList.Item key={variant.id} text={`${variant.locale_id}`} />
                         ))}
                       </List.Item.Detail.Metadata.TagList>
@@ -335,7 +370,70 @@ export default function SearchZendesk() {
                     title="Copy Link to Clipboard"
                     content={`${getZendeskUrl().replace("/api/v2", "")}/dynamic_content/items/${dynamicContent.id}`}
                   />
-                  {defaultVariant && <Action.CopyToClipboard title="Copy Content to Clipboard" content={defaultVariant.content} />}
+                  {defaultVariant && (
+                    <Action.CopyToClipboard title="Copy Content to Clipboard" content={defaultVariant.content} />
+                  )}
+                  <Action.OpenInBrowser
+                    title="Open General Configuration"
+                    url={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/dynamic_content`}
+                    shortcut={{ modifiers: ["cmd", "shift"], key: "d" }}
+                  />
+                </ActionPanel>
+              }
+            />
+          );
+        } else if (searchType === "macros") {
+          const macro = item as ZendeskMacro;
+          const nameParts = macro.title?.split("::");
+          const title = nameParts.length > 1 ? nameParts[nameParts.length - 1] : macro.title;
+          const tags = nameParts.length > 1 ? nameParts.slice(0, nameParts.length - 1) : [];
+
+          return (
+            <List.Item
+              key={macro.id}
+              title={title}
+              accessories={
+                tags.length > 2
+                  ? [...tags.slice(0, 2).map((tag) => ({ text: tag })), { text: "..." }]
+                  : tags.map((tag) => ({ text: tag }))
+              }
+              detail={
+                <List.Item.Detail
+                  metadata={
+                    <List.Item.Detail.Metadata>
+                      <List.Item.Detail.Metadata.Label title="Name" text={macro.title} />
+                      <List.Item.Detail.Metadata.Label title="ID" text={macro.id.toString()} />
+                      <List.Item.Detail.Metadata.Label title="Active" text={macro.active ? "Yes" : "No"} />
+                      {macro.description && (
+                        <List.Item.Detail.Metadata.Label title="Description" text={macro.description} />
+                      )}
+                      <List.Item.Detail.Metadata.Label
+                        title="Created At"
+                        text={new Date(macro.created_at).toLocaleString()}
+                      />
+                      <List.Item.Detail.Metadata.Label
+                        title="Updated At"
+                        text={new Date(macro.updated_at).toLocaleString()}
+                      />
+                    </List.Item.Detail.Metadata>
+                  }
+                />
+              }
+              actions={
+                <ActionPanel>
+                  <Action.OpenInBrowser
+                    title="Open Macro in Zendesk"
+                    url={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/macros/${macro.id}`}
+                  />
+                  <Action.CopyToClipboard
+                    title="Copy Macro Link"
+                    content={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/macros/${macro.id}`}
+                  />
+                  <Action.OpenInBrowser
+                    title="Open General Configuration"
+                    url={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/macros`}
+                    shortcut={{ modifiers: ["cmd", "shift"], key: "m" }}
+                  />
                 </ActionPanel>
               }
             />
@@ -391,6 +489,11 @@ export default function SearchZendesk() {
                   <Action.CopyToClipboard
                     title="Copy URL to Clipboard"
                     content={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers/${trigger.id}`}
+                  />
+                  <Action.OpenInBrowser
+                    title="Open General Configuration"
+                    url={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers`}
+                    shortcut={{ modifiers: ["cmd", "shift"], key: "t" }}
                   />
                 </ActionPanel>
               }

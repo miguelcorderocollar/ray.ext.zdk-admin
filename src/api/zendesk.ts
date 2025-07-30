@@ -1,3 +1,4 @@
+import { showToast, Toast } from "@raycast/api";
 import { getZendeskPreferences } from "../utils/preferences";
 
 export interface ZendeskUser {
@@ -112,6 +113,21 @@ interface ZendeskDynamicContentSearchResponse {
   items: ZendeskDynamicContent[];
 }
 
+export interface ZendeskMacro {
+  url: string;
+  id: number;
+  title: string;
+  active: boolean;
+  updated_at: string;
+  created_at: string;
+  usage_count: number;
+  description: string | null;
+}
+
+interface ZendeskMacroSearchResponse {
+  macros: ZendeskMacro[];
+}
+
 export function getZendeskAuthHeader(): string {
   const { zendeskEmail, zendeskApiToken } = getZendeskPreferences();
   const credentials = `${zendeskEmail}/token:${zendeskApiToken}`;
@@ -132,18 +148,28 @@ export async function searchZendeskUsers(query: string): Promise<ZendeskUser[]> 
     "Content-Type": "application/json",
   };
 
-  const response = await fetch(url, {
-    method: "GET",
-    headers: headers,
-  });
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(Toast.Style.Failure, "Zendesk API Error", `Failed to fetch users: ${response.status} - ${errorText}`);
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskUserSearchResponse;
+    return data.users;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
   }
-
-  const data = (await response.json()) as ZendeskUserSearchResponse;
-  return data.users;
 }
 
 export async function searchZendeskOrganizations(query: string): Promise<ZendeskOrganization[]> {
@@ -155,18 +181,32 @@ export async function searchZendeskOrganizations(query: string): Promise<Zendesk
     "Content-Type": "application/json",
   };
 
-  const response = await fetch(url, {
-    method: "GET",
-    headers: headers,
-  });
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(
+        Toast.Style.Failure,
+        "Zendesk API Error",
+        `Failed to fetch organizations: ${response.status} - ${errorText}`,
+      );
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskOrganizationSearchResponse;
+    return data.results;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
   }
-
-  const data = (await response.json()) as ZendeskOrganizationSearchResponse;
-  return data.results;
 }
 
 export async function searchZendeskTriggers(query: string): Promise<ZendeskTrigger[]> {
@@ -178,18 +218,32 @@ export async function searchZendeskTriggers(query: string): Promise<ZendeskTrigg
     "Content-Type": "application/json",
   };
 
-  const response = await fetch(url, {
-    method: "GET",
-    headers: headers,
-  });
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(
+        Toast.Style.Failure,
+        "Zendesk API Error",
+        `Failed to fetch triggers: ${response.status} - ${errorText}`,
+      );
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskTriggerSearchResponse;
+    return data.triggers;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
   }
-
-  const data = (await response.json()) as ZendeskTriggerSearchResponse;
-  return data.triggers;
 }
 
 export async function updateUser(userId: number, updatedFields: Record<string, unknown>): Promise<ZendeskUser> {
@@ -200,19 +254,29 @@ export async function updateUser(userId: number, updatedFields: Record<string, u
     "Content-Type": "application/json",
   };
 
-  const response = await fetch(url, {
-    method: "PUT",
-    headers: headers,
-    body: JSON.stringify({ user: updatedFields }),
-  });
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: headers,
+      body: JSON.stringify({ user: updatedFields }),
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(Toast.Style.Failure, "Zendesk API Error", `Failed to update user: ${response.status} - ${errorText}`);
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as { user: ZendeskUser };
+    return data.user;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
   }
-
-  const data = (await response.json()) as { user: ZendeskUser };
-  return data.user;
 }
 
 export async function searchZendeskDynamicContent(query: string): Promise<ZendeskDynamicContent[]> {
@@ -223,21 +287,80 @@ export async function searchZendeskDynamicContent(query: string): Promise<Zendes
     "Content-Type": "application/json",
   };
 
-  const response = await fetch(url, {
-    method: "GET",
-    headers: headers,
-  });
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
-  }
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(
+        Toast.Style.Failure,
+        "Zendesk API Error",
+        `Failed to fetch dynamic content: ${response.status} - ${errorText}`,
+      );
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
 
-  const data = (await response.json()) as ZendeskDynamicContentSearchResponse;
-  
-  if (query) {
-    return data.items.filter(item => item.name.toLowerCase().includes(query.toLowerCase()) || item.variants.some(variant => variant.content.toLowerCase().includes(query.toLowerCase())));
+    const data = (await response.json()) as ZendeskDynamicContentSearchResponse;
+
+    if (query) {
+      return data.items.filter(
+        (item) =>
+          item.name.toLowerCase().includes(query.toLowerCase()) ||
+          item.variants.some((variant) => variant.content.toLowerCase().includes(query.toLowerCase())),
+      );
+    }
+
+    return data.items;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
   }
-  
-  return data.items;
+}
+
+export async function searchZendeskMacros(query: string): Promise<ZendeskMacro[]> {
+  const url = `${getZendeskUrl()}/macros.json?active=true`;
+  console.log("Zendesk Macro Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(Toast.Style.Failure, "Zendesk API Error", `Failed to fetch macros: ${response.status} - ${errorText}`);
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskMacroSearchResponse;
+
+    if (query) {
+      return data.macros.filter(
+        (macro) =>
+          macro.title.toLowerCase().includes(query.toLowerCase()) ||
+          (macro.description && macro.description.toLowerCase().includes(query.toLowerCase())),
+      );
+    }
+
+    return data.macros;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
 }
