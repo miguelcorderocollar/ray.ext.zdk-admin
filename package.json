@@ -37,6 +37,14 @@
       "description": "Your Zendesk API token. Generate one in Zendesk Admin Center > Apps and Integrations > Zendesk API.",
       "type": "password",
       "required": true
+    },
+    {
+      "name": "instanceColor",
+      "title": "Instance Color",
+      "description": "Color for the current Zendesk instance (e.g., #FF0000, blue, red).",
+      "type": "textfield",
+      "required": false,
+      "default": "#007AFF"
     }
   ],
   "dependencies": {

@@ -1,4 +1,5 @@
 import { List, showToast, Toast, ActionPanel, Action, Image, Icon, Color } from "@raycast/api";
+import { getZendeskPreferences } from "./utils/preferences";
 import { useState, useEffect } from "react";
 import {
   searchZendeskUsers,
@@ -221,20 +222,43 @@ export default function SearchZendesk() {
               }
               actions={
                 <ActionPanel>
-                  <Action.Push title="Edit User" icon={Icon.Pencil} target={<EditUserForm user={user} />} />
-                  <Action.OpenInBrowser
-                    title="Open in Browser"
-                    url={`${getZendeskUrl().replace("/api/v2", "")}/agent/users/${user.id}`}
-                  />
-                  <Action.CopyToClipboard
-                    title="Copy Link"
-                    content={`${getZendeskUrl().replace("/api/v2", "")}/agent/users/${user.id}`}
-                  />
-                  <Action.OpenInBrowser
-                    title="Open General Configuration"
-                    url={`${getZendeskUrl().replace("/api/v2", "")}/agent/user_filters`}
-                    shortcut={{ modifiers: ["cmd", "shift"], key: "u" }}
-                  />
+                  <ActionPanel.Section title="Open">
+                    <Action.OpenInBrowser
+                      title="Open in Browser"
+                      url={`${getZendeskUrl().replace("/api/v2", "")}/agent/users/${user.id}`}
+                    />
+                    <Action.CopyToClipboard
+                      title="Copy Link"
+                      content={`${getZendeskUrl().replace("/api/v2", "")}/agent/users/${user.id}`}
+                    />
+                  </ActionPanel.Section>
+                  <ActionPanel.Section title="Edit">
+                    <Action.Push title="Edit User" icon={Icon.Pencil} target={<EditUserForm user={user} />} />
+                  </ActionPanel.Section>
+                  <ActionPanel.Section title="General">
+                    <Action.OpenInBrowser
+                      title="Open General Configuration"
+                      url={`${getZendeskUrl().replace("/api/v2", "")}/agent/user_filters`}
+                      shortcut={{ modifiers: ["cmd", "shift"], key: "u" }}
+                    />
+                    <ActionPanel.Submenu title="Change Instance" icon={{ source: Icon.House }}>
+                      <Action.OpenInBrowser
+                        title={`${getZendeskPreferences().zendeskSubdomain}`}
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: getZendeskPreferences().instanceColor || Color.Blue }}
+                      />
+                      <Action.OpenInBrowser
+                        title="Instance 2"
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: Color.Red }}
+                      />
+                      <Action.OpenInBrowser
+                        title="Instance 3"
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: Color.Green }}
+                      />
+                    </ActionPanel.Submenu>
+                  </ActionPanel.Section>
                 </ActionPanel>
               }
             />
@@ -305,19 +329,40 @@ export default function SearchZendesk() {
               }
               actions={
                 <ActionPanel>
-                  <Action.OpenInBrowser
-                    title="Open in Browser"
-                    url={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
-                  />
-                  <Action.CopyToClipboard
-                    title="Copy Link"
-                    content={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
-                  />
-                  <Action.OpenInBrowser
-                    title="Open General Configuration"
-                    url={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations`}
-                    shortcut={{ modifiers: ["cmd", "shift"], key: "o" }}
-                  />
+                  <ActionPanel.Section title="Open">
+                    <Action.OpenInBrowser
+                      title="Open in Browser"
+                      url={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
+                    />
+                    <Action.CopyToClipboard
+                      title="Copy Link"
+                      content={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
+                    />
+                  </ActionPanel.Section>
+                  <ActionPanel.Section title="General">
+                    <Action.OpenInBrowser
+                      title="Open General Configuration"
+                      url={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations`}
+                      shortcut={{ modifiers: ["cmd", "shift"], key: "o" }}
+                    />
+                    <ActionPanel.Submenu title="Change Instance" icon={{ source: Icon.House }}>
+                      <Action.OpenInBrowser
+                        title={`${getZendeskPreferences().zendeskSubdomain}`}
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: getZendeskPreferences().instanceColor || Color.Blue }}
+                      />
+                      <Action.OpenInBrowser
+                        title="Instance 2"
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: Color.Red }}
+                      />
+                      <Action.OpenInBrowser
+                        title="Instance 3"
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: Color.Green }}
+                      />
+                    </ActionPanel.Submenu>
+                  </ActionPanel.Section>
                 </ActionPanel>
               }
             />
@@ -367,22 +412,43 @@ export default function SearchZendesk() {
               }
               actions={
                 <ActionPanel>
-                  <Action.OpenInBrowser
-                    title="Open Dynamic Content"
-                    url={`${getZendeskUrl().replace("/api/v2", "")}/dynamic_content/items/${dynamicContent.id}`}
-                  />
-                  <Action.CopyToClipboard
-                    title="Copy Link to Clipboard"
-                    content={`${getZendeskUrl().replace("/api/v2", "")}/dynamic_content/items/${dynamicContent.id}`}
-                  />
-                  {defaultVariant && (
-                    <Action.CopyToClipboard title="Copy Content to Clipboard" content={defaultVariant.content} />
-                  )}
-                  <Action.OpenInBrowser
-                    title="Open General Configuration"
-                    url={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/dynamic_content`}
-                    shortcut={{ modifiers: ["cmd", "shift"], key: "d" }}
-                  />
+                  <ActionPanel.Section title="Open">
+                    <Action.OpenInBrowser
+                      title="Open Dynamic Content"
+                      url={`${getZendeskUrl().replace("/api/v2", "")}/dynamic_content/items/${dynamicContent.id}`}
+                    />
+                    <Action.CopyToClipboard
+                      title="Copy Link to Clipboard"
+                      content={`${getZendeskUrl().replace("/api/v2", "")}/dynamic_content/items/${dynamicContent.id}`}
+                    />
+                    {defaultVariant && (
+                      <Action.CopyToClipboard title="Copy Content to Clipboard" content={defaultVariant.content} />
+                    )}
+                  </ActionPanel.Section>
+                  <ActionPanel.Section title="General">
+                    <Action.OpenInBrowser
+                      title="Open General Configuration"
+                      url={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/dynamic_content`}
+                      shortcut={{ modifiers: ["cmd", "shift"], key: "d" }}
+                    />
+                    <ActionPanel.Submenu title="Change Instance" icon={{ source: Icon.House }}>
+                      <Action.OpenInBrowser
+                        title={`${getZendeskPreferences().zendeskSubdomain}`}
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: getZendeskPreferences().instanceColor || Color.Blue }}
+                      />
+                      <Action.OpenInBrowser
+                        title="Instance 2"
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: Color.Red }}
+                      />
+                      <Action.OpenInBrowser
+                        title="Instance 3"
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: Color.Green }}
+                      />
+                    </ActionPanel.Submenu>
+                  </ActionPanel.Section>
                 </ActionPanel>
               }
             />
@@ -426,19 +492,40 @@ export default function SearchZendesk() {
               }
               actions={
                 <ActionPanel>
-                  <Action.OpenInBrowser
-                    title="Open Macro in Zendesk"
-                    url={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/macros/${macro.id}`}
-                  />
-                  <Action.CopyToClipboard
-                    title="Copy Macro Link"
-                    content={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/macros/${macro.id}`}
-                  />
-                  <Action.OpenInBrowser
-                    title="Open General Configuration"
-                    url={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/macros`}
-                    shortcut={{ modifiers: ["cmd", "shift"], key: "m" }}
-                  />
+                  <ActionPanel.Section title="Open">
+                    <Action.OpenInBrowser
+                      title="Open Macro in Zendesk"
+                      url={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/macros/${macro.id}`}
+                    />
+                    <Action.CopyToClipboard
+                      title="Copy Macro Link"
+                      content={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/macros/${macro.id}`}
+                    />
+                  </ActionPanel.Section>
+                  <ActionPanel.Section title="General">
+                    <Action.OpenInBrowser
+                      title="Open General Configuration"
+                      url={`${getZendeskUrl().replace("/api/v2", "")}/admin/workspaces/agent-workspace/macros`}
+                      shortcut={{ modifiers: ["cmd", "shift"], key: "m" }}
+                    />
+                    <ActionPanel.Submenu title="Change Instance" icon={{ source: Icon.House }}>
+                      <Action.OpenInBrowser
+                        title={`${getZendeskPreferences().zendeskSubdomain}`}
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: getZendeskPreferences().instanceColor || Color.Blue }}
+                      />
+                      <Action.OpenInBrowser
+                        title="Instance 2"
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: Color.Red }}
+                      />
+                      <Action.OpenInBrowser
+                        title="Instance 3"
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: Color.Green }}
+                      />
+                    </ActionPanel.Submenu>
+                  </ActionPanel.Section>
                 </ActionPanel>
               }
             />
@@ -487,19 +574,40 @@ export default function SearchZendesk() {
               }
               actions={
                 <ActionPanel>
-                  <Action.OpenInBrowser
-                    title="Open in Browser"
-                    url={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers/${trigger.id}`}
-                  />
-                  <Action.CopyToClipboard
-                    title="Copy URL to Clipboard"
-                    content={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers/${trigger.id}`}
-                  />
-                  <Action.OpenInBrowser
-                    title="Open General Configuration"
-                    url={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers`}
-                    shortcut={{ modifiers: ["cmd", "shift"], key: "t" }}
-                  />
+                  <ActionPanel.Section title="Open">
+                    <Action.OpenInBrowser
+                      title="Open in Browser"
+                      url={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers/${trigger.id}`}
+                    />
+                    <Action.CopyToClipboard
+                      title="Copy URL to Clipboard"
+                      content={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers/${trigger.id}`}
+                    />
+                  </ActionPanel.Section>
+                  <ActionPanel.Section title="General">
+                    <Action.OpenInBrowser
+                      title="Open General Configuration"
+                      url={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers`}
+                      shortcut={{ modifiers: ["cmd", "shift"], key: "t" }}
+                    />
+                    <ActionPanel.Submenu title="Change Instance" icon={{ source: Icon.House }}>
+                      <Action.OpenInBrowser
+                        title={`${getZendeskPreferences().zendeskSubdomain}`}
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: getZendeskPreferences().instanceColor || Color.Blue }}
+                      />
+                      <Action.OpenInBrowser
+                        title="Instance 2"
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: Color.Red }}
+                      />
+                      <Action.OpenInBrowser
+                        title="Instance 3"
+                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
+                        icon={{ source: Icon.House, tintColor: Color.Green }}
+                      />
+                    </ActionPanel.Submenu>
+                  </ActionPanel.Section>
                 </ActionPanel>
               }
             />

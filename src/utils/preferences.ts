@@ -4,6 +4,7 @@ interface Preferences {
   zendeskSubdomain: string;
   zendeskEmail: string;
   zendeskApiToken: string;
+  instanceColor?: string;
 }
 
 export function getZendeskPreferences(): Preferences {

@@ -13,7 +13,9 @@ type ExtensionPreferences = {
   /** Zendesk Email - Your Zendesk email address. */
   "zendeskEmail": string,
   /** Zendesk API Token - Your Zendesk API token. Generate one in Zendesk Admin Center > Apps and Integrations > Zendesk API. */
-  "zendeskApiToken": string
+  "zendeskApiToken": string,
+  /** Instance Color - Color for the current Zendesk instance (e.g., #FF0000, blue, red). */
+  "instanceColor": string
 }
 
 /** Preferences accessible in all the extension's commands */
