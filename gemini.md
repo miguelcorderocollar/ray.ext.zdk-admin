@@ -22,3 +22,8 @@ Follow these steps for each development phase:
 -   Run `npm run lint` and `npm run fix-lint` to ensure code style and quality.
 -   Run `npm run build` to test the extension can be build in Raycast.
 -   If applicable, write and run unit tests.
+
+
+## Git
+- You don't do git, human is in charge of git
+- Human commits on stable versions so git diff is good way to find source of errors.

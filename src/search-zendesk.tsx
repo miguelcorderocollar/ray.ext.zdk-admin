@@ -230,6 +230,11 @@ export default function SearchZendesk() {
                     title="Copy Link"
                     content={`${getZendeskUrl().replace("/api/v2", "")}/agent/users/${user.id}`}
                   />
+                  <Action.OpenInBrowser
+                    title="Open General Configuration"
+                    url={`${getZendeskUrl().replace("/api/v2", "")}/agent/user_filters`}
+                    shortcut={{ modifiers: ["cmd", "shift"], key: "u" }}
+                  />
                 </ActionPanel>
               }
             />
