@@ -10,8 +10,12 @@ export default function UserDetail({ user }: UserDetailProps) {
     <Detail
       navigationTitle={user.name}
       markdown={`
-${user.photo?.content_url ? `![](${user.photo.content_url})
-` : ''}
+${
+  user.photo?.content_url
+    ? `![](${user.photo.content_url})
+`
+    : ""
+}
 # ${user.name}
 
 Email: ${user.email}
@@ -25,8 +29,12 @@ ID: ${user.id}`}
           {user.phone && <Detail.Metadata.Label title="Phone" text={user.phone} />}
           {user.details && <Detail.Metadata.Label title="Details" text={user.details} />}
           {user.notes && <Detail.Metadata.Label title="Notes" text={user.notes} />}
-          {user.created_at && <Detail.Metadata.Label title="Created At" text={new Date(user.created_at).toLocaleString()} />}
-          {user.updated_at && <Detail.Metadata.Label title="Updated At" text={new Date(user.updated_at).toLocaleString()} />}
+          {user.created_at && (
+            <Detail.Metadata.Label title="Created At" text={new Date(user.created_at).toLocaleString()} />
+          )}
+          {user.updated_at && (
+            <Detail.Metadata.Label title="Updated At" text={new Date(user.updated_at).toLocaleString()} />
+          )}
         </Detail.Metadata>
       }
       actions={
@@ -44,4 +52,3 @@ ID: ${user.id}`}
     />
   );
 }
-

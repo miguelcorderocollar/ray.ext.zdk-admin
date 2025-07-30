@@ -19,8 +19,12 @@ export default function OrganizationDetail({ organization }: OrganizationDetailP
           {organization.details && <Detail.Metadata.Label title="Details" text={organization.details} />}
           {organization.notes && <Detail.Metadata.Label title="Notes" text={organization.notes} />}
           {organization.external_id && <Detail.Metadata.Label title="External ID" text={organization.external_id} />}
-          {organization.created_at && <Detail.Metadata.Label title="Created At" text={new Date(organization.created_at).toLocaleString()} />}
-          {organization.updated_at && <Detail.Metadata.Label title="Updated At" text={new Date(organization.updated_at).toLocaleString()} />}
+          {organization.created_at && (
+            <Detail.Metadata.Label title="Created At" text={new Date(organization.created_at).toLocaleString()} />
+          )}
+          {organization.updated_at && (
+            <Detail.Metadata.Label title="Updated At" text={new Date(organization.updated_at).toLocaleString()} />
+          )}
         </Detail.Metadata>
       }
       actions={

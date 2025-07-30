@@ -1,6 +1,12 @@
 import { List, showToast, Toast, ActionPanel, Action, Image } from "@raycast/api";
 import { useState, useEffect } from "react";
-import { searchZendeskUsers, getZendeskUrl, ZendeskUser, searchZendeskOrganizations, ZendeskOrganization } from "./api/zendesk";
+import {
+  searchZendeskUsers,
+  getZendeskUrl,
+  ZendeskUser,
+  searchZendeskOrganizations,
+  ZendeskOrganization,
+} from "./api/zendesk";
 import UserDetail from "./user-detail";
 import OrganizationDetail from "./organization-detail";
 
@@ -45,8 +51,12 @@ export default function SearchZendesk() {
           searchResults = await searchZendeskOrganizations(debouncedSearchText);
         }
         setResults(searchResults);
-      } catch (error: any) {
-        showToast(Toast.Style.Failure, "Search Failed", error.message);
+      } catch (error: unknown) {
+        let errorMessage = "An unknown error occurred.";
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        showToast(Toast.Style.Failure, "Search Failed", errorMessage);
         setResults([]);
       } finally {
         setIsLoading(false);
@@ -60,10 +70,18 @@ export default function SearchZendesk() {
     <List
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
-      searchBarPlaceholder={searchType === "users" ? "Search Zendesk users by name, email, etc." : "Search Zendesk organizations by name, domain, etc."}
+      searchBarPlaceholder={
+        searchType === "users"
+          ? "Search Zendesk users by name, email, etc."
+          : "Search Zendesk organizations by name, domain, etc."
+      }
       throttle
       searchBarAccessory={
-        <List.Dropdown onChange={(newValue) => setSearchType(newValue as "users" | "organizations")} tooltip="Select Search Type" value={searchType}>
+        <List.Dropdown
+          onChange={(newValue) => setSearchType(newValue as "users" | "organizations")}
+          tooltip="Select Search Type"
+          value={searchType}
+        >
           <List.Dropdown.Item title="Users" value="users" />
           <List.Dropdown.Item title="Organizations" value="organizations" />
         </List.Dropdown>
@@ -73,7 +91,10 @@ export default function SearchZendesk() {
         <List.EmptyView title="No Results Found" description="Try a different search query." />
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
-        <List.EmptyView title={`Start Typing to Search ${searchType === "users" ? "Users" : "Organizations"}`} description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`} />
+        <List.EmptyView
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : "Organizations"}`}
+          description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
+        />
       )}
       {(results || []).map((item) => {
         if (searchType === "users") {
@@ -83,7 +104,11 @@ export default function SearchZendesk() {
               key={user.id}
               title={user.name}
               subtitle={user.email}
-              icon={user.photo?.content_url ? { source: user.photo.content_url, mask: Image.Mask.Circle } : { source: "person-circle.png", mask: Image.Mask.Circle }}
+              icon={
+                user.photo?.content_url
+                  ? { source: user.photo.content_url, mask: Image.Mask.Circle }
+                  : { source: "placeholder-user.svg", mask: Image.Mask.Circle }
+              }
               actions={
                 <ActionPanel>
                   <Action.Push title="Open Details" target={<UserDetail user={user} />} />
@@ -106,7 +131,7 @@ export default function SearchZendesk() {
               key={organization.id}
               title={organization.name}
               subtitle={organization.domain_names?.join(", ") || ""}
-              icon={"icon.png"} // Using the default icon for organizations
+              icon={undefined}
               actions={
                 <ActionPanel>
                   <Action.Push title="Open Details" target={<OrganizationDetail organization={organization} />} />
