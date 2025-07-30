@@ -15,6 +15,7 @@ import {
   ZendeskMacro,
 } from "./api/zendesk";
 import EditUserForm from "./components/EditUserForm";
+import { ZendeskActions } from "./components/ZendeskActions";
 
 // Custom useDebounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -327,44 +328,7 @@ export default function SearchZendesk() {
                   }
                 />
               }
-              actions={
-                <ActionPanel>
-                  <ActionPanel.Section title="Open">
-                    <Action.OpenInBrowser
-                      title="Open in Browser"
-                      url={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
-                    />
-                    <Action.CopyToClipboard
-                      title="Copy Link"
-                      content={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
-                    />
-                  </ActionPanel.Section>
-                  <ActionPanel.Section title="General">
-                    <Action.OpenInBrowser
-                      title="Open General Configuration"
-                      url={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations`}
-                      shortcut={{ modifiers: ["cmd", "shift"], key: "o" }}
-                    />
-                    <ActionPanel.Submenu title="Change Instance" icon={{ source: Icon.House }}>
-                      <Action.OpenInBrowser
-                        title={`${getZendeskPreferences().zendeskSubdomain}`}
-                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
-                        icon={{ source: Icon.House, tintColor: getZendeskPreferences().instanceColor || Color.Blue }}
-                      />
-                      <Action.OpenInBrowser
-                        title="Instance 2"
-                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
-                        icon={{ source: Icon.House, tintColor: Color.Red }}
-                      />
-                      <Action.OpenInBrowser
-                        title="Instance 3"
-                        url={`${getZendeskUrl().replace("/api/v2", "")}`}
-                        icon={{ source: Icon.House, tintColor: Color.Green }}
-                      />
-                    </ActionPanel.Submenu>
-                  </ActionPanel.Section>
-                </ActionPanel>
-              }
+              actions={<ZendeskActions item={organization} searchType="organizations" />}
             />
           );
         } else if (searchType === "dynamic_content") {

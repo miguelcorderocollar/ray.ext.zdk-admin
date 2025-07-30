@@ -8,16 +8,13 @@ This document outlines the approach for developing Raycast extensions, emphasizi
 2.  **Iterative Development:** Build features incrementally, verifying each milestone before proceeding.
 3.  **Test-Driven Approach (where applicable):** Write tests for critical logic to ensure correctness and prevent regressions.
 
-## Development Workflow
 
-Follow these steps for each development phase:
-
-### 1. Implement Code
+### Implement Code
 
 -   Write code in the `src/` directory, adhering to the project's established conventions.
 -   Ensure proper import statements for Raycast API components and utilities.
 
-### 2. Verify and Test
+###  Verify and Test
 
 -   Run `npm run lint` and `npm run fix-lint` to ensure code style and quality.
 -   Run `npm run build` to test the extension can be build in Raycast.
@@ -27,3 +24,7 @@ Follow these steps for each development phase:
 ## Git
 - You don't do git, human is in charge of git
 - Human commits on stable versions so git diff is good way to find source of errors.
+
+## Fixing errors
+- When you are stuck and try many times to fix the same issue please search online, usually docs have the answer.
+- If that does not help, pelase ask the human
