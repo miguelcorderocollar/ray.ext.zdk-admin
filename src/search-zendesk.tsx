@@ -8,6 +8,8 @@ import {
   ZendeskOrganization,
   searchZendeskTriggers,
   ZendeskTrigger,
+  searchZendeskDynamicContent,
+  ZendeskDynamicContent,
 } from "./api/zendesk";
 import EditUserForm from "./components/EditUserForm";
 
@@ -31,13 +33,13 @@ function useDebounce<T>(value: T, delay: number): T {
 export default function SearchZendesk() {
   const [searchText, setSearchText] = useState("");
   const debouncedSearchText = useDebounce(searchText, 500);
-  const [results, setResults] = useState<ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[]>([]);
+  const [results, setResults] = useState<ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[] | ZendeskDynamicContent[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchType, setSearchType] = useState<"users" | "organizations" | "triggers">("users");
+  const [searchType, setSearchType] = useState<"users" | "organizations" | "triggers" | "dynamic_content">("users");
 
   useEffect(() => {
     async function performSearch() {
-      if (!debouncedSearchText) {
+      if (!debouncedSearchText && searchType !== "dynamic_content") {
         setResults([]);
         setIsLoading(false);
         return;
@@ -45,11 +47,13 @@ export default function SearchZendesk() {
 
       setIsLoading(true);
       try {
-        let searchResults: ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[];
+        let searchResults: ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[] | ZendeskDynamicContent[];
         if (searchType === "users") {
           searchResults = await searchZendeskUsers(debouncedSearchText);
         } else if (searchType === "organizations") {
           searchResults = await searchZendeskOrganizations(debouncedSearchText);
+        } else if (searchType === "dynamic_content") {
+          searchResults = await searchZendeskDynamicContent(debouncedSearchText);
         } else {
           searchResults = await searchZendeskTriggers(debouncedSearchText);
         }
@@ -79,12 +83,14 @@ export default function SearchZendesk() {
           ? "Search Zendesk users by name, email, etc."
           : searchType === "organizations"
             ? "Search Zendesk organizations by name, domain, etc."
-            : "Search Zendesk triggers by name"
+            : searchType === "dynamic_content"
+              ? "Search Zendesk dynamic content by name or content"
+              : "Search Zendesk triggers by name"
       }
       throttle
       searchBarAccessory={
         <List.Dropdown
-          onChange={(newValue) => setSearchType(newValue as "users" | "organizations" | "triggers")}
+          onChange={(newValue) => setSearchType(newValue as "users" | "organizations" | "triggers" | "dynamic_content")}
           tooltip="Select Search Type"
           value={searchType}
         >
@@ -94,6 +100,7 @@ export default function SearchZendesk() {
           </List.Dropdown.Section>
           <List.Dropdown.Section title="Admin">
             <List.Dropdown.Item title="Triggers" value="triggers" />
+            <List.Dropdown.Item title="Dynamic Content" value="dynamic_content" />
           </List.Dropdown.Section>
         </List.Dropdown>
       }
@@ -103,7 +110,7 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : "Triggers"}`}
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : "Triggers"}`}
           description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}
@@ -283,6 +290,52 @@ export default function SearchZendesk() {
                     title="Copy Link"
                     content={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
                   />
+                </ActionPanel>
+              }
+            />
+          );
+        } else if (searchType === "dynamic_content") {
+          const dynamicContent = item as ZendeskDynamicContent;
+          const nameParts = dynamicContent.name.split("::");
+          const title = nameParts.length > 1 ? nameParts[nameParts.length - 1] : dynamicContent.name;
+          const tags = nameParts.length > 1 ? nameParts.slice(0, nameParts.length - 1) : [];
+          const defaultVariant = dynamicContent.variants.find(v => v.id === dynamicContent.default_locale_id);
+
+          return (
+            <List.Item
+              key={dynamicContent.id}
+              title={title}
+              accessories={tags.map(tag => ({ text: tag }))}
+              detail={
+                <List.Item.Detail
+                  metadata={
+                    <List.Item.Detail.Metadata>
+                      <List.Item.Detail.Metadata.Label title="Name" text={dynamicContent.name} />
+                      <List.Item.Detail.Metadata.Label title="ID" text={dynamicContent.id.toString()} />
+                      <List.Item.Detail.Metadata.Label title="Placeholder" text={dynamicContent.placeholder} />
+                      <List.Item.Detail.Metadata.Label title="Created At" text={new Date(dynamicContent.created_at).toLocaleString()} />
+                      <List.Item.Detail.Metadata.Label title="Updated At" text={new Date(dynamicContent.updated_at).toLocaleString()} />
+                      {defaultVariant && <List.Item.Detail.Metadata.Label title="Content" text={defaultVariant.content} />}
+                      <List.Item.Detail.Metadata.TagList title="Locales">
+                        {dynamicContent.variants.map(variant => (
+                          <List.Item.Detail.Metadata.TagList.Item key={variant.id} text={`${variant.locale_id}`} />
+                        ))}
+                      </List.Item.Detail.Metadata.TagList>
+                    </List.Item.Detail.Metadata>
+                  }
+                />
+              }
+              actions={
+                <ActionPanel>
+                  <Action.OpenInBrowser
+                    title="Open Dynamic Content"
+                    url={`${getZendeskUrl().replace("/api/v2", "")}/dynamic_content/items/${dynamicContent.id}`}
+                  />
+                  <Action.CopyToClipboard
+                    title="Copy Link to Clipboard"
+                    content={`${getZendeskUrl().replace("/api/v2", "")}/dynamic_content/items/${dynamicContent.id}`}
+                  />
+                  {defaultVariant && <Action.CopyToClipboard title="Copy Content to Clipboard" content={defaultVariant.content} />}
                 </ActionPanel>
               }
             />

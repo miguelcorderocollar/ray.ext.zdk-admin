@@ -88,6 +88,30 @@ interface ZendeskOrganizationSearchResponse {
   count: number;
 }
 
+export interface ZendeskDynamicContent {
+  id: number;
+  name: string;
+  placeholder: string;
+  default_locale_id: number;
+  created_at: string;
+  updated_at: string;
+  variants: ZendeskDynamicContentVariant[];
+}
+
+export interface ZendeskDynamicContentVariant {
+  id: number;
+  locale_id: number;
+  active: boolean;
+  default: boolean;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ZendeskDynamicContentSearchResponse {
+  items: ZendeskDynamicContent[];
+}
+
 export function getZendeskAuthHeader(): string {
   const { zendeskEmail, zendeskApiToken } = getZendeskPreferences();
   const credentials = `${zendeskEmail}/token:${zendeskApiToken}`;
@@ -189,4 +213,31 @@ export async function updateUser(userId: number, updatedFields: Record<string, u
 
   const data = (await response.json()) as { user: ZendeskUser };
   return data.user;
+}
+
+export async function searchZendeskDynamicContent(query: string): Promise<ZendeskDynamicContent[]> {
+  const url = `${getZendeskUrl()}/dynamic_content/items.json`;
+  console.log("Zendesk Dynamic Content Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(),
+    "Content-Type": "application/json",
+  };
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: headers,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+  }
+
+  const data = (await response.json()) as ZendeskDynamicContentSearchResponse;
+  
+  if (query) {
+    return data.items.filter(item => item.name.toLowerCase().includes(query.toLowerCase()) || item.variants.some(variant => variant.content.toLowerCase().includes(query.toLowerCase())));
+  }
+  
+  return data.items;
 }
