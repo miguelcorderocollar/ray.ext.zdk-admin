@@ -78,8 +78,7 @@ export function getZendeskUrl(): string {
 
 export async function searchZendeskUsers(query: string): Promise<ZendeskUser[]> {
   const searchTerms = query;
-  const url = `${getZendeskUrl()}/users/search.json?query=${encodeURIComponent(searchTerms)}&per_page=10`;
-  console.log("Zendesk Search URL:", url);
+  const url = `${getZendeskUrl()}/users/search.json?query=${encodeURIComponent(searchTerms)}&per_page=20`;
   const headers = {
     Authorization: getZendeskAuthHeader(),
     "Content-Type": "application/json",
@@ -101,8 +100,7 @@ export async function searchZendeskUsers(query: string): Promise<ZendeskUser[]> 
 
 export async function searchZendeskOrganizations(query: string): Promise<ZendeskOrganization[]> {
   const searchTerms = query;
-  const url = `${getZendeskUrl()}/search.json?query=type:organization ${encodeURIComponent(searchTerms)}&per_page=10`;
-  console.log("Zendesk Organization Search URL:", url);
+  const url = `${getZendeskUrl()}/search.json?query=type:organization ${encodeURIComponent(searchTerms)}&per_page=20`;
   const headers = {
     Authorization: getZendeskAuthHeader(),
     "Content-Type": "application/json",

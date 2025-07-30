@@ -7,8 +7,6 @@ import {
   searchZendeskOrganizations,
   ZendeskOrganization,
 } from "./api/zendesk";
-import UserDetail from "./user-detail";
-import OrganizationDetail from "./organization-detail";
 
 // Custom useDebounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -68,6 +66,7 @@ export default function SearchZendesk() {
 
   return (
     <List
+      isShowingDetail
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
       searchBarPlaceholder={
@@ -99,19 +98,70 @@ export default function SearchZendesk() {
       {(results || []).map((item) => {
         if (searchType === "users") {
           const user = item as ZendeskUser;
+          const hasDetailsOrNotes = user.details || user.notes;
+          const hasTimestamps = user.created_at || user.updated_at;
+
           return (
             <List.Item
               key={user.id}
               title={user.name}
-              subtitle={user.email}
               icon={
                 user.photo?.content_url
                   ? { source: user.photo.content_url, mask: Image.Mask.Circle }
                   : { source: "placeholder-user.svg", mask: Image.Mask.Circle }
               }
+              detail={
+                <List.Item.Detail
+                  metadata={
+                    <List.Item.Detail.Metadata>
+                      <List.Item.Detail.Metadata.Label title="Name" text={user.name} />
+                      <List.Item.Detail.Metadata.Label title="ID" text={user.id.toString()} />
+                      <List.Item.Detail.Metadata.Label title="Email" text={user.email} />
+                      {user.phone && <List.Item.Detail.Metadata.Label title="Phone" text={user.phone} />}
+                      {user.role && (
+                        <List.Item.Detail.Metadata.TagList title="Role">
+                          <List.Item.Detail.Metadata.TagList.Item text={user.role} />
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+
+                      {hasDetailsOrNotes && (
+                        <>
+                          <List.Item.Detail.Metadata.Separator />
+                          {user.details && <List.Item.Detail.Metadata.Label title="Details" text={user.details} />}
+                          {user.notes && <List.Item.Detail.Metadata.Label title="Notes" text={user.notes} />}
+                        </>
+                      )}
+
+                      {hasTimestamps && (
+                        <>
+                          <List.Item.Detail.Metadata.Separator />
+                          {user.created_at && (
+                            <List.Item.Detail.Metadata.Label
+                              title="Created At"
+                              text={new Date(user.created_at).toLocaleString()}
+                            />
+                          )}
+                          {user.updated_at && (
+                            <List.Item.Detail.Metadata.Label
+                              title="Updated At"
+                              text={new Date(user.updated_at).toLocaleString()}
+                            />
+                          )}
+                        </>
+                      )}
+
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.Link
+                        title="Open in Zendesk"
+                        text="View User Profile"
+                        target={`${getZendeskUrl().replace("/api/v2", "")}/agent/users/${user.id}`}
+                      />
+                    </List.Item.Detail.Metadata>
+                  }
+                />
+              }
               actions={
                 <ActionPanel>
-                  <Action.Push title="Open Details" target={<UserDetail user={user} />} />
                   <Action.OpenInBrowser
                     title="Open in Browser"
                     url={`${getZendeskUrl().replace("/api/v2", "")}/agent/users/${user.id}`}
@@ -126,15 +176,70 @@ export default function SearchZendesk() {
           );
         } else {
           const organization = item as ZendeskOrganization;
+          const hasDetailsOrNotes = organization.details || organization.notes;
+          const hasTimestamps = organization.created_at || organization.updated_at;
+
           return (
             <List.Item
               key={organization.id}
               title={organization.name}
-              subtitle={organization.domain_names?.join(", ") || ""}
               icon={undefined}
+              detail={
+                <List.Item.Detail
+                  metadata={
+                    <List.Item.Detail.Metadata>
+                      <List.Item.Detail.Metadata.Label title="Name" text={organization.name} />
+                      <List.Item.Detail.Metadata.Label title="ID" text={organization.id.toString()} />
+                      {organization.domain_names && organization.domain_names.length > 0 && (
+                        <List.Item.Detail.Metadata.TagList title="Domains">
+                          {organization.domain_names.map((domain) => (
+                            <List.Item.Detail.Metadata.TagList.Item key={domain} text={domain} />
+                          ))}
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+
+                      {hasDetailsOrNotes && (
+                        <>
+                          <List.Item.Detail.Metadata.Separator />
+                          {organization.details && (
+                            <List.Item.Detail.Metadata.Label title="Details" text={organization.details} />
+                          )}
+                          {organization.notes && (
+                            <List.Item.Detail.Metadata.Label title="Notes" text={organization.notes} />
+                          )}
+                        </>
+                      )}
+
+                      {(hasTimestamps || organization.external_id) && <List.Item.Detail.Metadata.Separator />}
+
+                      {organization.external_id && (
+                        <List.Item.Detail.Metadata.Label title="External ID" text={organization.external_id} />
+                      )}
+                      {organization.created_at && (
+                        <List.Item.Detail.Metadata.Label
+                          title="Created At"
+                          text={new Date(organization.created_at).toLocaleString()}
+                        />
+                      )}
+                      {organization.updated_at && (
+                        <List.Item.Detail.Metadata.Label
+                          title="Updated At"
+                          text={new Date(organization.updated_at).toLocaleString()}
+                        />
+                      )}
+
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.Link
+                        title="Open in Zendesk"
+                        text="View Organization Profile"
+                        target={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
+                      />
+                    </List.Item.Detail.Metadata>
+                  }
+                />
+              }
               actions={
                 <ActionPanel>
-                  <Action.Push title="Open Details" target={<OrganizationDetail organization={organization} />} />
                   <Action.OpenInBrowser
                     title="Open in Browser"
                     url={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
