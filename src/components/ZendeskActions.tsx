@@ -1,4 +1,4 @@
-import { ActionPanel, Action, Icon, KeyboardShortcut, Keyboard } from "@raycast/api";
+import { ActionPanel, Action, Icon, Keyboard, Color } from "@raycast/api";
 import { getZendeskPreferences } from "../utils/preferences";
 import {
   getZendeskUrl,
@@ -122,14 +122,22 @@ export function ZendeskActions({ item, searchType }: ZendeskActionsProps) {
           url={generalConfigUrl}
           shortcut={shortcutKey ? { modifiers: ["cmd", "shift"], key: shortcutKey } : undefined}
         />
-        <ActionPanel.Submenu title="Change Instance">
+        <ActionPanel.Submenu title="Change Instance" icon={Icon.House}>
           <Action.OpenInBrowser
             title={`${preferences.zendeskSubdomain}.zendesk.com`}
             url={`${zendeskUrl}`}
-            icon={{ source: Icon.House }}
+            icon={{ source: Icon.House, tintColor: preferences.instanceColor || Color.Blue }}
           />
-          <Action.OpenInBrowser title="Instance 2" url={`${zendeskUrl}`} icon={{ source: Icon.House }} />
-          <Action.OpenInBrowser title="Instance 3" url={`${zendeskUrl}`} icon={{ source: Icon.House }} />
+          <Action.OpenInBrowser
+            title="Instance 2"
+            url={`${zendeskUrl}`}
+            icon={{ source: Icon.House, tintColor: Color.Red }}
+          />
+          <Action.OpenInBrowser
+            title="Instance 3"
+            url={`${zendeskUrl}`}
+            icon={{ source: Icon.House, tintColor: Color.Green }}
+          />
         </ActionPanel.Submenu>
       </>
     );
