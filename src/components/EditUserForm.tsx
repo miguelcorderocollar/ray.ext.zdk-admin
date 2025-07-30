@@ -1,11 +1,13 @@
 import { ActionPanel, Action, Form, Icon, useNavigation, confirmAlert, Alert, showToast, Toast } from "@raycast/api";
 import { ZendeskUser, updateUser } from "../api/zendesk";
+import { ZendeskInstance } from "../utils/preferences";
 
 interface EditUserFormProps {
   user: ZendeskUser;
+  instance: ZendeskInstance | undefined;
 }
 
-export default function EditUserForm({ user }: EditUserFormProps) {
+export default function EditUserForm({ user, instance }: EditUserFormProps) {
   const { pop } = useNavigation();
 
   async function handleSubmit(values: {
@@ -55,7 +57,13 @@ export default function EditUserForm({ user }: EditUserFormProps) {
         title: "Updating user...",
       });
       try {
-        await updateUser(user.id, updatedValues);
+        if (!instance) {
+          toast.style = Toast.Style.Failure;
+          toast.title = "Configuration Error";
+          toast.message = "No Zendesk instance provided for update.";
+          return;
+        }
+        await updateUser(user.id, updatedValues, instance);
         toast.style = Toast.Style.Success;
         toast.title = "User updated successfully!";
         pop();

@@ -18,33 +18,11 @@
   ],
   "preferences": [
     {
-      "name": "zendeskSubdomain",
-      "title": "Zendesk Subdomain",
-      "description": "Your Zendesk subdomain (e.g., yourcompany).",
-      "type": "textfield",
-      "required": true
-    },
-    {
-      "name": "zendeskEmail",
-      "title": "Zendesk Email",
-      "description": "Your Zendesk email address.",
-      "type": "textfield",
-      "required": true
-    },
-    {
-      "name": "zendeskApiToken",
-      "title": "Zendesk API Token",
-      "description": "Your Zendesk API token. Generate one in Zendesk Admin Center > Apps and Integrations > Zendesk API.",
+      "name": "zendeskInstances",
+      "title": "Zendesk Instances Configuration (JSON)",
+      "description": "A JSON array of Zendesk instance configurations. See README.md for example.",
       "type": "password",
       "required": true
-    },
-    {
-      "name": "instanceColor",
-      "title": "Instance Color",
-      "description": "Color for the current Zendesk instance (e.g., #FF0000, blue, red).",
-      "type": "textfield",
-      "required": false,
-      "default": "#007AFF"
     }
   ],
   "dependencies": {

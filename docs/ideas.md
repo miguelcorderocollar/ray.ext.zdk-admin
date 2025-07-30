@@ -1,1 +1,4 @@
 - Add actions we go to edit, see tickets, + open, etc...
+- clean search on change type
+- store instance
+- display instance somehwere

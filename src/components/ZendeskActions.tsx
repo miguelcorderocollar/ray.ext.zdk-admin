@@ -1,39 +1,45 @@
 import { ActionPanel, Action, Icon, Keyboard, Color } from "@raycast/api";
-import { getZendeskPreferences } from "../utils/preferences";
-import {
-  getZendeskUrl,
-  ZendeskUser,
-  ZendeskOrganization,
-  ZendeskTrigger,
-  ZendeskDynamicContent,
-  ZendeskMacro,
-} from "../api/zendesk";
+import { getZendeskInstances, ZendeskInstance } from "../utils/preferences";
+import { ZendeskUser, ZendeskOrganization, ZendeskTrigger, ZendeskDynamicContent, ZendeskMacro } from "../api/zendesk";
 import EditUserForm from "./EditUserForm";
 
 interface ZendeskActionsProps {
   item: ZendeskUser | ZendeskOrganization | ZendeskTrigger | ZendeskDynamicContent | ZendeskMacro;
   searchType: "users" | "organizations" | "triggers" | "dynamic_content" | "macros";
+  instance: ZendeskInstance | undefined;
+  onInstanceChange: (instance: ZendeskInstance) => void;
 }
 
-export function ZendeskActions({ item, searchType }: ZendeskActionsProps) {
-  const zendeskUrl = getZendeskUrl().replace("/api/v2", "");
-  const preferences = getZendeskPreferences();
+export function ZendeskActions({ item, searchType, instance, onInstanceChange }: ZendeskActionsProps) {
+  const allInstances = getZendeskInstances();
 
   const renderOpenActions = () => {
     if (searchType === "users") {
       const user = item as ZendeskUser;
       return (
         <>
-          <Action.OpenInBrowser title="Open in Browser" url={`${zendeskUrl}/agent/users/${user.id}`} />
-          <Action.CopyToClipboard title="Copy Link" content={`${zendeskUrl}/agent/users/${user.id}`} />
+          <Action.OpenInBrowser
+            title="Open in Browser"
+            url={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
+          />
+          <Action.CopyToClipboard
+            title="Copy Link"
+            content={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
+          />
         </>
       );
     } else if (searchType === "organizations") {
       const organization = item as ZendeskOrganization;
       return (
         <>
-          <Action.OpenInBrowser title="Open in Browser" url={`${zendeskUrl}/agent/organizations/${organization.id}`} />
-          <Action.CopyToClipboard title="Copy Link" content={`${zendeskUrl}/agent/organizations/${organization.id}`} />
+          <Action.OpenInBrowser
+            title="Open in Browser"
+            url={`https://${instance?.subdomain}.zendesk.com/agent/organizations/${organization.id}`}
+          />
+          <Action.CopyToClipboard
+            title="Copy Link"
+            content={`https://${instance?.subdomain}.zendesk.com/agent/organizations/${organization.id}`}
+          />
         </>
       );
     } else if (searchType === "dynamic_content") {
@@ -43,11 +49,11 @@ export function ZendeskActions({ item, searchType }: ZendeskActionsProps) {
         <>
           <Action.OpenInBrowser
             title="Open Dynamic Content"
-            url={`${zendeskUrl}/dynamic_content/items/${dynamicContent.id}`}
+            url={`https://${instance?.subdomain}.zendesk.com/dynamic_content/items/${dynamicContent.id}`}
           />
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
-            content={`${zendeskUrl}/dynamic_content/items/${dynamicContent.id}`}
+            content={`https://${instance?.subdomain}.zendesk.com/dynamic_content/items/${dynamicContent.id}`}
           />
           {defaultVariant && (
             <Action.CopyToClipboard title="Copy Content to Clipboard" content={defaultVariant.content} />
@@ -60,11 +66,11 @@ export function ZendeskActions({ item, searchType }: ZendeskActionsProps) {
         <>
           <Action.OpenInBrowser
             title="Open Macro in Zendesk"
-            url={`${zendeskUrl}/admin/workspaces/agent-workspace/macros/${macro.id}`}
+            url={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/macros/${macro.id}`}
           />
           <Action.CopyToClipboard
             title="Copy Macro Link"
-            content={`${zendeskUrl}/admin/workspaces/agent-workspace/macros/${macro.id}`}
+            content={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/macros/${macro.id}`}
           />
         </>
       );
@@ -74,11 +80,11 @@ export function ZendeskActions({ item, searchType }: ZendeskActionsProps) {
         <>
           <Action.OpenInBrowser
             title="Open in Browser"
-            url={`${zendeskUrl}/admin/objects-rules/rules/triggers/${trigger.id}`}
+            url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/triggers/${trigger.id}`}
           />
           <Action.CopyToClipboard
             title="Copy URL to Clipboard"
-            content={`${zendeskUrl}/admin/objects-rules/rules/triggers/${trigger.id}`}
+            content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/triggers/${trigger.id}`}
           />
         </>
       );
@@ -89,29 +95,31 @@ export function ZendeskActions({ item, searchType }: ZendeskActionsProps) {
   const renderEditActions = () => {
     if (searchType === "users") {
       const user = item as ZendeskUser;
-      return <Action.Push title="Edit User" icon={Icon.Pencil} target={<EditUserForm user={user} />} />;
+      return (
+        <Action.Push title="Edit User" icon={Icon.Pencil} target={<EditUserForm user={user} instance={instance} />} />
+      );
     }
     return null;
   };
 
   const renderGeneralActions = () => {
-    let generalConfigUrl = "";
+    let generalConfigUrl = `https://${instance?.subdomain}.zendesk.com`;
     let shortcutKey: Keyboard.KeyEquivalent | undefined = undefined;
 
     if (searchType === "users") {
-      generalConfigUrl = `${zendeskUrl}/agent/user_filters`;
+      generalConfigUrl = `${generalConfigUrl}/agent/user_filters`;
       shortcutKey = "u";
     } else if (searchType === "organizations") {
-      generalConfigUrl = `${zendeskUrl}/agent/organizations`;
+      generalConfigUrl = `${generalConfigUrl}/agent/organizations`;
       shortcutKey = "o";
     } else if (searchType === "dynamic_content") {
-      generalConfigUrl = `${zendeskUrl}/admin/workspaces/agent-workspace/dynamic_content`;
+      generalConfigUrl = `${generalConfigUrl}/admin/workspaces/agent-workspace/dynamic_content`;
       shortcutKey = "d";
     } else if (searchType === "macros") {
-      generalConfigUrl = `${zendeskUrl}/admin/workspaces/agent-workspace/macros`;
+      generalConfigUrl = `${generalConfigUrl}/admin/workspaces/agent-workspace/macros`;
       shortcutKey = "m";
     } else if (searchType === "triggers") {
-      generalConfigUrl = `${zendeskUrl}/admin/objects-rules/rules/triggers`;
+      generalConfigUrl = `${generalConfigUrl}/admin/objects-rules/rules/triggers`;
       shortcutKey = "t";
     }
 
@@ -123,21 +131,14 @@ export function ZendeskActions({ item, searchType }: ZendeskActionsProps) {
           shortcut={shortcutKey ? { modifiers: ["cmd", "shift"], key: shortcutKey } : undefined}
         />
         <ActionPanel.Submenu title="Change Instance" icon={Icon.House}>
-          <Action.OpenInBrowser
-            title={`${preferences.zendeskSubdomain}.zendesk.com`}
-            url={`${zendeskUrl}`}
-            icon={{ source: Icon.House, tintColor: preferences.instanceColor || Color.Blue }}
-          />
-          <Action.OpenInBrowser
-            title="Instance 2"
-            url={`${zendeskUrl}`}
-            icon={{ source: Icon.House, tintColor: Color.Red }}
-          />
-          <Action.OpenInBrowser
-            title="Instance 3"
-            url={`${zendeskUrl}`}
-            icon={{ source: Icon.House, tintColor: Color.Green }}
-          />
+          {allInstances.map((inst) => (
+            <Action
+              key={inst.subdomain}
+              title={`${inst.subdomain}`}
+              icon={instance?.subdomain === inst.subdomain ? { source: Icon.Dot, tintColor: Color.Green } : undefined}
+              onAction={() => onInstanceChange(inst)}
+            />
+          ))}
         </ActionPanel.Submenu>
       </>
     );

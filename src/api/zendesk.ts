@@ -1,5 +1,5 @@
 import { showToast, Toast } from "@raycast/api";
-import { getZendeskPreferences } from "../utils/preferences";
+import { ZendeskInstance } from "../utils/preferences";
 
 export interface ZendeskUser {
   id: number;
@@ -128,23 +128,21 @@ interface ZendeskMacroSearchResponse {
   macros: ZendeskMacro[];
 }
 
-export function getZendeskAuthHeader(): string {
-  const { zendeskEmail, zendeskApiToken } = getZendeskPreferences();
-  const credentials = `${zendeskEmail}/token:${zendeskApiToken}`;
+export function getZendeskAuthHeader(instance: ZendeskInstance): string {
+  const credentials = `${instance.user}/token:${instance.api_key}`;
   return `Basic ${Buffer.from(credentials).toString("base64")}`;
 }
 
-export function getZendeskUrl(): string {
-  const { zendeskSubdomain } = getZendeskPreferences();
-  return `https://${zendeskSubdomain}.zendesk.com/api/v2`;
+export function getZendeskUrl(instance: ZendeskInstance): string {
+  return `https://${instance.subdomain}.zendesk.com/api/v2`;
 }
 
-export async function searchZendeskUsers(query: string): Promise<ZendeskUser[]> {
+export async function searchZendeskUsers(query: string, instance: ZendeskInstance): Promise<ZendeskUser[]> {
   const searchTerms = query;
-  const url = `${getZendeskUrl()}/users/search.json?query=${encodeURIComponent(searchTerms)}&per_page=20`;
-  console.log("Zendesk Search URL:", url);
+  const url = `${getZendeskUrl(instance)}/users/search.json?query=${encodeURIComponent(searchTerms)}&per_page=20`;
+  console.log("Zendesk User Search URL:", url);
   const headers = {
-    Authorization: getZendeskAuthHeader(),
+    Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
   };
 
@@ -172,12 +170,15 @@ export async function searchZendeskUsers(query: string): Promise<ZendeskUser[]> 
   }
 }
 
-export async function searchZendeskOrganizations(query: string): Promise<ZendeskOrganization[]> {
+export async function searchZendeskOrganizations(
+  query: string,
+  instance: ZendeskInstance,
+): Promise<ZendeskOrganization[]> {
   const searchTerms = query;
-  const url = `${getZendeskUrl()}/search.json?query=type:organization ${encodeURIComponent(searchTerms)}&per_page=20`;
+  const url = `${getZendeskUrl(instance)}/search.json?query=type:organization ${encodeURIComponent(searchTerms)}&per_page=20`;
   console.log("Zendesk Organization Search URL:", url);
   const headers = {
-    Authorization: getZendeskAuthHeader(),
+    Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
   };
 
@@ -209,12 +210,12 @@ export async function searchZendeskOrganizations(query: string): Promise<Zendesk
   }
 }
 
-export async function searchZendeskTriggers(query: string): Promise<ZendeskTrigger[]> {
+export async function searchZendeskTriggers(query: string, instance: ZendeskInstance): Promise<ZendeskTrigger[]> {
   const searchTerms = query;
-  const url = `${getZendeskUrl()}/triggers/search.json?query=${encodeURIComponent(searchTerms)}`;
+  const url = `${getZendeskUrl(instance)}/triggers/search.json?query=${encodeURIComponent(searchTerms)}`;
   console.log("Zendesk Trigger Search URL:", url);
   const headers = {
-    Authorization: getZendeskAuthHeader(),
+    Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
   };
 
@@ -246,11 +247,15 @@ export async function searchZendeskTriggers(query: string): Promise<ZendeskTrigg
   }
 }
 
-export async function updateUser(userId: number, updatedFields: Record<string, unknown>): Promise<ZendeskUser> {
-  const url = `${getZendeskUrl()}/users/${userId}.json`;
+export async function updateUser(
+  userId: number,
+  updatedFields: Record<string, unknown>,
+  instance: ZendeskInstance,
+): Promise<ZendeskUser> {
+  const url = `${getZendeskUrl(instance)}/users/${userId}.json`;
   console.log("Zendesk Update User URL:", url);
   const headers = {
-    Authorization: getZendeskAuthHeader(),
+    Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
   };
 
@@ -279,11 +284,14 @@ export async function updateUser(userId: number, updatedFields: Record<string, u
   }
 }
 
-export async function searchZendeskDynamicContent(query: string): Promise<ZendeskDynamicContent[]> {
-  const url = `${getZendeskUrl()}/dynamic_content/items.json`;
+export async function searchZendeskDynamicContent(
+  query: string,
+  instance: ZendeskInstance,
+): Promise<ZendeskDynamicContent[]> {
+  const url = `${getZendeskUrl(instance)}/dynamic_content/items.json`;
   console.log("Zendesk Dynamic Content Search URL:", url);
   const headers = {
-    Authorization: getZendeskAuthHeader(),
+    Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
   };
 
@@ -324,11 +332,11 @@ export async function searchZendeskDynamicContent(query: string): Promise<Zendes
   }
 }
 
-export async function searchZendeskMacros(query: string): Promise<ZendeskMacro[]> {
-  const url = `${getZendeskUrl()}/macros.json?active=true`;
+export async function searchZendeskMacros(query: string, instance: ZendeskInstance): Promise<ZendeskMacro[]> {
+  const url = `${getZendeskUrl(instance)}/macros.json?active=true`;
   console.log("Zendesk Macro Search URL:", url);
   const headers = {
-    Authorization: getZendeskAuthHeader(),
+    Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
   };
 

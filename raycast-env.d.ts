@@ -8,14 +8,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 type ExtensionPreferences = {
-  /** Zendesk Subdomain - Your Zendesk subdomain (e.g., yourcompany). */
-  "zendeskSubdomain": string,
-  /** Zendesk Email - Your Zendesk email address. */
-  "zendeskEmail": string,
-  /** Zendesk API Token - Your Zendesk API token. Generate one in Zendesk Admin Center > Apps and Integrations > Zendesk API. */
-  "zendeskApiToken": string,
-  /** Instance Color - Color for the current Zendesk instance (e.g., #FF0000, blue, red). */
-  "instanceColor": string
+  /** Zendesk Instances Configuration (JSON) - A JSON array of Zendesk instance configurations. See README.md for example. */
+  "zendeskInstances": string
 }
 
 /** Preferences accessible in all the extension's commands */

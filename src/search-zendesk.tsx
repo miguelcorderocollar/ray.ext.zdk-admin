@@ -1,9 +1,9 @@
 import { List, showToast, Toast, Image, Color } from "@raycast/api";
 
 import { useState, useEffect } from "react";
+import { getZendeskInstances, ZendeskInstance } from "./utils/preferences";
 import {
   searchZendeskUsers,
-  getZendeskUrl,
   ZendeskUser,
   searchZendeskOrganizations,
   ZendeskOrganization,
@@ -35,6 +35,8 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 export default function SearchZendesk() {
+  const allInstances = getZendeskInstances();
+  const [currentInstance, setCurrentInstance] = useState<ZendeskInstance | undefined>(allInstances[0]);
   const [searchText, setSearchText] = useState("");
   const debouncedSearchText = useDebounce(searchText, 500);
   const [results, setResults] = useState<
@@ -47,7 +49,12 @@ export default function SearchZendesk() {
 
   useEffect(() => {
     async function performSearch() {
-      if (!debouncedSearchText && searchType !== "dynamic_content" && searchType !== "macros") {
+      if (!currentInstance) {
+        showToast(Toast.Style.Failure, "Configuration Error", "No Zendesk instances configured.");
+        return;
+      }
+
+      if (searchType === "triggers" && !debouncedSearchText) {
         setResults([]);
         setIsLoading(false);
         return;
@@ -62,15 +69,15 @@ export default function SearchZendesk() {
           | ZendeskDynamicContent[]
           | ZendeskMacro[];
         if (searchType === "users") {
-          searchResults = await searchZendeskUsers(debouncedSearchText);
+          searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
         } else if (searchType === "organizations") {
-          searchResults = await searchZendeskOrganizations(debouncedSearchText);
+          searchResults = await searchZendeskOrganizations(debouncedSearchText, currentInstance);
         } else if (searchType === "dynamic_content") {
-          searchResults = await searchZendeskDynamicContent(debouncedSearchText);
+          searchResults = await searchZendeskDynamicContent(debouncedSearchText, currentInstance);
         } else if (searchType === "macros") {
-          searchResults = await searchZendeskMacros(debouncedSearchText);
+          searchResults = await searchZendeskMacros(debouncedSearchText, currentInstance);
         } else {
-          searchResults = await searchZendeskTriggers(debouncedSearchText);
+          searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
         }
         setResults(searchResults);
       } catch (error: unknown) {
@@ -86,7 +93,7 @@ export default function SearchZendesk() {
     }
 
     performSearch();
-  }, [debouncedSearchText, searchType]);
+  }, [debouncedSearchText, searchType, currentInstance]);
 
   return (
     <List
@@ -153,6 +160,17 @@ export default function SearchZendesk() {
                 <List.Item.Detail
                   metadata={
                     <List.Item.Detail.Metadata>
+                      {currentInstance && (
+                        <>
+                          <List.Item.Detail.Metadata.TagList title="Instance">
+                            <List.Item.Detail.Metadata.TagList.Item
+                              text={currentInstance.subdomain}
+                              color={currentInstance.color || Color.Blue}
+                            />
+                          </List.Item.Detail.Metadata.TagList>
+                          <List.Item.Detail.Metadata.Separator />
+                        </>
+                      )}
                       <List.Item.Detail.Metadata.Label title="Name" text={user.name} />
                       <List.Item.Detail.Metadata.Label title="ID" text={user.id.toString()} />
                       <List.Item.Detail.Metadata.Label title="Email" text={user.email} />
@@ -215,13 +233,20 @@ export default function SearchZendesk() {
                       <List.Item.Detail.Metadata.Link
                         title="Open in Zendesk"
                         text="View User Profile"
-                        target={`${getZendeskUrl().replace("/api/v2", "")}/agent/users/${user.id}`}
+                        target={`https://${currentInstance?.subdomain}.zendesk.com/agent/users/${user.id}`}
                       />
                     </List.Item.Detail.Metadata>
                   }
                 />
               }
-              actions={<ZendeskActions item={user} searchType="users" />}
+              actions={
+                <ZendeskActions
+                  item={user}
+                  searchType="users"
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                />
+              }
             />
           );
         } else if (searchType === "organizations") {
@@ -238,6 +263,17 @@ export default function SearchZendesk() {
                 <List.Item.Detail
                   metadata={
                     <List.Item.Detail.Metadata>
+                      {currentInstance && (
+                        <>
+                          <List.Item.Detail.Metadata.TagList title="Instance">
+                            <List.Item.Detail.Metadata.TagList.Item
+                              text={currentInstance.subdomain}
+                              color={currentInstance.color || Color.Blue}
+                            />
+                          </List.Item.Detail.Metadata.TagList>
+                          <List.Item.Detail.Metadata.Separator />
+                        </>
+                      )}
                       <List.Item.Detail.Metadata.Label title="Name" text={organization.name} />
                       <List.Item.Detail.Metadata.Label title="ID" text={organization.id.toString()} />
                       {organization.domain_names && organization.domain_names.length > 0 && (
@@ -282,20 +318,27 @@ export default function SearchZendesk() {
                       <List.Item.Detail.Metadata.Link
                         title="Open in Zendesk"
                         text="View Organization Profile"
-                        target={`${getZendeskUrl().replace("/api/v2", "")}/agent/organizations/${organization.id}`}
+                        target={`https://${currentInstance?.subdomain}.zendesk.com/agent/organizations/${organization.id}`}
                       />
                     </List.Item.Detail.Metadata>
                   }
                 />
               }
-              actions={<ZendeskActions item={organization} searchType="organizations" />}
+              actions={
+                <ZendeskActions
+                  item={organization}
+                  searchType="organizations"
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                />
+              }
             />
           );
         } else if (searchType === "dynamic_content") {
           const dynamicContent = item as ZendeskDynamicContent;
           const nameParts = (dynamicContent.name ?? "").split("::");
-          const title = nameParts.length > 1 ? nameParts[nameParts.length - 1] : dynamicContent.name;
-          const tags = nameParts.length > 1 ? nameParts.slice(0, nameParts.length - 1) : [];
+          const title = nameParts?.length > 1 ? nameParts[nameParts.length - 1] : dynamicContent.name;
+          const tags = nameParts?.length > 1 ? nameParts.slice(0, nameParts.length - 1) : [];
           const defaultVariant = dynamicContent.variants?.find((v) => v.id === dynamicContent.default_locale_id);
 
           return (
@@ -311,6 +354,17 @@ export default function SearchZendesk() {
                 <List.Item.Detail
                   metadata={
                     <List.Item.Detail.Metadata>
+                      {currentInstance && (
+                        <>
+                          <List.Item.Detail.Metadata.TagList title="Instance">
+                            <List.Item.Detail.Metadata.TagList.Item
+                              text={currentInstance.subdomain}
+                              color={currentInstance.color || Color.Blue}
+                            />
+                          </List.Item.Detail.Metadata.TagList>
+                          <List.Item.Detail.Metadata.Separator />
+                        </>
+                      )}
                       <List.Item.Detail.Metadata.Label title="Name" text={dynamicContent.name} />
                       <List.Item.Detail.Metadata.Label title="ID" text={dynamicContent.id.toString()} />
                       <List.Item.Detail.Metadata.Label title="Placeholder" text={dynamicContent.placeholder} />
@@ -334,14 +388,21 @@ export default function SearchZendesk() {
                   }
                 />
               }
-              actions={<ZendeskActions item={dynamicContent} searchType="dynamic_content" />}
+              actions={
+                <ZendeskActions
+                  item={dynamicContent}
+                  searchType="dynamic_content"
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                />
+              }
             />
           );
         } else if (searchType === "macros") {
           const macro = item as ZendeskMacro;
           const nameParts = macro.title?.split("::");
-          const title = nameParts.length > 1 ? nameParts[nameParts.length - 1] : macro.title;
-          const tags = nameParts.length > 1 ? nameParts.slice(0, nameParts.length - 1) : [];
+          const title = nameParts?.length > 1 ? nameParts[nameParts.length - 1] : macro.title;
+          const tags = nameParts?.length > 1 ? nameParts.slice(0, nameParts.length - 1) : [];
 
           return (
             <List.Item
@@ -356,6 +417,17 @@ export default function SearchZendesk() {
                 <List.Item.Detail
                   metadata={
                     <List.Item.Detail.Metadata>
+                      {currentInstance && (
+                        <>
+                          <List.Item.Detail.Metadata.TagList title="Instance">
+                            <List.Item.Detail.Metadata.TagList.Item
+                              text={currentInstance.subdomain}
+                              color={currentInstance.color || Color.Blue}
+                            />
+                          </List.Item.Detail.Metadata.TagList>
+                          <List.Item.Detail.Metadata.Separator />
+                        </>
+                      )}
                       <List.Item.Detail.Metadata.Label title="Name" text={macro.title} />
                       <List.Item.Detail.Metadata.Label title="ID" text={macro.id.toString()} />
                       <List.Item.Detail.Metadata.Label title="Active" text={macro.active ? "Yes" : "No"} />
@@ -374,7 +446,14 @@ export default function SearchZendesk() {
                   }
                 />
               }
-              actions={<ZendeskActions item={macro} searchType="macros" />}
+              actions={
+                <ZendeskActions
+                  item={macro}
+                  searchType="macros"
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                />
+              }
             />
           );
         } else {
@@ -388,6 +467,17 @@ export default function SearchZendesk() {
                 <List.Item.Detail
                   metadata={
                     <List.Item.Detail.Metadata>
+                      {currentInstance && (
+                        <>
+                          <List.Item.Detail.Metadata.TagList title="Instance">
+                            <List.Item.Detail.Metadata.TagList.Item
+                              text={currentInstance.subdomain}
+                              color={currentInstance.color || Color.Blue}
+                            />
+                          </List.Item.Detail.Metadata.TagList>
+                          <List.Item.Detail.Metadata.Separator />
+                        </>
+                      )}
                       <List.Item.Detail.Metadata.Label title="Title" text={trigger.title} />
                       <List.Item.Detail.Metadata.Label title="ID" text={trigger.id.toString()} />
                       <List.Item.Detail.Metadata.Label title="Category ID" text={trigger.category_id} />
@@ -413,13 +503,20 @@ export default function SearchZendesk() {
                       <List.Item.Detail.Metadata.Link
                         title="Open in Zendesk"
                         text="View Trigger"
-                        target={`${getZendeskUrl().replace("/api/v2", "")}/admin/objects-rules/rules/triggers/${trigger.id}`}
+                        target={`https://${currentInstance?.subdomain}.zendesk.com/admin/objects-rules/rules/triggers/${trigger.id}`}
                       />
                     </List.Item.Detail.Metadata>
                   }
                 />
               }
-              actions={<ZendeskActions item={trigger} searchType="triggers" />}
+              actions={
+                <ZendeskActions
+                  item={trigger}
+                  searchType="triggers"
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                />
+              }
             />
           );
         }
