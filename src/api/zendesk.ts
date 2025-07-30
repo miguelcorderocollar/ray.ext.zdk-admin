@@ -4,6 +4,8 @@ export interface ZendeskUser {
   id: number;
   name: string;
   email: string;
+  alias?: string;
+  tags?: string[];
   created_at?: string;
   updated_at?: string;
   time_zone?: string;
@@ -79,6 +81,7 @@ export function getZendeskUrl(): string {
 export async function searchZendeskUsers(query: string): Promise<ZendeskUser[]> {
   const searchTerms = query;
   const url = `${getZendeskUrl()}/users/search.json?query=${encodeURIComponent(searchTerms)}&per_page=20`;
+  console.log("Zendesk Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(),
     "Content-Type": "application/json",
@@ -101,6 +104,7 @@ export async function searchZendeskUsers(query: string): Promise<ZendeskUser[]> 
 export async function searchZendeskOrganizations(query: string): Promise<ZendeskOrganization[]> {
   const searchTerms = query;
   const url = `${getZendeskUrl()}/search.json?query=type:organization ${encodeURIComponent(searchTerms)}&per_page=20`;
+  console.log("Zendesk Organization Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(),
     "Content-Type": "application/json",
@@ -118,4 +122,27 @@ export async function searchZendeskOrganizations(query: string): Promise<Zendesk
 
   const data = (await response.json()) as ZendeskOrganizationSearchResponse;
   return data.results;
+}
+
+export async function updateUser(userId: number, updatedFields: Record<string, unknown>): Promise<ZendeskUser> {
+  const url = `${getZendeskUrl()}/users/${userId}.json`;
+  console.log("Zendesk Update User URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(),
+    "Content-Type": "application/json",
+  };
+
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: JSON.stringify({ user: updatedFields }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+  }
+
+  const data = (await response.json()) as { user: ZendeskUser };
+  return data.user;
 }

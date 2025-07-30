@@ -13,35 +13,15 @@ This document outlines the approach for developing Raycast extensions, emphasizi
 
 Follow these steps for each development phase:
 
-### 1. Understand the Goal
-
--   Refer to `docs/development_plan.md` for the current phase's objective and steps.
--   Consult `docs/zendesk_user_search_details.md` for the overall extension features and requirements.
-
-### 2. Research Raycast API
-
--   **Key Resource:** `https://developers.raycast.com/api-reference`
--   For UI components (List, Detail, Form, ActionPanel), refer to:
-    -   `https://developers.raycast.com/api-reference/components/list`
-    -   `https://developers.raycast.com/api-reference/components/detail`
-    -   `https://developers.raycast.com/api-reference/components/form`
-    -   `https://developers.raycast.com/api-reference/components/actionpanel`
--   For utility hooks (`useFetch`, `useLocalStorage`), refer to:
-    -   `https://developers.raycast.com/api-reference/utils/usefetch`
-    -   `https://developers.raycast.com/api-reference/utils/uselocalstorage`
--   For preferences and local storage, refer to:
-    -   `https://developers.raycast.com/api-reference/api/preferences`
-    -   `https://developers.raycast.com/api-reference/api/setlocalstorage`
-
-### 3. Implement Code
+### 1. Implement Code
 
 -   Write code in the `src/` directory, adhering to the project's established conventions.
 -   Ensure proper import statements for Raycast API components and utilities.
 
-### 4. Verify and Test
+### 2. Verify and Test
 
 -   Run `npm run lint` and `npm run fix-lint` to ensure code style and quality.
--   Run `ray develop` to test the extension in Raycast.
+-   Run `npm run build` to test the extension can be build in Raycast.
 -   If applicable, write and run unit tests.
 -   Check off completed steps in `docs/development_plan.md`.
 

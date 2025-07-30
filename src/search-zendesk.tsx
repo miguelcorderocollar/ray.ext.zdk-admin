@@ -1,4 +1,4 @@
-import { List, showToast, Toast, ActionPanel, Action, Image } from "@raycast/api";
+import { List, showToast, Toast, ActionPanel, Action, Image, Icon, Color } from "@raycast/api";
 import { useState, useEffect } from "react";
 import {
   searchZendeskUsers,
@@ -7,6 +7,7 @@ import {
   searchZendeskOrganizations,
   ZendeskOrganization,
 } from "./api/zendesk";
+import EditUserForm from "./components/EditUserForm";
 
 // Custom useDebounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -117,10 +118,32 @@ export default function SearchZendesk() {
                       <List.Item.Detail.Metadata.Label title="Name" text={user.name} />
                       <List.Item.Detail.Metadata.Label title="ID" text={user.id.toString()} />
                       <List.Item.Detail.Metadata.Label title="Email" text={user.email} />
+                      {user.alias && <List.Item.Detail.Metadata.Label title="Alias" text={user.alias} />}
                       {user.phone && <List.Item.Detail.Metadata.Label title="Phone" text={user.phone} />}
                       {user.role && (
                         <List.Item.Detail.Metadata.TagList title="Role">
-                          <List.Item.Detail.Metadata.TagList.Item text={user.role} />
+                          <List.Item.Detail.Metadata.TagList.Item
+                            text={user.role}
+                            color={(() => {
+                              switch (user.role) {
+                                case "end-user":
+                                  return Color.Blue;
+                                case "agent":
+                                  return Color.Green;
+                                case "admin":
+                                  return Color.Red;
+                                default:
+                                  return Color.PrimaryText;
+                              }
+                            })()}
+                          />
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+                      {user.tags && user.tags.length > 0 && (
+                        <List.Item.Detail.Metadata.TagList title="Tags">
+                          {user.tags.map((tag) => (
+                            <List.Item.Detail.Metadata.TagList.Item key={tag} text={tag} />
+                          ))}
                         </List.Item.Detail.Metadata.TagList>
                       )}
 
@@ -162,6 +185,7 @@ export default function SearchZendesk() {
               }
               actions={
                 <ActionPanel>
+                  <Action.Push title="Edit User" icon={Icon.Pencil} target={<EditUserForm user={user} />} />
                   <Action.OpenInBrowser
                     title="Open in Browser"
                     url={`${getZendeskUrl().replace("/api/v2", "")}/agent/users/${user.id}`}
