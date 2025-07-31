@@ -15,6 +15,8 @@ import {
   ZendeskMacro,
   searchZendeskTicketFields,
   ZendeskTicketField,
+  searchZendeskSupportAddresses,
+  ZendeskSupportAddress,
 } from "./api/zendesk";
 
 import { ZendeskActions } from "./components/ZendeskActions";
@@ -48,10 +50,11 @@ export default function SearchZendesk() {
     | ZendeskDynamicContent[]
     | ZendeskMacro[]
     | ZendeskTicketField[]
+    | ZendeskSupportAddress[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState<
-    "users" | "organizations" | "triggers" | "dynamic_content" | "macros" | "ticket_fields"
+    "users" | "organizations" | "triggers" | "dynamic_content" | "macros" | "ticket_fields" | "support_addresses"
   >("users");
 
   useEffect(() => {
@@ -78,7 +81,8 @@ export default function SearchZendesk() {
         | ZendeskTrigger[]
         | ZendeskDynamicContent[]
         | ZendeskMacro[]
-        | ZendeskTicketField[];
+        | ZendeskTicketField[]
+        | ZendeskSupportAddress[];
       if (searchType === "users") {
         searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
       } else if (searchType === "organizations") {
@@ -89,6 +93,8 @@ export default function SearchZendesk() {
         searchResults = await searchZendeskMacros(debouncedSearchText, currentInstance);
       } else if (searchType === "ticket_fields") {
         searchResults = await searchZendeskTicketFields(debouncedSearchText, currentInstance);
+      } else if (searchType === "support_addresses") {
+        searchResults = await searchZendeskSupportAddresses(debouncedSearchText, currentInstance);
       } else {
         searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
       }
@@ -121,14 +127,23 @@ export default function SearchZendesk() {
                 ? "Search Zendesk macros by name or description"
                 : searchType === "ticket_fields"
                   ? ""
-                  : "Search Zendesk triggers by name"
+                  : searchType === "support_addresses"
+                    ? "Search support addresses by email"
+                    : "Search Zendesk triggers by name"
       }
       throttle
       searchBarAccessory={
         <List.Dropdown
           onChange={(newValue) =>
             setSearchType(
-              newValue as "users" | "organizations" | "triggers" | "dynamic_content" | "macros" | "ticket_fields",
+              newValue as
+                | "users"
+                | "organizations"
+                | "triggers"
+                | "dynamic_content"
+                | "macros"
+                | "ticket_fields"
+                | "support_addresses",
             )
           }
           tooltip="Select Search Type"
@@ -143,6 +158,7 @@ export default function SearchZendesk() {
             <List.Dropdown.Item title="Dynamic Content" value="dynamic_content" />
             <List.Dropdown.Item title="Macros" value="macros" />
             <List.Dropdown.Item title="Ticket Fields" value="ticket_fields" />
+            <List.Dropdown.Item title="Support Addresses" value="support_addresses" />
           </List.Dropdown.Section>
         </List.Dropdown>
       }
@@ -152,7 +168,7 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : "Triggers"}`}
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : "Triggers"}`}
           description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}
@@ -565,6 +581,106 @@ export default function SearchZendesk() {
                 <ZendeskActions
                   item={ticketField}
                   searchType="ticket_fields"
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                />
+              }
+            />
+          );
+        } else if (searchType === "support_addresses") {
+          const supportAddress = item as ZendeskSupportAddress;
+
+          return (
+            <List.Item
+              key={supportAddress.id}
+              title={supportAddress.email}
+              accessories={[{ icon: supportAddress.default ? Icon.Star : undefined }]}
+              detail={
+                <List.Item.Detail
+                  metadata={
+                    <List.Item.Detail.Metadata>
+                      {supportAddress.name && (
+                        <List.Item.Detail.Metadata.Label title="Name" text={supportAddress.name} />
+                      )}
+                      <List.Item.Detail.Metadata.Label title="Email" text={supportAddress.email} />
+                      <List.Item.Detail.Metadata.Label title="ID" text={supportAddress.id.toString()} />
+                      {supportAddress.brand_id && (
+                        <List.Item.Detail.Metadata.Label title="Brand ID" text={supportAddress.brand_id.toString()} />
+                      )}
+                      <List.Item.Detail.Metadata.Label
+                        title="Default"
+                        icon={
+                          supportAddress.default
+                            ? { source: Icon.CheckCircle, tintColor: Color.Green }
+                            : { source: Icon.XMarkCircle, tintColor: Color.Red }
+                        }
+                      />
+                      <List.Item.Detail.Metadata.Separator />
+                      {supportAddress.cname_status && (
+                        <List.Item.Detail.Metadata.TagList title="CNAME Status">
+                          <List.Item.Detail.Metadata.TagList.Item
+                            text={supportAddress.cname_status}
+                            color={supportAddress.cname_status === "verified" ? Color.Green : Color.Orange}
+                          />
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+                      {supportAddress.dns_results && (
+                        <List.Item.Detail.Metadata.Label title="DNS Results" text={supportAddress.dns_results} />
+                      )}
+                      {supportAddress.domain_verification_code && (
+                        <List.Item.Detail.Metadata.Label
+                          title="Domain Verification Code"
+                          text={supportAddress.domain_verification_code}
+                        />
+                      )}
+                      {supportAddress.domain_verification_status && (
+                        <List.Item.Detail.Metadata.TagList title="Domain Verification Status">
+                          <List.Item.Detail.Metadata.TagList.Item
+                            text={supportAddress.domain_verification_status}
+                            color={
+                              supportAddress.domain_verification_status === "verified" ? Color.Green : Color.Orange
+                            }
+                          />
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+                      {supportAddress.spf_status && (
+                        <List.Item.Detail.Metadata.TagList title="SPF Status">
+                          <List.Item.Detail.Metadata.TagList.Item
+                            text={supportAddress.spf_status}
+                            color={supportAddress.spf_status === "verified" ? Color.Green : Color.Orange}
+                          />
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+                      <List.Item.Detail.Metadata.Separator />
+                      {supportAddress.forwarding_status && (
+                        <List.Item.Detail.Metadata.TagList title="Forwarding Status">
+                          <List.Item.Detail.Metadata.TagList.Item
+                            text={supportAddress.forwarding_status}
+                            color={supportAddress.forwarding_status === "verified" ? Color.Green : Color.Orange}
+                          />
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+                      <List.Item.Detail.Metadata.Separator />
+                      {supportAddress.created_at && (
+                        <List.Item.Detail.Metadata.Label
+                          title="Created At"
+                          text={new Date(supportAddress.created_at).toLocaleString()}
+                        />
+                      )}
+                      {supportAddress.updated_at && (
+                        <List.Item.Detail.Metadata.Label
+                          title="Updated At"
+                          text={new Date(supportAddress.updated_at).toLocaleString()}
+                        />
+                      )}
+                    </List.Item.Detail.Metadata>
+                  }
+                />
+              }
+              actions={
+                <ZendeskActions
+                  item={supportAddress}
+                  searchType="support_addresses"
                   instance={currentInstance}
                   onInstanceChange={setCurrentInstance}
                 />

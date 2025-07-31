@@ -7,12 +7,27 @@ import {
   ZendeskDynamicContent,
   ZendeskMacro,
   ZendeskTicketField,
+  ZendeskSupportAddress,
 } from "../api/zendesk";
 import EditUserForm from "./EditUserForm";
 
 interface ZendeskActionsProps {
-  item: ZendeskUser | ZendeskOrganization | ZendeskTrigger | ZendeskDynamicContent | ZendeskMacro | ZendeskTicketField;
-  searchType: "users" | "organizations" | "triggers" | "dynamic_content" | "macros" | "ticket_fields";
+  item:
+    | ZendeskUser
+    | ZendeskOrganization
+    | ZendeskTrigger
+    | ZendeskDynamicContent
+    | ZendeskMacro
+    | ZendeskTicketField
+    | ZendeskSupportAddress;
+  searchType:
+    | "users"
+    | "organizations"
+    | "triggers"
+    | "dynamic_content"
+    | "macros"
+    | "ticket_fields"
+    | "support_addresses";
   instance: ZendeskInstance | undefined;
   onInstanceChange: (instance: ZendeskInstance) => void;
 }
@@ -109,6 +124,13 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
           />
         </>
       );
+    } else if (searchType === "support_addresses") {
+      const supportAddress = item as ZendeskSupportAddress;
+      return (
+        <>
+          <Action.CopyToClipboard title="Copy Email to Clipboard" content={supportAddress.email} />
+        </>
+      );
     }
     return null;
   };
@@ -145,6 +167,9 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
     } else if (searchType === "ticket_fields") {
       generalConfigUrl = `${generalConfigUrl}/admin/objects-rules/tickets/ticket-fields`;
       shortcutKey = "f";
+    } else if (searchType === "support_addresses") {
+      generalConfigUrl = `${generalConfigUrl}/admin/channels/talk_and_email/email`;
+      shortcutKey = "s";
     }
 
     return (

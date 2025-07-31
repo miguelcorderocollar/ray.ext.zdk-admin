@@ -161,6 +161,27 @@ interface ZendeskTicketFieldSearchResponse {
   ticket_fields: ZendeskTicketField[];
 }
 
+export interface ZendeskSupportAddress {
+  id: number;
+  url: string;
+  email: string;
+  name: string;
+  default: boolean;
+  brand_id: number;
+  cname_status: string;
+  dns_results: string;
+  domain_verification_code: string;
+  domain_verification_status: string;
+  forwarding_status: string;
+  spf_status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ZendeskSupportAddressSearchResponse {
+  recipient_addresses: ZendeskSupportAddress[];
+}
+
 export function getZendeskAuthHeader(instance: ZendeskInstance): string {
   const credentials = `${instance.user}/token:${instance.api_key}`;
   return `Basic ${Buffer.from(credentials).toString("base64")}`;
@@ -440,6 +461,50 @@ export async function searchZendeskTicketFields(
     }
 
     return data.ticket_fields;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskSupportAddresses(
+  query: string,
+  instance: ZendeskInstance,
+): Promise<ZendeskSupportAddress[]> {
+  const url = `${getZendeskUrl(instance)}/recipient_addresses.json`;
+  console.log("Zendesk Support Addresses Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(
+        Toast.Style.Failure,
+        "Zendesk API Error",
+        `Failed to fetch support addresses: ${response.status} - ${errorText}`,
+      );
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskSupportAddressSearchResponse;
+
+    if (query) {
+      return data.recipient_addresses.filter((address) => address.email.toLowerCase().includes(query.toLowerCase()));
+    }
+
+    return data.recipient_addresses;
   } catch (error) {
     showToast(
       Toast.Style.Failure,
