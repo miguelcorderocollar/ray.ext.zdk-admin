@@ -182,6 +182,24 @@ interface ZendeskSupportAddressSearchResponse {
   recipient_addresses: ZendeskSupportAddress[];
 }
 
+export interface ZendeskTicketForm {
+  id: number;
+  name: string;
+  display_name: string;
+  position: number;
+  active: boolean;
+  end_user_visible: boolean;
+  default: boolean;
+  in_all_brands: boolean;
+  restricted_brand_ids: number[];
+  created_at: string;
+  updated_at: string;
+}
+
+interface ZendeskTicketFormSearchResponse {
+  ticket_forms: ZendeskTicketForm[];
+}
+
 export function getZendeskAuthHeader(instance: ZendeskInstance): string {
   const credentials = `${instance.user}/token:${instance.api_key}`;
   return `Basic ${Buffer.from(credentials).toString("base64")}`;
@@ -505,6 +523,47 @@ export async function searchZendeskSupportAddresses(
     }
 
     return data.recipient_addresses;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskTicketForms(query: string, instance: ZendeskInstance): Promise<ZendeskTicketForm[]> {
+  const url = `${getZendeskUrl(instance)}/ticket_forms.json`;
+  console.log("Zendesk Ticket Forms Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(
+        Toast.Style.Failure,
+        "Zendesk API Error",
+        `Failed to fetch ticket forms: ${response.status} - ${errorText}`,
+      );
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskTicketFormSearchResponse;
+
+    if (query) {
+      return data.ticket_forms.filter((form) => form.name.toLowerCase().includes(query.toLowerCase()));
+    }
+
+    return data.ticket_forms;
   } catch (error) {
     showToast(
       Toast.Style.Failure,

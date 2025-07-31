@@ -17,6 +17,8 @@ import {
   ZendeskTicketField,
   searchZendeskSupportAddresses,
   ZendeskSupportAddress,
+  searchZendeskTicketForms,
+  ZendeskTicketForm,
 } from "./api/zendesk";
 
 import { ZendeskActions } from "./components/ZendeskActions";
@@ -51,10 +53,18 @@ export default function SearchZendesk() {
     | ZendeskMacro[]
     | ZendeskTicketField[]
     | ZendeskSupportAddress[]
+    | ZendeskTicketForm[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState<
-    "users" | "organizations" | "triggers" | "dynamic_content" | "macros" | "ticket_fields" | "support_addresses"
+    | "users"
+    | "organizations"
+    | "triggers"
+    | "dynamic_content"
+    | "macros"
+    | "ticket_fields"
+    | "support_addresses"
+    | "ticket_forms"
   >("users");
 
   useEffect(() => {
@@ -82,7 +92,8 @@ export default function SearchZendesk() {
         | ZendeskDynamicContent[]
         | ZendeskMacro[]
         | ZendeskTicketField[]
-        | ZendeskSupportAddress[];
+        | ZendeskSupportAddress[]
+        | ZendeskTicketForm[];
       if (searchType === "users") {
         searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
       } else if (searchType === "organizations") {
@@ -95,6 +106,8 @@ export default function SearchZendesk() {
         searchResults = await searchZendeskTicketFields(debouncedSearchText, currentInstance);
       } else if (searchType === "support_addresses") {
         searchResults = await searchZendeskSupportAddresses(debouncedSearchText, currentInstance);
+      } else if (searchType === "ticket_forms") {
+        searchResults = await searchZendeskTicketForms(debouncedSearchText, currentInstance);
       } else {
         searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
       }
@@ -129,7 +142,9 @@ export default function SearchZendesk() {
                   ? ""
                   : searchType === "support_addresses"
                     ? "Search support addresses by email"
-                    : "Search Zendesk triggers by name"
+                    : searchType === "ticket_forms"
+                      ? "Search ticket forms by name"
+                      : "Search Zendesk triggers by name"
       }
       throttle
       searchBarAccessory={
@@ -143,7 +158,8 @@ export default function SearchZendesk() {
                 | "dynamic_content"
                 | "macros"
                 | "ticket_fields"
-                | "support_addresses",
+                | "support_addresses"
+                | "ticket_forms",
             )
           }
           tooltip="Select Search Type"
@@ -159,6 +175,7 @@ export default function SearchZendesk() {
             <List.Dropdown.Item title="Macros" value="macros" />
             <List.Dropdown.Item title="Ticket Fields" value="ticket_fields" />
             <List.Dropdown.Item title="Support Addresses" value="support_addresses" />
+            <List.Dropdown.Item title="Ticket Forms" value="ticket_forms" />
           </List.Dropdown.Section>
         </List.Dropdown>
       }
@@ -168,7 +185,7 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : "Triggers"}`}
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : "Triggers"}`}
           description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}
@@ -612,7 +629,7 @@ export default function SearchZendesk() {
                         icon={
                           supportAddress.default
                             ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                            : { source: Icon.XMarkCircle, tintColor: Color.Red }
+                            : { source: Icon.XMarkCircle }
                         }
                       />
                       <List.Item.Detail.Metadata.Separator />
@@ -681,6 +698,75 @@ export default function SearchZendesk() {
                 <ZendeskActions
                   item={supportAddress}
                   searchType="support_addresses"
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                />
+              }
+            />
+          );
+        } else if (searchType === "ticket_forms") {
+          const ticketForm = item as ZendeskTicketForm;
+
+          return (
+            <List.Item
+              key={ticketForm.id}
+              title={ticketForm.name}
+              detail={
+                <List.Item.Detail
+                  metadata={
+                    <List.Item.Detail.Metadata>
+                      <List.Item.Detail.Metadata.Label title="Name" text={ticketForm.name} />
+                      {ticketForm.display_name && (
+                        <List.Item.Detail.Metadata.Label title="Display Name" text={ticketForm.display_name} />
+                      )}
+                      <List.Item.Detail.Metadata.Label title="ID" text={ticketForm.id.toString()} />
+                      <List.Item.Detail.Metadata.TagList title="Active">
+                        <List.Item.Detail.Metadata.TagList.Item
+                          text={ticketForm.active ? "Active" : "Inactive"}
+                          color={ticketForm.active ? Color.Green : Color.Red}
+                        />
+                      </List.Item.Detail.Metadata.TagList>
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.Label
+                        title="End User Visible"
+                        icon={
+                          ticketForm.end_user_visible
+                            ? { source: Icon.CheckCircle, tintColor: Color.Green }
+                            : { source: Icon.XMarkCircle, tintColor: Color.Red }
+                        }
+                      />
+                      <List.Item.Detail.Metadata.Label
+                        title="In All Brands"
+                        icon={
+                          ticketForm.in_all_brands
+                            ? { source: Icon.CheckCircle, tintColor: Color.Green }
+                            : { source: Icon.XMarkCircle, tintColor: Color.Red }
+                        }
+                      />
+                      {ticketForm.restricted_brand_ids && ticketForm.restricted_brand_ids.length > 0 && (
+                        <List.Item.Detail.Metadata.TagList title="Restricted Brand IDs">
+                          {ticketForm.restricted_brand_ids.map((brandId) => (
+                            <List.Item.Detail.Metadata.TagList.Item key={brandId} text={brandId.toString()} />
+                          ))}
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.Label
+                        title="Created At"
+                        text={new Date(ticketForm.created_at).toLocaleString()}
+                      />
+                      <List.Item.Detail.Metadata.Label
+                        title="Updated At"
+                        text={new Date(ticketForm.updated_at).toLocaleString()}
+                      />
+                    </List.Item.Detail.Metadata>
+                  }
+                />
+              }
+              actions={
+                <ZendeskActions
+                  item={ticketForm}
+                  searchType="ticket_forms"
                   instance={currentInstance}
                   onInstanceChange={setCurrentInstance}
                 />

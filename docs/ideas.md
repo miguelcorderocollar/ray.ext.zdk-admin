@@ -1,6 +1,6 @@
 - Add actions we go to edit, see tickets, + open, etc...
 - clean search on change type
 - maybe we select instance when opening in a form... and then we continue...
-- add support addresses, forms, tickets and groups search lists
+- add  tickets and groups search lists
 - add details view where we filter by input: user/organization/group/form/recipient/brand
 - add roles, brands, schedules, automations, views
