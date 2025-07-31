@@ -21,6 +21,8 @@ import {
   ZendeskTicketForm,
   searchZendeskGroups,
   ZendeskGroup,
+  searchZendeskTickets,
+  ZendeskTicket,
 } from "./api/zendesk";
 
 import { ZendeskActions } from "./components/ZendeskActions";
@@ -57,6 +59,7 @@ export default function SearchZendesk() {
     | ZendeskSupportAddress[]
     | ZendeskTicketForm[]
     | ZendeskGroup[]
+    | ZendeskTicket[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState<
@@ -69,7 +72,8 @@ export default function SearchZendesk() {
     | "support_addresses"
     | "ticket_forms"
     | "groups"
-  >("users");
+    | "tickets"
+  >("tickets");
 
   useEffect(() => {
     performSearch();
@@ -98,7 +102,8 @@ export default function SearchZendesk() {
         | ZendeskTicketField[]
         | ZendeskSupportAddress[]
         | ZendeskTicketForm[]
-        | ZendeskGroup[];
+        | ZendeskGroup[]
+        | ZendeskTicket[];
       if (searchType === "users") {
         searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
       } else if (searchType === "organizations") {
@@ -115,6 +120,8 @@ export default function SearchZendesk() {
         searchResults = await searchZendeskTicketForms(debouncedSearchText, currentInstance);
       } else if (searchType === "groups") {
         searchResults = await searchZendeskGroups(debouncedSearchText, currentInstance);
+      } else if (searchType === "tickets") {
+        searchResults = await searchZendeskTickets(debouncedSearchText, currentInstance);
       } else {
         searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
       }
@@ -153,7 +160,9 @@ export default function SearchZendesk() {
                       ? "Search ticket forms by name"
                       : searchType === "groups"
                         ? "Search groups by name"
-                        : "Search Zendesk triggers by name"
+                        : searchType === "tickets"
+                          ? "Search tickets by subject, description, etc."
+                          : "Search Zendesk triggers by name"
       }
       throttle
       searchBarAccessory={
@@ -169,13 +178,15 @@ export default function SearchZendesk() {
                 | "ticket_fields"
                 | "support_addresses"
                 | "ticket_forms"
-                | "groups",
+                | "groups"
+                | "tickets",
             )
           }
           tooltip="Select Search Type"
           value={searchType}
         >
           <List.Dropdown.Section title="Ticketing">
+            <List.Dropdown.Item title="Tickets" value="tickets" />
             <List.Dropdown.Item title="Users" value="users" />
             <List.Dropdown.Item title="Organizations" value="organizations" />
           </List.Dropdown.Section>
@@ -196,7 +207,7 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : "Triggers"}`}
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : searchType === "tickets" ? "Tickets" : "Triggers"}`}
           description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}
@@ -851,6 +862,138 @@ export default function SearchZendesk() {
                 <ZendeskActions
                   item={group}
                   searchType="groups"
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                />
+              }
+            />
+          );
+        } else if (searchType === "tickets") {
+          const ticket = item as ZendeskTicket;
+          const statusColor = (() => {
+            switch (ticket.status) {
+              case "new":
+                return Color.Yellow;
+              case "open":
+                return Color.Red;
+              case "pending":
+                return Color.Blue;
+              case "hold":
+              case "on-hold":
+                return Color.Purple;
+              case "solved":
+                return Color.Blue;
+              case "closed":
+                return Color.PrimaryText; // Using PrimaryText as a darker alternative
+              default:
+                return Color.PrimaryText;
+            }
+          })();
+
+          const priorityColor = (() => {
+            switch (ticket.priority) {
+              case "urgent":
+                return Color.Red;
+              case "high":
+                return Color.Orange;
+              case "normal":
+                return Color.Blue;
+              case "low":
+                return Color.Green;
+              default:
+                return Color.PrimaryText;
+            }
+          })();
+
+          return (
+            <List.Item
+              key={ticket.id}
+              title={ticket.subject}
+              icon={{ source: Icon.Circle, tintColor: statusColor }}
+              accessories={[{ text: `#${ticket.id}` }]}
+              detail={
+                <List.Item.Detail
+                  markdown={`## ${ticket.subject}
+
+${ticket.description}`}
+                  metadata={
+                    <List.Item.Detail.Metadata>
+                      <List.Item.Detail.Metadata.TagList title="Status">
+                        <List.Item.Detail.Metadata.TagList.Item text={ticket.status} color={statusColor} />
+                      </List.Item.Detail.Metadata.TagList>
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.TagList title="Associations">
+                        {ticket.organization_id && (
+                          <List.Item.Detail.Metadata.TagList.Item text={`Organization: ${ticket.organization_id}`} />
+                        )}
+                        {ticket.brand_id && (
+                          <List.Item.Detail.Metadata.TagList.Item text={`Brand: ${ticket.brand_id}`} />
+                        )}
+                        {ticket.group_id && (
+                          <List.Item.Detail.Metadata.TagList.Item text={`Group: ${ticket.group_id}`} />
+                        )}
+                      </List.Item.Detail.Metadata.TagList>
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.Label
+                        title="Created At"
+                        text={new Date(ticket.created_at).toLocaleString()}
+                      />
+                      <List.Item.Detail.Metadata.Label
+                        title="Updated At"
+                        text={new Date(ticket.updated_at).toLocaleString()}
+                      />
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.TagList title="Custom Fields">
+                        {ticket.custom_fields?.map(
+                          (field) =>
+                            field.value && (
+                              <List.Item.Detail.Metadata.TagList.Item
+                                key={field.id}
+                                text={`${field.id}: ${field.value}`}
+                              />
+                            ),
+                        )}
+                      </List.Item.Detail.Metadata.TagList>
+                      <List.Item.Detail.Metadata.Separator />
+                      {ticket.external_id && (
+                        <List.Item.Detail.Metadata.Label title="External ID" text={ticket.external_id} />
+                      )}
+                      {ticket.recipient && (
+                        <List.Item.Detail.Metadata.Label title="Recipient" text={ticket.recipient} />
+                      )}
+                      {ticket.tags && ticket.tags.length > 0 && (
+                        <List.Item.Detail.Metadata.TagList title="Tags">
+                          {ticket.tags.map((tag) => (
+                            <List.Item.Detail.Metadata.TagList.Item key={tag} text={tag} />
+                          ))}
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+                      {ticket.ticket_form_id && (
+                        <List.Item.Detail.Metadata.Label title="Ticket Form ID" text={String(ticket.ticket_form_id)} />
+                      )}
+                      {ticket.priority && (
+                        <List.Item.Detail.Metadata.TagList title="Priority">
+                          <List.Item.Detail.Metadata.TagList.Item text={ticket.priority} color={priorityColor} />
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+                      {ticket.type && (
+                        <List.Item.Detail.Metadata.TagList title="Type">
+                          <List.Item.Detail.Metadata.TagList.Item text={ticket.type} />
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+                      {ticket.via && (
+                        <List.Item.Detail.Metadata.TagList title="Via">
+                          <List.Item.Detail.Metadata.TagList.Item text={ticket.via.channel} />
+                        </List.Item.Detail.Metadata.TagList>
+                      )}
+                    </List.Item.Detail.Metadata>
+                  }
+                />
+              }
+              actions={
+                <ZendeskActions
+                  item={ticket}
+                  searchType="tickets"
                   instance={currentInstance}
                   onInstanceChange={setCurrentInstance}
                 />

@@ -216,6 +216,31 @@ interface ZendeskGroupSearchResponse {
   groups: ZendeskGroup[];
 }
 
+export interface ZendeskTicket {
+  id: number;
+  subject: string;
+  description: string;
+  status: string;
+  organization_id: number;
+  brand_id: number;
+  group_id: number;
+  created_at: string;
+  updated_at: string;
+  external_id: string;
+  recipient: string;
+  tags: string[];
+  ticket_form_id: number;
+  priority: string;
+  type: string;
+  via: { channel: string; source: { from: Record<string, unknown>; to: Record<string, unknown> }; rel: string };
+  custom_fields: { id: number; value: string | null }[];
+}
+
+interface ZendeskTicketSearchResponse {
+  results: ZendeskTicket[];
+  count: number;
+}
+
 export function getZendeskAuthHeader(instance: ZendeskInstance): string {
   const credentials = `${instance.user}/token:${instance.api_key}`;
   return `Basic ${Buffer.from(credentials).toString("base64")}`;
@@ -656,6 +681,39 @@ export async function addTicketFieldOption(
       );
       throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
     }
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskTickets(query: string, instance: ZendeskInstance): Promise<ZendeskTicket[]> {
+  const searchTerms = query ? `type:ticket ${query}` : "type:ticket";
+  const url = `${getZendeskUrl(instance)}/search.json?query=${encodeURIComponent(searchTerms)}&per_page=30`;
+  console.log("Zendesk Ticket Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(Toast.Style.Failure, "Zendesk API Error", `Failed to fetch tickets: ${response.status} - ${errorText}`);
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskTicketSearchResponse;
+    return data.results;
   } catch (error) {
     showToast(
       Toast.Style.Failure,
