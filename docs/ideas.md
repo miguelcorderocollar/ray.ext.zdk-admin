@@ -1,41 +1,66 @@
-### Core Features & Search
+# Raycast Zendesk Extension Ideas
 
-*   **Search:**
-    *   Improve search behavior when changing the search type.
-    *   Implement a detailed view with filtering by various Zendesk objects (user, organization, group, etc.).
-    *   Add search capabilities for roles, brands, schedules, automations, and views.
-    *   Allow saving searches.
-    *   Display options/values/conditions, etc... on details for triggers, groups, fields, etc...
-    *   Special rules: move [ARCHIVE] to bottom, or hide them more
-    * improve search for the once loaded to search on all relevant properties
-*   **Actions:**
-    *   Add essential actions: edit, view tickets, open in Zendesk.
-    *   Implement bulk actions (e.g., for users).
-    *   Create quick user actions like "assign group".
-*   **Customization:**
-    *   Add the ability to manage custom fields and their options.
+This document outlines potential features and improvements for the Raycast Zendesk extension, organized by priority and estimated difficulty.
+
+## High Priority (Easy/Medium Difficulty)
+
+These are features that are highly useful and relatively straightforward to implement.
+
+### Core Search & Display Improvements
+*   **Search Behavior:** Improve search behavior when changing the search type to be more intuitive.
+*   **Detailed Views:** Enhance detailed views for all Zendesk objects (user, organization, group, etc.) to include more relevant information.
+    *   Display options/values/conditions on details for triggers, groups, fields, etc.
+    *   Display correct labels instead of IDs in search details (e.g., brands, groups, forms, fields, trigger categories).
+    *   Add group memberships on group view and user details.
+*   **Search Scope:** Improve search for already loaded items to search across all relevant properties.
+*   **Archived Items:** Implement special rules to move `[ARCHIVE]` items to the bottom of search results or hide them.
+
+### Essential Actions
+*   **Basic Actions:** Ensure all essential actions are available: edit, view tickets, and open in Zendesk for relevant items.
+*   **Specific Entry Point Actions:** Add direct entry points for common creation tasks:
+    *   Create User
+    *   Create Organization
+    *   Create Ticket Field
+    *   Create Ticket Form
+    *   Create Group
+    *   Create Macro
+    *   Create Trigger
+    *   Create Dynamic Content
+    *   Create Support Address
+    *   Create View
 
 ### Instance & Configuration Management
-
 *   **Instance Switching:**
-    *   Allow instance selection via a form upon opening.
-    *   Implement hotkeys for quick instance switching.
-*   **Instance Tools:**
-    *   Provide an instance overview (API permitting).
-    *   Create a tool to compare configurations between production and quality environments.
-    *   Develop an API explorer/finder.
+    *   Allow instance selection via a form upon opening the extension.
+    *   Implement hotkeys for quick instance switching between configured instances.
 
-### Advanced Concepts & Future Directions
+## Medium Priority (Medium/Hard Difficulty)
 
-*   **Agent-Focused App:**
-    *   Develop a separate, dedicated application for agents, potentially with its own extension support.
-*   **AI Integration:**
-    *   Leverage Raycast AI with tools to combine multiple actions into a single command.
+These features offer significant value but may require more complex implementation or API exploration.
 
-### Actions:
-- add specific actions as entry poitns, like all the creates.
-### Reminder
-- Move to preferences special logic like separar groups by .
-- or skip verify email true when creating users
+### Advanced Search & Filtering
+*   **Expanded Search Capabilities:** Add search for roles, brands, schedules, automations, and other available APIs.
+*   **Saved Searches:** Allow users to save frequently used search queries.
+*   **Actionable Fields:** Add organization and user fields as actions directly within search entities.
 
+### User & Customization Actions
+*   **Bulk Actions:** Implement bulk actions for items like users (e.g., bulk update, bulk delete).
+*   **Quick User Actions:** Create quick actions for users, such as "assign group".
+*   **Custom Field Management:** Add the ability to manage custom fields and their options directly within the extension.
 
+### Instance Tools
+*   **Instance Overview:** Provide an overview of a Zendesk instance (API permitting).
+*   **Configuration Comparison:** Develop a tool to compare configurations between different environments (e.g., production and quality).
+*   **API Explorer/Finder:** Create a tool to explore and find Zendesk API endpoints.
+
+## Future/Low Priority
+
+These are more advanced concepts or features that could be considered for long-term development.
+
+*   **Agent-Focused Application:** Develop a separate, dedicated application for Zendesk agents, potentially with its own extension support.
+*   **AI Integration:** Leverage Raycast AI with tools to combine multiple actions into a single command.
+*   **Other API Implementations:** Implement functionalities for other Zendesk APIs, such as Help Center Guide, Voice/Talk, etc.
+
+## Reminders for Development
+
+*   **Preferences for Logic:** Move special logic (e.g., separating groups by '.', skipping email verification for user creation) to preferences for user configuration.
