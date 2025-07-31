@@ -213,7 +213,7 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
           />
           <Action.OpenInBrowser
             title="Open Admin Views Page"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/views`}
+            url={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/views`}
           />
           <Action.CopyToClipboard
             title="Copy Agent View Link"

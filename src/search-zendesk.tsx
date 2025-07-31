@@ -808,7 +808,7 @@ export default function SearchZendesk() {
           );
         } else if (searchType === "groups") {
           const group = item as ZendeskGroup;
-          const nameParts = group.name.split(".");
+          const nameParts = (group.name ?? "").split(".");
           const title = nameParts.length > 1 ? nameParts.slice(1).join(".") : group.name;
           const accessory = nameParts.length > 1 ? nameParts[0] : "";
 
