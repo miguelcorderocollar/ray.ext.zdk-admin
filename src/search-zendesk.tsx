@@ -1,4 +1,4 @@
-import { List, showToast, Toast, Image, Color } from "@raycast/api";
+import { List, showToast, Toast, Image, Color, Icon } from "@raycast/api";
 
 import { useState, useEffect } from "react";
 import { getZendeskInstances, ZendeskInstance } from "./utils/preferences";
@@ -13,6 +13,8 @@ import {
   ZendeskDynamicContent,
   searchZendeskMacros,
   ZendeskMacro,
+  searchZendeskTicketFields,
+  ZendeskTicketField,
 } from "./api/zendesk";
 
 import { ZendeskActions } from "./components/ZendeskActions";
@@ -40,60 +42,68 @@ export default function SearchZendesk() {
   const [searchText, setSearchText] = useState("");
   const debouncedSearchText = useDebounce(searchText, 500);
   const [results, setResults] = useState<
-    ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[] | ZendeskDynamicContent[] | ZendeskMacro[]
+    | ZendeskUser[]
+    | ZendeskOrganization[]
+    | ZendeskTrigger[]
+    | ZendeskDynamicContent[]
+    | ZendeskMacro[]
+    | ZendeskTicketField[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchType, setSearchType] = useState<"users" | "organizations" | "triggers" | "dynamic_content" | "macros">(
-    "users",
-  );
+  const [searchType, setSearchType] = useState<
+    "users" | "organizations" | "triggers" | "dynamic_content" | "macros" | "ticket_fields"
+  >("users");
 
   useEffect(() => {
-    async function performSearch() {
-      if (!currentInstance) {
-        showToast(Toast.Style.Failure, "Configuration Error", "No Zendesk instances configured.");
-        return;
-      }
-
-      if (searchType === "triggers" && !debouncedSearchText) {
-        setResults([]);
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-      try {
-        let searchResults:
-          | ZendeskUser[]
-          | ZendeskOrganization[]
-          | ZendeskTrigger[]
-          | ZendeskDynamicContent[]
-          | ZendeskMacro[];
-        if (searchType === "users") {
-          searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
-        } else if (searchType === "organizations") {
-          searchResults = await searchZendeskOrganizations(debouncedSearchText, currentInstance);
-        } else if (searchType === "dynamic_content") {
-          searchResults = await searchZendeskDynamicContent(debouncedSearchText, currentInstance);
-        } else if (searchType === "macros") {
-          searchResults = await searchZendeskMacros(debouncedSearchText, currentInstance);
-        } else {
-          searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
-        }
-        setResults(searchResults);
-      } catch (error: unknown) {
-        let errorMessage = "An unknown error occurred.";
-        if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-        showToast(Toast.Style.Failure, "Search Failed", errorMessage);
-        setResults([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     performSearch();
   }, [debouncedSearchText, searchType, currentInstance]);
+
+  async function performSearch() {
+    if (!currentInstance) {
+      showToast(Toast.Style.Failure, "Configuration Error", "No Zendesk instances configured.");
+      return;
+    }
+
+    if (searchType === "triggers" && !debouncedSearchText) {
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      let searchResults:
+        | ZendeskUser[]
+        | ZendeskOrganization[]
+        | ZendeskTrigger[]
+        | ZendeskDynamicContent[]
+        | ZendeskMacro[]
+        | ZendeskTicketField[];
+      if (searchType === "users") {
+        searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
+      } else if (searchType === "organizations") {
+        searchResults = await searchZendeskOrganizations(debouncedSearchText, currentInstance);
+      } else if (searchType === "dynamic_content") {
+        searchResults = await searchZendeskDynamicContent(debouncedSearchText, currentInstance);
+      } else if (searchType === "macros") {
+        searchResults = await searchZendeskMacros(debouncedSearchText, currentInstance);
+      } else if (searchType === "ticket_fields") {
+        searchResults = await searchZendeskTicketFields(debouncedSearchText, currentInstance);
+      } else {
+        searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
+      }
+      setResults(searchResults);
+    } catch (error: unknown) {
+      let errorMessage = "An unknown error occurred.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      showToast(Toast.Style.Failure, "Search Failed", errorMessage);
+      setResults([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <List
@@ -109,13 +119,17 @@ export default function SearchZendesk() {
               ? "Search Zendesk dynamic content by name or content"
               : searchType === "macros"
                 ? "Search Zendesk macros by name or description"
-                : "Search Zendesk triggers by name"
+                : searchType === "ticket_fields"
+                  ? ""
+                  : "Search Zendesk triggers by name"
       }
       throttle
       searchBarAccessory={
         <List.Dropdown
           onChange={(newValue) =>
-            setSearchType(newValue as "users" | "organizations" | "triggers" | "dynamic_content" | "macros")
+            setSearchType(
+              newValue as "users" | "organizations" | "triggers" | "dynamic_content" | "macros" | "ticket_fields",
+            )
           }
           tooltip="Select Search Type"
           value={searchType}
@@ -128,6 +142,7 @@ export default function SearchZendesk() {
             <List.Dropdown.Item title="Triggers" value="triggers" />
             <List.Dropdown.Item title="Dynamic Content" value="dynamic_content" />
             <List.Dropdown.Item title="Macros" value="macros" />
+            <List.Dropdown.Item title="Ticket Fields" value="ticket_fields" />
           </List.Dropdown.Section>
         </List.Dropdown>
       }
@@ -137,7 +152,7 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : "Triggers"}`}
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : "Triggers"}`}
           description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}
@@ -430,7 +445,12 @@ export default function SearchZendesk() {
                       )}
                       <List.Item.Detail.Metadata.Label title="Name" text={macro.title} />
                       <List.Item.Detail.Metadata.Label title="ID" text={macro.id.toString()} />
-                      <List.Item.Detail.Metadata.Label title="Active" text={macro.active ? "Yes" : "No"} />
+                      <List.Item.Detail.Metadata.TagList title="Active">
+                        <List.Item.Detail.Metadata.TagList.Item
+                          text={macro.active ? "Active" : "Inactive"}
+                          color={macro.active ? Color.Green : Color.Red}
+                        />
+                      </List.Item.Detail.Metadata.TagList>
                       {macro.description && (
                         <List.Item.Detail.Metadata.Label title="Description" text={macro.description} />
                       )}
@@ -450,6 +470,101 @@ export default function SearchZendesk() {
                 <ZendeskActions
                   item={macro}
                   searchType="macros"
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                />
+              }
+            />
+          );
+        } else if (searchType === "ticket_fields") {
+          const ticketField = item as ZendeskTicketField;
+          const fieldTypeMapping: { [key: string]: string } = {
+            text: "Single-line Text",
+            textarea: "Multi-line Text",
+            checkbox: "Checkbox",
+            date: "Date",
+            integer: "Integer",
+            decimal: "Decimal",
+            regexp: "Regex Pattern",
+            partialcreditcard: "Partial Credit Card",
+            multiselect: "Multi-select Dropdown",
+            tagger: "Dropdown",
+            lookup: "Lookup Relationship",
+          };
+
+          return (
+            <List.Item
+              key={ticketField.id}
+              title={ticketField.title}
+              accessories={[{ text: fieldTypeMapping[ticketField.type] || ticketField.type }]}
+              detail={
+                <List.Item.Detail
+                  metadata={
+                    <List.Item.Detail.Metadata>
+                      <List.Item.Detail.Metadata.Label title="Title" text={ticketField.title} />
+                      <List.Item.Detail.Metadata.Label title="ID" text={ticketField.id.toString()} />
+                      <List.Item.Detail.Metadata.Label
+                        title="Type"
+                        text={fieldTypeMapping[ticketField.type] || ticketField.type}
+                      />
+                      <List.Item.Detail.Metadata.TagList title="Active">
+                        <List.Item.Detail.Metadata.TagList.Item
+                          text={ticketField.active ? "Active" : "Inactive"}
+                          color={ticketField.active ? Color.Green : Color.Red}
+                        />
+                      </List.Item.Detail.Metadata.TagList>
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.Label
+                        title="Visible in Portal"
+                        icon={
+                          ticketField.visible_in_portal
+                            ? { source: Icon.CheckCircle, tintColor: Color.Green }
+                            : { source: Icon.XMarkCircle, tintColor: Color.Red }
+                        }
+                      />
+                      <List.Item.Detail.Metadata.Label
+                        title="Editable in Portal"
+                        icon={
+                          ticketField.editable_in_portal
+                            ? { source: Icon.CheckCircle, tintColor: Color.Green }
+                            : { source: Icon.XMarkCircle, tintColor: Color.Red }
+                        }
+                      />
+                      <List.Item.Detail.Metadata.Label
+                        title="Required in Portal"
+                        icon={
+                          ticketField.required_in_portal
+                            ? { source: Icon.CheckCircle, tintColor: Color.Green }
+                            : { source: Icon.XMarkCircle, tintColor: Color.Red }
+                        }
+                      />
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.Label
+                        title="Agent Can Edit"
+                        icon={
+                          ticketField.editable_in_portal
+                            ? { source: Icon.CheckCircle, tintColor: Color.Green }
+                            : { source: Icon.XMarkCircle, tintColor: Color.Red }
+                        }
+                      />
+                      <List.Item.Detail.Metadata.Separator />
+                      {ticketField.tag && <List.Item.Detail.Metadata.Label title="Tag" text={ticketField.tag} />}
+                      <List.Item.Detail.Metadata.Label
+                        title="Created At"
+                        text={new Date(ticketField.created_at).toLocaleString()}
+                      />
+                      <List.Item.Detail.Metadata.Label
+                        title="Updated At"
+                        text={new Date(ticketField.updated_at).toLocaleString()}
+                      />
+                    </List.Item.Detail.Metadata>
+                  }
+                />
+              }
+              actions={
+                <ZendeskActions
+                  item={ticketField}
+                  searchType="ticket_fields"
                   instance={currentInstance}
                   onInstanceChange={setCurrentInstance}
                 />

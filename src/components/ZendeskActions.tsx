@@ -1,11 +1,18 @@
 import { ActionPanel, Action, Icon, Keyboard, Color } from "@raycast/api";
 import { getZendeskInstances, ZendeskInstance } from "../utils/preferences";
-import { ZendeskUser, ZendeskOrganization, ZendeskTrigger, ZendeskDynamicContent, ZendeskMacro } from "../api/zendesk";
+import {
+  ZendeskUser,
+  ZendeskOrganization,
+  ZendeskTrigger,
+  ZendeskDynamicContent,
+  ZendeskMacro,
+  ZendeskTicketField,
+} from "../api/zendesk";
 import EditUserForm from "./EditUserForm";
 
 interface ZendeskActionsProps {
-  item: ZendeskUser | ZendeskOrganization | ZendeskTrigger | ZendeskDynamicContent | ZendeskMacro;
-  searchType: "users" | "organizations" | "triggers" | "dynamic_content" | "macros";
+  item: ZendeskUser | ZendeskOrganization | ZendeskTrigger | ZendeskDynamicContent | ZendeskMacro | ZendeskTicketField;
+  searchType: "users" | "organizations" | "triggers" | "dynamic_content" | "macros" | "ticket_fields";
   instance: ZendeskInstance | undefined;
   onInstanceChange: (instance: ZendeskInstance) => void;
 }
@@ -88,6 +95,20 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
           />
         </>
       );
+    } else if (searchType === "ticket_fields") {
+      const ticketField = item as ZendeskTicketField;
+      return (
+        <>
+          <Action.OpenInBrowser
+            title="Open Ticket Fields"
+            url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-fields/${ticketField.id}`}
+          />
+          <Action.CopyToClipboard
+            title="Copy Link to Clipboard"
+            content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-fields/${ticketField.id}`}
+          />
+        </>
+      );
     }
     return null;
   };
@@ -121,6 +142,9 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
     } else if (searchType === "triggers") {
       generalConfigUrl = `${generalConfigUrl}/admin/objects-rules/rules/triggers`;
       shortcutKey = "t";
+    } else if (searchType === "ticket_fields") {
+      generalConfigUrl = `${generalConfigUrl}/admin/objects-rules/tickets/ticket-fields`;
+      shortcutKey = "f";
     }
 
     return (

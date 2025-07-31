@@ -128,6 +128,39 @@ interface ZendeskMacroSearchResponse {
   macros: ZendeskMacro[];
 }
 
+export interface ZendeskTicketField {
+  id: number;
+  url: string;
+  type: string;
+  title: string;
+  raw_title: string;
+  description: string;
+  raw_description: string;
+  position: number;
+  active: boolean;
+  required: boolean;
+  collapsed_for_agents: boolean;
+  regexp_for_validation: string | null;
+  title_in_portal: string;
+  raw_title_in_portal: string;
+  visible_in_portal: boolean;
+  editable_in_portal: boolean;
+  required_in_portal: boolean;
+  tag: string | null;
+  created_at: string;
+  updated_at: string;
+  removable: boolean;
+  agent_description: string | null;
+  system_field_options: unknown[];
+  custom_field_options: unknown[];
+  sub_type_id: number | null;
+  permission_group_id: number | null;
+}
+
+interface ZendeskTicketFieldSearchResponse {
+  ticket_fields: ZendeskTicketField[];
+}
+
 export function getZendeskAuthHeader(instance: ZendeskInstance): string {
   const credentials = `${instance.user}/token:${instance.api_key}`;
   return `Basic ${Buffer.from(credentials).toString("base64")}`;
@@ -363,6 +396,50 @@ export async function searchZendeskMacros(query: string, instance: ZendeskInstan
     }
 
     return data.macros;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskTicketFields(
+  query: string,
+  instance: ZendeskInstance,
+): Promise<ZendeskTicketField[]> {
+  const url = `${getZendeskUrl(instance)}/ticket_fields.json`;
+  console.log("Zendesk Ticket Fields Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(
+        Toast.Style.Failure,
+        "Zendesk API Error",
+        `Failed to fetch ticket fields: ${response.status} - ${errorText}`,
+      );
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskTicketFieldSearchResponse;
+
+    if (query) {
+      return data.ticket_fields.filter((field) => field.title.toLowerCase().includes(query.toLowerCase()));
+    }
+
+    return data.ticket_fields;
   } catch (error) {
     showToast(
       Toast.Style.Failure,
