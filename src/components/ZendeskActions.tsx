@@ -15,6 +15,7 @@ import {
 } from "../api/zendesk";
 import EditUserForm from "./EditUserForm";
 import AddTicketFieldOptionForm from "./AddTicketFieldOptionForm";
+import CreateUserForm from "./CreateUserForm";
 import UserTicketsList from "./UserTicketsList";
 
 interface ZendeskActionsProps {
@@ -225,11 +226,14 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
     return null;
   };
 
-  const renderEditActions = () => {
+  const renderUserActions = () => {
     if (searchType === "users") {
       const user = item as ZendeskUser;
       return (
-        <Action.Push title="Edit User" icon={Icon.Pencil} target={<EditUserForm user={user} instance={instance} />} />
+        <>
+          <Action.Push title="Edit User" icon={Icon.Pencil} target={<EditUserForm user={user} instance={instance} />} />
+          <Action.Push title="Create User" icon={Icon.Plus} target={<CreateUserForm instance={instance} />} />
+        </>
       );
     } else if (searchType === "ticket_fields") {
       const ticketField = item as ZendeskTicketField;
@@ -307,7 +311,7 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
   return (
     <ActionPanel>
       <ActionPanel.Section title="Open">{renderOpenActions()}</ActionPanel.Section>
-      {renderEditActions() && <ActionPanel.Section title="Edit">{renderEditActions()}</ActionPanel.Section>}
+      {renderUserActions() && <ActionPanel.Section title="User Actions">{renderUserActions()}</ActionPanel.Section>}
       <ActionPanel.Section title="General">{renderGeneralActions()}</ActionPanel.Section>
     </ActionPanel>
   );

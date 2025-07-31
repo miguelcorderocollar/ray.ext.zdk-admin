@@ -32,5 +32,10 @@
 *   **AI Integration:**
     *   Leverage Raycast AI with tools to combine multiple actions into a single command.
 
+### Actions:
+- add specific actions as entry poitns, like all the creates.
 ### Reminder
 - Move to preferences special logic like separar groups by .
+- or skip verify email true when creating users
+
+

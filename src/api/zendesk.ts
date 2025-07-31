@@ -704,6 +704,54 @@ export async function addTicketFieldOption(
   }
 }
 
+export async function createUser(name: string, email: string, instance: ZendeskInstance): Promise<ZendeskUser> {
+  const url = `${getZendeskUrl(instance)}/users.json`;
+  console.log("Zendesk Create User URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({ user: { name, email, verified: true, skip_verify_email: true } }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      let errorMessage = `Failed to create user: ${response.status} - ${errorText}`;
+      try {
+        const errorJson = JSON.parse(errorText);
+        if (
+          errorJson.details &&
+          errorJson.details.email &&
+          errorJson.details.email[0] &&
+          errorJson.details.email[0].error === "DuplicateValue"
+        ) {
+          errorMessage = `Failed to create user: Email already exists.`;
+        }
+      } catch (parseError) {
+        // If parsing fails, errorText is not JSON, so use the default message
+        console.error("Failed to parse error response as JSON:", parseError);
+      }
+      showToast(Toast.Style.Failure, "Zendesk API Error", errorMessage);
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as { user: ZendeskUser };
+    return data.user;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
 export async function searchZendeskTickets(
   query: string,
   instance: ZendeskInstance,
