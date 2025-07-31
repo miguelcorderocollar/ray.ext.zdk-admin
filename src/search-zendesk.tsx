@@ -188,7 +188,7 @@ export default function SearchZendesk() {
                       )}
                       <List.Item.Detail.Metadata.Label title="Name" text={user.name} />
                       <List.Item.Detail.Metadata.Label title="ID" text={user.id.toString()} />
-                      <List.Item.Detail.Metadata.Label title="Email" text={user.email} />
+                      {user.email && <List.Item.Detail.Metadata.Label title="Email" text={user.email} />}
                       {user.alias && <List.Item.Detail.Metadata.Label title="Alias" text={user.alias} />}
                       {user.phone && <List.Item.Detail.Metadata.Label title="Phone" text={user.phone} />}
                       {user.role && (
