@@ -19,6 +19,8 @@ import {
   ZendeskSupportAddress,
   searchZendeskTicketForms,
   ZendeskTicketForm,
+  searchZendeskGroups,
+  ZendeskGroup,
 } from "./api/zendesk";
 
 import { ZendeskActions } from "./components/ZendeskActions";
@@ -54,6 +56,7 @@ export default function SearchZendesk() {
     | ZendeskTicketField[]
     | ZendeskSupportAddress[]
     | ZendeskTicketForm[]
+    | ZendeskGroup[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState<
@@ -65,6 +68,7 @@ export default function SearchZendesk() {
     | "ticket_fields"
     | "support_addresses"
     | "ticket_forms"
+    | "groups"
   >("users");
 
   useEffect(() => {
@@ -93,7 +97,8 @@ export default function SearchZendesk() {
         | ZendeskMacro[]
         | ZendeskTicketField[]
         | ZendeskSupportAddress[]
-        | ZendeskTicketForm[];
+        | ZendeskTicketForm[]
+        | ZendeskGroup[];
       if (searchType === "users") {
         searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
       } else if (searchType === "organizations") {
@@ -108,6 +113,8 @@ export default function SearchZendesk() {
         searchResults = await searchZendeskSupportAddresses(debouncedSearchText, currentInstance);
       } else if (searchType === "ticket_forms") {
         searchResults = await searchZendeskTicketForms(debouncedSearchText, currentInstance);
+      } else if (searchType === "groups") {
+        searchResults = await searchZendeskGroups(debouncedSearchText, currentInstance);
       } else {
         searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
       }
@@ -144,7 +151,9 @@ export default function SearchZendesk() {
                     ? "Search support addresses by email"
                     : searchType === "ticket_forms"
                       ? "Search ticket forms by name"
-                      : "Search Zendesk triggers by name"
+                      : searchType === "groups"
+                        ? "Search groups by name"
+                        : "Search Zendesk triggers by name"
       }
       throttle
       searchBarAccessory={
@@ -159,7 +168,8 @@ export default function SearchZendesk() {
                 | "macros"
                 | "ticket_fields"
                 | "support_addresses"
-                | "ticket_forms",
+                | "ticket_forms"
+                | "groups",
             )
           }
           tooltip="Select Search Type"
@@ -170,6 +180,7 @@ export default function SearchZendesk() {
             <List.Dropdown.Item title="Organizations" value="organizations" />
           </List.Dropdown.Section>
           <List.Dropdown.Section title="Admin">
+            <List.Dropdown.Item title="Groups" value="groups" />
             <List.Dropdown.Item title="Triggers" value="triggers" />
             <List.Dropdown.Item title="Dynamic Content" value="dynamic_content" />
             <List.Dropdown.Item title="Macros" value="macros" />
@@ -185,7 +196,7 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : "Triggers"}`}
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : "Triggers"}`}
           description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}
@@ -767,6 +778,79 @@ export default function SearchZendesk() {
                 <ZendeskActions
                   item={ticketForm}
                   searchType="ticket_forms"
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                />
+              }
+            />
+          );
+        } else if (searchType === "groups") {
+          const group = item as ZendeskGroup;
+          const nameParts = group.name.split(".");
+          const title = nameParts.length > 1 ? nameParts.slice(1).join(".") : group.name;
+          const accessory = nameParts.length > 1 ? nameParts[0] : "";
+
+          return (
+            <List.Item
+              key={group.id}
+              title={title}
+              accessories={[{ text: accessory }]}
+              detail={
+                <List.Item.Detail
+                  metadata={
+                    <List.Item.Detail.Metadata>
+                      <List.Item.Detail.Metadata.Label title="Name" text={group.name} />
+                      <List.Item.Detail.Metadata.Label title="ID" text={group.id.toString()} />
+                      {group.description && (
+                        <List.Item.Detail.Metadata.Label title="Description" text={group.description} />
+                      )}
+                      <List.Item.Detail.Metadata.Link
+                        title="Open Group Details"
+                        text="View Group Details"
+                        target={`https://${currentInstance?.subdomain}.zendesk.com/admin/people/groups/${group.id}`}
+                      />
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.Label
+                        title="Default"
+                        icon={
+                          group.default
+                            ? { source: Icon.CheckCircle, tintColor: Color.Green }
+                            : { source: Icon.XMarkCircle, tintColor: Color.Red }
+                        }
+                      />
+                      <List.Item.Detail.Metadata.Label
+                        title="Deleted"
+                        icon={
+                          group.deleted
+                            ? { source: Icon.CheckCircle, tintColor: Color.Green }
+                            : { source: Icon.XMarkCircle, tintColor: Color.Red }
+                        }
+                      />
+                      <List.Item.Detail.Metadata.Label
+                        title="Is Public"
+                        icon={
+                          group.is_public
+                            ? { source: Icon.CheckCircle, tintColor: Color.Green }
+                            : { source: Icon.XMarkCircle, tintColor: Color.Red }
+                        }
+                      />
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.Label
+                        title="Created At"
+                        text={new Date(group.created_at).toLocaleString()}
+                      />
+                      <List.Item.Detail.Metadata.Label
+                        title="Updated At"
+                        text={new Date(group.updated_at).toLocaleString()}
+                      />
+                    </List.Item.Detail.Metadata>
+                  }
+                />
+              }
+              actions={
+                <ZendeskActions
+                  item={group}
+                  searchType="groups"
                   instance={currentInstance}
                   onInstanceChange={setCurrentInstance}
                 />

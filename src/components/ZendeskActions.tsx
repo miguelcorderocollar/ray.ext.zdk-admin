@@ -9,6 +9,7 @@ import {
   ZendeskTicketField,
   ZendeskSupportAddress,
   ZendeskTicketForm,
+  ZendeskGroup,
 } from "../api/zendesk";
 import EditUserForm from "./EditUserForm";
 
@@ -21,7 +22,8 @@ interface ZendeskActionsProps {
     | ZendeskMacro
     | ZendeskTicketField
     | ZendeskSupportAddress
-    | ZendeskTicketForm;
+    | ZendeskTicketForm
+    | ZendeskGroup;
   searchType:
     | "users"
     | "organizations"
@@ -30,7 +32,8 @@ interface ZendeskActionsProps {
     | "macros"
     | "ticket_fields"
     | "support_addresses"
-    | "ticket_forms";
+    | "ticket_forms"
+    | "groups";
   instance: ZendeskInstance | undefined;
   onInstanceChange: (instance: ZendeskInstance) => void;
 }
@@ -148,6 +151,20 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
           />
         </>
       );
+    } else if (searchType === "groups") {
+      const group = item as ZendeskGroup;
+      return (
+        <>
+          <Action.OpenInBrowser
+            title="Open Group Details"
+            url={`https://${instance?.subdomain}.zendesk.com/admin/people/groups/${group.id}`}
+          />
+          <Action.CopyToClipboard
+            title="Copy Link to Clipboard"
+            content={`https://${instance?.subdomain}.zendesk.com/admin/people/groups/${group.id}`}
+          />
+        </>
+      );
     }
     return null;
   };
@@ -190,6 +207,9 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
     } else if (searchType === "ticket_forms") {
       generalConfigUrl = `${generalConfigUrl}/admin/objects-rules/tickets/ticket-forms`;
       shortcutKey = "f";
+    } else if (searchType === "groups") {
+      generalConfigUrl = `${generalConfigUrl}/admin/people/groups`;
+      shortcutKey = "g";
     }
 
     return (

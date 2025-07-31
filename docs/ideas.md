@@ -1,7 +1,7 @@
 ### Core Features & Search
 
 *   **Search:**
-    *   Add search lists for tickets and groups.
+    *   Add search lists for tickets.
     *   Improve search behavior when changing the search type.
     *   Implement a detailed view with filtering by various Zendesk objects (user, organization, group, etc.).
     *   Add search capabilities for roles, brands, schedules, automations, and views.
@@ -29,3 +29,6 @@
     *   Develop a separate, dedicated application for agents, potentially with its own extension support.
 *   **AI Integration:**
     *   Leverage Raycast AI with tools to combine multiple actions into a single command.
+
+### Reminder
+- Move to preferences special logic like separar groups by .

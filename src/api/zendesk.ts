@@ -200,6 +200,22 @@ interface ZendeskTicketFormSearchResponse {
   ticket_forms: ZendeskTicketForm[];
 }
 
+export interface ZendeskGroup {
+  id: number;
+  name: string;
+  description: string;
+  default: boolean;
+  deleted: boolean;
+  created_at: string;
+  updated_at: string;
+  url: string;
+  is_public: boolean;
+}
+
+interface ZendeskGroupSearchResponse {
+  groups: ZendeskGroup[];
+}
+
 export function getZendeskAuthHeader(instance: ZendeskInstance): string {
   const credentials = `${instance.user}/token:${instance.api_key}`;
   return `Basic ${Buffer.from(credentials).toString("base64")}`;
@@ -564,6 +580,43 @@ export async function searchZendeskTicketForms(query: string, instance: ZendeskI
     }
 
     return data.ticket_forms;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskGroups(query: string, instance: ZendeskInstance): Promise<ZendeskGroup[]> {
+  const url = `${getZendeskUrl(instance)}/groups.json`;
+  console.log("Zendesk Groups Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(Toast.Style.Failure, "Zendesk API Error", `Failed to fetch groups: ${response.status} - ${errorText}`);
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskGroupSearchResponse;
+
+    if (query) {
+      return data.groups.filter((group) => group.name.toLowerCase().includes(query.toLowerCase()));
+    }
+
+    return data.groups;
   } catch (error) {
     showToast(
       Toast.Style.Failure,
