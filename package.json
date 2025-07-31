@@ -14,6 +14,13 @@
       "description": "Search for users and organizations in Zendesk.",
       "mode": "view",
       "entrypoint": "src/search-zendesk.tsx"
+    },
+    {
+      "name": "open-zendesk-instance",
+      "title": "Open Zendesk Instance",
+      "description": "Open a Zendesk instance product.",
+      "mode": "view",
+      "entrypoint": "src/open-zendesk-instance.tsx"
     }
   ],
   "preferences": [

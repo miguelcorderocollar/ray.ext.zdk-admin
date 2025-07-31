@@ -18,10 +18,14 @@ declare type Preferences = ExtensionPreferences
 declare namespace Preferences {
   /** Preferences accessible in the `search-zendesk` command */
   export type SearchZendesk = ExtensionPreferences & {}
+  /** Preferences accessible in the `open-zendesk-instance` command */
+  export type OpenZendeskInstance = ExtensionPreferences & {}
 }
 
 declare namespace Arguments {
   /** Arguments passed to the `search-zendesk` command */
   export type SearchZendesk = {}
+  /** Arguments passed to the `open-zendesk-instance` command */
+  export type OpenZendeskInstance = {}
 }
 

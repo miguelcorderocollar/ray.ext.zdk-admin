@@ -1,10 +1,12 @@
 import { getPreferenceValues } from "@raycast/api";
 
 export interface ZendeskInstance {
+  name: string;
   subdomain: string;
   user: string;
   api_key: string;
   color?: string;
+  production?: boolean;
 }
 
 interface Preferences {
