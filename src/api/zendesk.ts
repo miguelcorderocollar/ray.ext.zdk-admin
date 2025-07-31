@@ -691,8 +691,15 @@ export async function addTicketFieldOption(
   }
 }
 
-export async function searchZendeskTickets(query: string, instance: ZendeskInstance): Promise<ZendeskTicket[]> {
-  const searchTerms = query ? `type:ticket ${query}` : "type:ticket";
+export async function searchZendeskTickets(
+  query: string,
+  instance: ZendeskInstance,
+  requesterEmail?: string,
+): Promise<ZendeskTicket[]> {
+  let searchTerms = query ? `type:ticket ${query}` : "type:ticket";
+  if (requesterEmail) {
+    searchTerms += ` requester:${requesterEmail}`;
+  }
   const url = `${getZendeskUrl(instance)}/search.json?query=${encodeURIComponent(searchTerms)}&per_page=30`;
   console.log("Zendesk Ticket Search URL:", url);
   const headers = {

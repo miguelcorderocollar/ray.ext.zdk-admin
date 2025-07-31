@@ -14,6 +14,7 @@ import {
 } from "../api/zendesk";
 import EditUserForm from "./EditUserForm";
 import AddTicketFieldOptionForm from "./AddTicketFieldOptionForm";
+import UserTicketsList from "./UserTicketsList";
 
 interface ZendeskActionsProps {
   item:
@@ -58,6 +59,14 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
             title="Copy Link"
             content={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
           />
+          {user.email && (
+            <Action.Push
+              title="View User's Tickets"
+              icon={Icon.Ticket}
+              target={<UserTicketsList userEmail={user.email} instance={instance} />}
+              shortcut={{ modifiers: ["cmd"], key: "t" }}
+            />
+          )}
         </>
       );
     } else if (searchType === "organizations") {

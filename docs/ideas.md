@@ -1,7 +1,6 @@
 ### Core Features & Search
 
 *   **Search:**
-    *   Add search lists for tickets.
     *   Improve search behavior when changing the search type.
     *   Implement a detailed view with filtering by various Zendesk objects (user, organization, group, etc.).
     *   Add search capabilities for roles, brands, schedules, automations, and views.
