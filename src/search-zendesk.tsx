@@ -523,17 +523,17 @@ export default function SearchZendesk() {
         } else if (searchType === "ticket_fields") {
           const ticketField = item as ZendeskTicketField;
           const fieldTypeMapping: { [key: string]: string } = {
-            text: "Single-line Text",
-            textarea: "Multi-line Text",
+            text: "Text",
+            textarea: "Textarea",
             checkbox: "Checkbox",
             date: "Date",
             integer: "Integer",
             decimal: "Decimal",
-            regexp: "Regex Pattern",
+            regexp: "Regex",
             partialcreditcard: "Partial Credit Card",
-            multiselect: "Multi-select Dropdown",
+            multiselect: "Multi-select",
             tagger: "Dropdown",
-            lookup: "Lookup Relationship",
+            lookup: "Lookup",
           };
 
           return (

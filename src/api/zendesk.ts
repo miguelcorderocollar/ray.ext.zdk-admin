@@ -626,3 +626,42 @@ export async function searchZendeskGroups(query: string, instance: ZendeskInstan
     throw error;
   }
 }
+
+export async function addTicketFieldOption(
+  ticketFieldId: number,
+  label: string,
+  tag: string,
+  instance: ZendeskInstance,
+): Promise<void> {
+  const url = `${getZendeskUrl(instance)}/ticket_fields/${ticketFieldId}/options.json`;
+  console.log("Zendesk Add Ticket Field Option URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({ custom_field_option: { name: label, value: tag } }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(
+        Toast.Style.Failure,
+        "Zendesk API Error",
+        `Failed to add ticket field option: ${response.status} - ${errorText}`,
+      );
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}

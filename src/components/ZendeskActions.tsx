@@ -12,6 +12,7 @@ import {
   ZendeskGroup,
 } from "../api/zendesk";
 import EditUserForm from "./EditUserForm";
+import AddTicketFieldOptionForm from "./AddTicketFieldOptionForm";
 
 interface ZendeskActionsProps {
   item:
@@ -149,6 +150,10 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-forms/edit/${ticketForm.id}`}
           />
+          <Action.OpenInBrowser
+            title="Open Ticket Form Conditions"
+            url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-forms/edit/${ticketForm.id}/conditions`}
+          />
         </>
       );
     } else if (searchType === "groups") {
@@ -174,6 +179,15 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
       const user = item as ZendeskUser;
       return (
         <Action.Push title="Edit User" icon={Icon.Pencil} target={<EditUserForm user={user} instance={instance} />} />
+      );
+    } else if (searchType === "ticket_fields") {
+      const ticketField = item as ZendeskTicketField;
+      return (
+        <Action.Push
+          title="Add New Option"
+          icon={Icon.Plus}
+          target={<AddTicketFieldOptionForm ticketField={ticketField} instance={instance} />}
+        />
       );
     }
     return null;
