@@ -23,6 +23,8 @@ import {
   ZendeskGroup,
   searchZendeskTickets,
   ZendeskTicket,
+  searchZendeskViews,
+  ZendeskView,
 } from "./api/zendesk";
 
 import { ZendeskActions } from "./components/ZendeskActions";
@@ -60,6 +62,7 @@ export default function SearchZendesk() {
     | ZendeskTicketForm[]
     | ZendeskGroup[]
     | ZendeskTicket[]
+    | ZendeskView[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState<
@@ -73,6 +76,7 @@ export default function SearchZendesk() {
     | "ticket_forms"
     | "groups"
     | "tickets"
+    | "views"
   >("tickets");
 
   useEffect(() => {
@@ -103,7 +107,8 @@ export default function SearchZendesk() {
         | ZendeskSupportAddress[]
         | ZendeskTicketForm[]
         | ZendeskGroup[]
-        | ZendeskTicket[];
+        | ZendeskTicket[]
+        | ZendeskView[] = [];
       if (searchType === "users") {
         searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
       } else if (searchType === "organizations") {
@@ -122,6 +127,8 @@ export default function SearchZendesk() {
         searchResults = await searchZendeskGroups(debouncedSearchText, currentInstance);
       } else if (searchType === "tickets") {
         searchResults = await searchZendeskTickets(debouncedSearchText, currentInstance);
+      } else if (searchType === "views") {
+        searchResults = await searchZendeskViews(debouncedSearchText, currentInstance);
       } else {
         searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
       }
@@ -153,7 +160,7 @@ export default function SearchZendesk() {
               : searchType === "macros"
                 ? "Search Zendesk macros by name or description"
                 : searchType === "ticket_fields"
-                  ? ""
+                  ? "Search ticket fields by title"
                   : searchType === "support_addresses"
                     ? "Search support addresses by email"
                     : searchType === "ticket_forms"
@@ -162,7 +169,9 @@ export default function SearchZendesk() {
                         ? "Search groups by name"
                         : searchType === "tickets"
                           ? "Search tickets by subject, description, etc."
-                          : "Search Zendesk triggers by name"
+                          : searchType === "views"
+                            ? "Search views by title"
+                            : "Search Zendesk triggers by name"
       }
       throttle
       searchBarAccessory={
@@ -179,7 +188,8 @@ export default function SearchZendesk() {
                 | "support_addresses"
                 | "ticket_forms"
                 | "groups"
-                | "tickets",
+                | "tickets"
+                | "views",
             )
           }
           tooltip="Select Search Type"
@@ -189,6 +199,7 @@ export default function SearchZendesk() {
             <List.Dropdown.Item title="Tickets" value="tickets" />
             <List.Dropdown.Item title="Users" value="users" />
             <List.Dropdown.Item title="Organizations" value="organizations" />
+            <List.Dropdown.Item title="Views" value="views" />
           </List.Dropdown.Section>
           <List.Dropdown.Section title="Admin">
             <List.Dropdown.Item title="Groups" value="groups" />
@@ -1000,7 +1011,7 @@ ${ticket.description}`}
               }
             />
           );
-        } else {
+        } else if (searchType === "triggers") {
           const trigger = item as unknown as ZendeskTrigger;
           return (
             <List.Item
@@ -1057,6 +1068,78 @@ ${ticket.description}`}
                 <ZendeskActions
                   item={trigger}
                   searchType="triggers"
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                />
+              }
+            />
+          );
+        } else if (searchType === "views") {
+          const view = item as ZendeskView;
+          return (
+            <List.Item
+              key={view.id}
+              title={view.title}
+              icon={undefined}
+              detail={
+                <List.Item.Detail
+                  metadata={
+                    <List.Item.Detail.Metadata>
+                      {currentInstance && (
+                        <>
+                          <List.Item.Detail.Metadata.TagList title="Instance">
+                            <List.Item.Detail.Metadata.TagList.Item
+                              text={currentInstance.subdomain}
+                              color={currentInstance.color || Color.Blue}
+                            />
+                          </List.Item.Detail.Metadata.TagList>
+                          <List.Item.Detail.Metadata.Separator />
+                        </>
+                      )}
+                      <List.Item.Detail.Metadata.Label title="Title" text={view.title} />
+                      <List.Item.Detail.Metadata.Label title="ID" text={view.id.toString()} />
+                      <List.Item.Detail.Metadata.TagList title="Active">
+                        <List.Item.Detail.Metadata.TagList.Item
+                          text={view.active ? "Active" : "Inactive"}
+                          color={view.active ? Color.Green : Color.Red}
+                        />
+                      </List.Item.Detail.Metadata.TagList>
+                      {view.created_at && (
+                        <List.Item.Detail.Metadata.Label
+                          title="Created At"
+                          text={new Date(view.created_at).toLocaleString()}
+                        />
+                      )}
+                      {view.updated_at && (
+                        <List.Item.Detail.Metadata.Label
+                          title="Updated At"
+                          text={new Date(view.updated_at).toLocaleString()}
+                        />
+                      )}
+                      <List.Item.Detail.Metadata.Separator />
+                      <List.Item.Detail.Metadata.Link
+                        title="Open Agent View"
+                        text="View in Agent Interface"
+                        target={`https://${currentInstance?.subdomain}.zendesk.com/agent/views/${view.id}`}
+                      />
+                      <List.Item.Detail.Metadata.Link
+                        title="Open Admin Edit View"
+                        text="Edit in Admin Interface"
+                        target={`https://${currentInstance?.subdomain}.zendesk.com/admin/objects-rules/rules/views/${view.id}`}
+                      />
+                      <List.Item.Detail.Metadata.Link
+                        title="Open Admin Views Page"
+                        text="All Views in Admin Interface"
+                        target={`https://${currentInstance?.subdomain}.zendesk.com/admin/objects-rules/rules/views`}
+                      />
+                    </List.Item.Detail.Metadata>
+                  }
+                />
+              }
+              actions={
+                <ZendeskActions
+                  item={view}
+                  searchType="views"
                   instance={currentInstance}
                   onInstanceChange={setCurrentInstance}
                 />

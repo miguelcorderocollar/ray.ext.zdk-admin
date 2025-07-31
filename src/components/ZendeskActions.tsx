@@ -11,6 +11,7 @@ import {
   ZendeskTicketForm,
   ZendeskGroup,
   ZendeskTicket,
+  ZendeskView,
 } from "../api/zendesk";
 import EditUserForm from "./EditUserForm";
 import AddTicketFieldOptionForm from "./AddTicketFieldOptionForm";
@@ -27,7 +28,8 @@ interface ZendeskActionsProps {
     | ZendeskSupportAddress
     | ZendeskTicketForm
     | ZendeskGroup
-    | ZendeskTicket;
+    | ZendeskTicket
+    | ZendeskView;
   searchType:
     | "users"
     | "organizations"
@@ -38,7 +40,8 @@ interface ZendeskActionsProps {
     | "support_addresses"
     | "ticket_forms"
     | "groups"
-    | "tickets";
+    | "tickets"
+    | "views";
   instance: ZendeskInstance | undefined;
   onInstanceChange: (instance: ZendeskInstance) => void;
 }
@@ -196,6 +199,28 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
           />
         </>
       );
+    } else if (searchType === "views") {
+      const view = item as ZendeskView;
+      return (
+        <>
+          <Action.OpenInBrowser
+            title="Open Agent View"
+            url={`https://${instance?.subdomain}.zendesk.com/agent/filters/${view.id}`}
+          />
+          <Action.OpenInBrowser
+            title="Open Admin Edit View"
+            url={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/views/${view.id}`}
+          />
+          <Action.OpenInBrowser
+            title="Open Admin Views Page"
+            url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/views`}
+          />
+          <Action.CopyToClipboard
+            title="Copy Agent View Link"
+            content={`https://${instance?.subdomain}.zendesk.com/agent/views/${view.id}`}
+          />
+        </>
+      );
     }
     return null;
   };
@@ -253,6 +278,9 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
     } else if (searchType === "tickets") {
       generalConfigUrl = `${generalConfigUrl}/agent/filters`;
       shortcutKey = "t";
+    } else if (searchType === "views") {
+      generalConfigUrl = `${generalConfigUrl}/admin/objects-rules/rules/views`;
+      shortcutKey = "v";
     }
 
     return (

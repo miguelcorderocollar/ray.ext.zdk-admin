@@ -7,6 +7,7 @@
     *   Allow saving searches.
     *   Display options/values/conditions, etc... on details for triggers, groups, fields, etc...
     *   Special rules: move [ARCHIVE] to bottom, or hide them more
+    * improve search for the once loaded to search on all relevant properties
 *   **Actions:**
     *   Add essential actions: edit, view tickets, open in Zendesk.
     *   Implement bulk actions (e.g., for users).

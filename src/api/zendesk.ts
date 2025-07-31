@@ -241,6 +241,19 @@ interface ZendeskTicketSearchResponse {
   count: number;
 }
 
+export interface ZendeskView {
+  id: number;
+  title: string;
+  active: boolean;
+  updated_at: string;
+  created_at: string;
+}
+
+interface ZendeskViewSearchResponse {
+  views: ZendeskView[];
+  count: number;
+}
+
 export function getZendeskAuthHeader(instance: ZendeskInstance): string {
   const credentials = `${instance.user}/token:${instance.api_key}`;
   return `Basic ${Buffer.from(credentials).toString("base64")}`;
@@ -721,6 +734,43 @@ export async function searchZendeskTickets(
 
     const data = (await response.json()) as ZendeskTicketSearchResponse;
     return data.results;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskViews(query: string, instance: ZendeskInstance): Promise<ZendeskView[]> {
+  const url = `${getZendeskUrl(instance)}/views.json?active=true`;
+  console.log("Zendesk Views Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(Toast.Style.Failure, "Zendesk API Error", `Failed to fetch views: ${response.status} - ${errorText}`);
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskViewSearchResponse;
+
+    if (query) {
+      return data.views.filter((view) => view.title.toLowerCase().includes(query.toLowerCase()));
+    }
+
+    return data.views;
   } catch (error) {
     showToast(
       Toast.Style.Failure,
