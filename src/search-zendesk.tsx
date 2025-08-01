@@ -83,6 +83,8 @@ export default function SearchZendesk() {
   const [dynamicContentLoaded, setDynamicContentLoaded] = useState(false);
   const [allSupportAddresses, setAllSupportAddresses] = useState<ZendeskSupportAddress[]>([]);
   const [supportAddressesLoaded, setSupportAddressesLoaded] = useState(false);
+  const [allGroups, setAllGroups] = useState<ZendeskGroup[]>([]);
+  const [groupsLoaded, setGroupsLoaded] = useState(false);
 
   useEffect(() => {
     if (searchType === "dynamic_content") {
@@ -119,10 +121,19 @@ export default function SearchZendesk() {
         );
         setResults(filteredResults);
       }
+    } else if (searchType === "groups") {
+      if (!groupsLoaded) {
+        performSearch();
+      } else {
+        const filteredResults = allGroups.filter((item) =>
+          item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+        );
+        setResults(filteredResults);
+      }
     } else {
       performSearch();
     }
-  }, [debouncedSearchText, searchType, currentInstance, dynamicContentLoaded, supportAddressesLoaded]);
+  }, [debouncedSearchText, searchType, currentInstance, dynamicContentLoaded, supportAddressesLoaded, groupsLoaded]);
 
   async function performSearch() {
     if (!currentInstance) {
@@ -202,6 +213,20 @@ export default function SearchZendesk() {
           );
           setResults(filteredResults);
         }
+      } else if (searchType === "groups") {
+        if (!groupsLoaded) {
+          setAllGroups([]);
+          const fetchedGroups = await searchZendeskGroups(currentInstance);
+          setAllGroups(fetchedGroups);
+          setResults(fetchedGroups);
+          setGroupsLoaded(true);
+          setIsLoading(false);
+        } else {
+          const filteredResults = allGroups.filter((item) =>
+            item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+          );
+          setResults(filteredResults);
+        }
       } else {
         let searchResults:
           | ZendeskUser[]
@@ -225,8 +250,6 @@ export default function SearchZendesk() {
           searchResults = await searchZendeskTicketFields(debouncedSearchText, currentInstance);
         } else if (searchType === "ticket_forms") {
           searchResults = await searchZendeskTicketForms(debouncedSearchText, currentInstance);
-        } else if (searchType === "groups") {
-          searchResults = await searchZendeskGroups(debouncedSearchText, currentInstance);
         } else if (searchType === "tickets") {
           searchResults = await searchZendeskTickets(debouncedSearchText, currentInstance);
         } else if (searchType === "views") {

@@ -216,6 +216,7 @@ export interface ZendeskGroup {
 
 interface ZendeskGroupSearchResponse {
   groups: ZendeskGroup[];
+  next_page: string | null;
 }
 
 export interface ZendeskTicket {
@@ -615,33 +616,36 @@ export async function searchZendeskTicketForms(query: string, instance: ZendeskI
   }
 }
 
-export async function searchZendeskGroups(query: string, instance: ZendeskInstance): Promise<ZendeskGroup[]> {
-  const url = `${getZendeskUrl(instance)}/groups.json`;
-  console.log("Zendesk Groups Search URL:", url);
+export async function searchZendeskGroups(instance: ZendeskInstance): Promise<ZendeskGroup[]> {
+  let allGroups: ZendeskGroup[] = [];
+  let url: string | null = `${getZendeskUrl(instance)}/groups.json?per_page=100`;
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
   };
 
   try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: headers,
-    });
+    while (url) {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: headers,
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      showToast(Toast.Style.Failure, "Zendesk API Error", `Failed to fetch groups: ${response.status} - ${errorText}`);
-      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        showToast(
+          Toast.Style.Failure,
+          "Zendesk API Error",
+          `Failed to fetch groups: ${response.status} - ${errorText}`,
+        );
+        throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      }
+
+      const data = (await response.json()) as ZendeskGroupSearchResponse;
+      allGroups = allGroups.concat(data.groups);
+      url = data.next_page;
     }
-
-    const data = (await response.json()) as ZendeskGroupSearchResponse;
-
-    if (query) {
-      return data.groups.filter((group) => group.name.toLowerCase().includes(query.toLowerCase()));
-    }
-
-    return data.groups;
+    return allGroups;
   } catch (error) {
     showToast(
       Toast.Style.Failure,
