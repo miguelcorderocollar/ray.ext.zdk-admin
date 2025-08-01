@@ -437,6 +437,7 @@ export async function searchZendeskDynamicContent(
 
   try {
     while (url) {
+      console.log("Zendesk Dynamic Content Search URL:", url);
       const response = await fetch(url, {
         method: "GET",
         headers: headers,
@@ -557,6 +558,7 @@ export async function searchZendeskSupportAddresses(
 
   try {
     while (url) {
+      console.log("Zendesk Support Addresses Search URL:", url);
       const response = await fetch(url, {
         method: "GET",
         headers: headers,
@@ -637,6 +639,7 @@ export async function searchZendeskGroups(instance: ZendeskInstance): Promise<Ze
 
   try {
     while (url) {
+      console.log("Zendesk Groups Search URL:", url);
       const response = await fetch(url, {
         method: "GET",
         headers: headers,
