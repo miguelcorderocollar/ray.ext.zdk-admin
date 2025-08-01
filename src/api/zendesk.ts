@@ -125,7 +125,7 @@ export interface ZendeskMacro {
   description: string | null;
 }
 
-interface ZendeskMacroSearchResponse {
+interface ZendeskMacroListResponse {
   macros: ZendeskMacro[];
 }
 
@@ -455,7 +455,9 @@ export async function searchZendeskDynamicContent(
 ("");
 
 export async function searchZendeskMacros(query: string, instance: ZendeskInstance): Promise<ZendeskMacro[]> {
-  const url = `${getZendeskUrl(instance)}/macros.json?active=true`;
+  const url = query
+    ? `${getZendeskUrl(instance)}/macros/search.json?query=${encodeURIComponent(query)}`
+    : `${getZendeskUrl(instance)}/macros.json?per_page=30`;
   console.log("Zendesk Macro Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
@@ -474,16 +476,7 @@ export async function searchZendeskMacros(query: string, instance: ZendeskInstan
       throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
     }
 
-    const data = (await response.json()) as ZendeskMacroSearchResponse;
-
-    if (query) {
-      return data.macros.filter(
-        (macro) =>
-          macro.title.toLowerCase().includes(query.toLowerCase()) ||
-          (macro.description && macro.description.toLowerCase().includes(query.toLowerCase())),
-      );
-    }
-
+    const data = (await response.json()) as ZendeskMacroListResponse;
     return data.macros;
   } catch (error) {
     showToast(

@@ -126,7 +126,21 @@ export default function SearchZendesk() {
           setAllDynamicContent([]);
           await searchZendeskDynamicContent(debouncedSearchText, currentInstance, (page) => {
             setAllDynamicContent((prev) => [...prev, ...page]);
-            setResults((prev) => [...prev, ...page] as (ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[] | ZendeskDynamicContent[] | ZendeskMacro[] | ZendeskTicketField[] | ZendeskSupportAddress[] | ZendeskTicketForm[] | ZendeskGroup[] | ZendeskTicket[] | ZendeskView[]));
+            setResults(
+              (prev) =>
+                [...prev, ...page] as
+                  | ZendeskUser[]
+                  | ZendeskOrganization[]
+                  | ZendeskTrigger[]
+                  | ZendeskDynamicContent[]
+                  | ZendeskMacro[]
+                  | ZendeskTicketField[]
+                  | ZendeskSupportAddress[]
+                  | ZendeskTicketForm[]
+                  | ZendeskGroup[]
+                  | ZendeskTicket[]
+                  | ZendeskView[],
+            );
           });
           setDynamicContentLoaded(true);
           setIsLoading(false);
