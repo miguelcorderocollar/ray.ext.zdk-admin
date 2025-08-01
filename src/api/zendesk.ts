@@ -341,7 +341,9 @@ export async function searchZendeskOrganizations(
 
 export async function searchZendeskTriggers(query: string, instance: ZendeskInstance): Promise<ZendeskTrigger[]> {
   const searchTerms = query;
-  const url = `${getZendeskUrl(instance)}/triggers/search.json?query=${encodeURIComponent(searchTerms)}`;
+  const url = searchTerms
+    ? `${getZendeskUrl(instance)}/triggers/search.json?query=${encodeURIComponent(searchTerms)}`
+    : `${getZendeskUrl(instance)}/triggers.json`;
   console.log("Zendesk Trigger Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),

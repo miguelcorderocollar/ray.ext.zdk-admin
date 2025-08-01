@@ -141,12 +141,6 @@ export default function SearchZendesk() {
       return;
     }
 
-    if (searchType === "triggers" && !debouncedSearchText) {
-      setResults([]);
-      setIsLoading(false);
-      return;
-    }
-
     setIsLoading(true);
     try {
       if (searchType === "dynamic_content") {
@@ -254,7 +248,7 @@ export default function SearchZendesk() {
           searchResults = await searchZendeskTickets(debouncedSearchText, currentInstance);
         } else if (searchType === "views") {
           searchResults = await searchZendeskViews(debouncedSearchText, currentInstance);
-        } else {
+        } else if (searchType === "triggers") {
           searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
         }
         setResults(searchResults);
@@ -344,8 +338,16 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : searchType === "tickets" ? "Tickets" : "Triggers"}`}
-          description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
+          title={
+            searchType === "triggers"
+              ? "No Triggers Found"
+              : `Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : searchType === "tickets" ? "Tickets" : "Triggers"}`
+          }
+          description={
+            searchType === "triggers"
+              ? "No triggers were returned from Zendesk."
+              : `Enter a name, email, or other keyword to find Zendesk ${searchType}.`
+          }
         />
       )}
       {(results || []).map((item) => {
