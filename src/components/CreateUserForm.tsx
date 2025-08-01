@@ -56,6 +56,7 @@ export default function CreateUserForm({ instance }: CreateUserFormProps) {
   return (
     <Form
       isLoading={isLoading}
+      navigationTitle={`Create User in ${instance?.name}`}
       actions={
         <ActionPanel>
           <Action.SubmitForm title="Create User" icon={Icon.AddPerson} onSubmit={handleSubmit} />
