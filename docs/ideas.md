@@ -64,3 +64,7 @@ These are more advanced concepts or features that could be considered for long-t
 ## Reminders for Development
 
 *   **Preferences for Logic:** Move special logic (e.g., separating groups by '.', skipping email verification for user creation) to preferences for user configuration.
+
+## TO DO
+
+*   **FIX SEARCH:** Some entities are not returning all, and we need to implement proper search + just initial results

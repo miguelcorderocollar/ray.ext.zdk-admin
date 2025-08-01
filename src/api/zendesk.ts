@@ -414,6 +414,7 @@ export async function searchZendeskDynamicContent(
   query: string,
   instance: ZendeskInstance,
 ): Promise<ZendeskDynamicContent[]> {
+  // TO DO, THIS IS NOT LOADING ALL DYNAMIC CONTENTS
   const url = `${getZendeskUrl(instance)}/dynamic_content/items.json`;
   console.log("Zendesk Dynamic Content Search URL:", url);
   const headers = {
@@ -721,7 +722,7 @@ export async function createUser(name: string, email: string, instance: ZendeskI
 
     if (!response.ok) {
       const errorText = await response.text();
-      let errorMessage = `Failed to create user: ${response.status} - ${errorText}`;
+      let errorMessage = `Failed to create user: ${response.status}`;
       try {
         const errorJson = JSON.parse(errorText);
         if (
@@ -730,14 +731,20 @@ export async function createUser(name: string, email: string, instance: ZendeskI
           errorJson.details.email[0] &&
           errorJson.details.email[0].error === "DuplicateValue"
         ) {
-          errorMessage = `Failed to create user: Email already exists.`;
+          errorMessage = errorJson.details.email[0].description || `Failed to create user: Email already exists.`;
+        } else if (errorJson.description) {
+          errorMessage = `Failed to create user: ${errorJson.description}`;
+        } else if (errorJson.error) {
+          errorMessage = `Failed to create user: ${errorJson.error}`;
+        } else {
+          errorMessage = `Failed to create user: An unexpected error occurred.`;
         }
       } catch (parseError) {
-        // If parsing fails, errorText is not JSON, so use the default message
         console.error("Failed to parse error response as JSON:", parseError);
+        errorMessage = `Failed to create user: An unexpected error occurred. Please check logs for details.`;
       }
       showToast(Toast.Style.Failure, "Zendesk API Error", errorMessage);
-      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      throw new Error(`Zendesk API Error: ${errorMessage}`);
     }
 
     const data = (await response.json()) as { user: ZendeskUser };
