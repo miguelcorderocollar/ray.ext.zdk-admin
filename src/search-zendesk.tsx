@@ -87,14 +87,17 @@ export default function SearchZendesk() {
   const [groupsLoaded, setGroupsLoaded] = useState(false);
 
   useEffect(() => {
+    setResults([]);
+    setSearchText("");
     if (searchType === "dynamic_content") {
       setDynamicContentLoaded(false);
       setAllDynamicContent([]);
-      setResults([]);
     } else if (searchType === "support_addresses") {
       setSupportAddressesLoaded(false);
       setAllSupportAddresses([]);
-      setResults([]);
+    } else if (searchType === "groups") {
+      setGroupsLoaded(false);
+      setAllGroups([]);
     }
   }, [currentInstance, searchType]);
 
@@ -267,7 +270,7 @@ export default function SearchZendesk() {
 
   return (
     <List
-      isShowingDetail
+            isShowingDetail
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
       searchBarPlaceholder={
