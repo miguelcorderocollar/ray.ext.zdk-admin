@@ -52,6 +52,7 @@ These features offer significant value but may require more complex implementati
 *   **Instance Overview:** Provide an overview of a Zendesk instance (API permitting).
 *   **Configuration Comparison:** Develop a tool to compare configurations between different environments (e.g., production and quality).
 *   **API Explorer/Finder:** Create a tool to explore and find Zendesk API endpoints.
+*   **License Usage per use-case:** Easily see usage of licenses (agents) per usecase.
 
 ## Future/Low Priority
 
