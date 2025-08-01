@@ -172,7 +172,12 @@ export default function EntityTicketsList({ entityType, entityId, entityEmail, i
           key={ticket.id}
           title={ticket.subject}
           icon={{ source: Icon.Circle, tintColor: getStatusColor(ticket.status) }}
-          accessories={[{ text: `#${ticket.id}` }]}
+          accessories={[
+            { text: `#${ticket.id}` },
+            { tag: { value: ticket.status, color: getStatusColor(ticket.status) } },
+            ...(ticket.priority ? [{ tag: { value: ticket.priority, color: getPriorityColor(ticket.priority) } }] : []),
+            { date: new Date(ticket.updated_at), tooltip: `Updated: ${new Date(ticket.updated_at).toLocaleString()}` },
+          ]}
           detail={
             <List.Item.Detail
               markdown={`## ${ticket.subject}

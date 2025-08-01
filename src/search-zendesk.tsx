@@ -368,6 +368,19 @@ export default function SearchZendesk() {
                   ? { source: user.photo.content_url, mask: Image.Mask.Circle }
                   : { source: "placeholder-user.svg", mask: Image.Mask.Circle }
               }
+              accessories={
+                user.role && (user.role === "agent" || user.role === "admin")
+                  ? [
+                      {
+                        icon: {
+                          source: Icon.Person,
+                          tintColor: user.role === "agent" ? Color.Green : Color.Red,
+                        },
+                        tooltip: user.role === "agent" ? "Agent" : "Admin",
+                      },
+                    ]
+                  : []
+              }
               detail={
                 <List.Item.Detail
                   metadata={
@@ -678,35 +691,59 @@ export default function SearchZendesk() {
           if (!ticketField) {
             return null; // Skip rendering if ticketField is null or undefined
           }
-          const fieldTypeMapping: { [key: string]: string } = {
-            text: "Text",
-            textarea: "Textarea",
-            checkbox: "Checkbox",
-            date: "Date",
-            integer: "Integer",
-            decimal: "Decimal",
-            regexp: "Regex",
-            partialcreditcard: "Partial Credit Card",
-            multiselect: "Multi-select",
-            tagger: "Dropdown",
-            lookup: "Lookup",
+          const fieldTypeMapping: { [key: string]: { label: string; color: string } } = {
+            text: { label: "Text", color: "#00796B" }, // Teal
+            textarea: { label: "Textarea", color: "Green" },
+            checkbox: { label: "Checkbox", color: "#FF9800" }, // Orange
+            date: { label: "Date", color: "Orange" },
+            integer: { label: "Integer", color: "#3F51B5" }, // Indigo
+            decimal: { label: "Decimal", color: "Red" },
+            regexp: { label: "Regex", color: "Yellow" },
+            partialcreditcard: { label: "Partial Credit Card", color: "PrimaryText" },
+            multiselect: { label: "Multi-select", color: "#9C27B0" }, // Purple
+            tagger: { label: "Dropdown", color: "#1E90FF" }, // Dodger Blue
+            lookup: { label: "Lookup", color: "#8A2BE2" }, // Blue Violet
+            group: { label: "System", color: "Gray" },
+            tickettype: { label: "System", color: "Gray" },
+            subject: { label: "System", color: "Gray" },
+            status: { label: "System", color: "Gray" },
+            description: { label: "System", color: "Gray" },
+            assignee: { label: "System", color: "Gray" },
+            priority: { label: "System", color: "Gray" },
           };
 
           return (
             <List.Item
               key={ticketField.id}
               title={ticketField.title}
-              accessories={[{ text: fieldTypeMapping[ticketField.type] || ticketField.type }]}
+              accessories={[
+                {
+                  tag: {
+                    value: fieldTypeMapping[ticketField.type]?.label || ticketField.type,
+                    color: fieldTypeMapping[ticketField.type]?.color || Color.PrimaryText,
+                  },
+                },
+              ]}
               detail={
                 <List.Item.Detail
                   metadata={
                     <List.Item.Detail.Metadata>
                       <List.Item.Detail.Metadata.Label title="Title" text={ticketField.title} />
                       <List.Item.Detail.Metadata.Label title="ID" text={ticketField.id.toString()} />
-                      <List.Item.Detail.Metadata.Label
-                        title="Type"
-                        text={fieldTypeMapping[ticketField.type || ""] || ticketField.type || "Unknown Type"}
-                      />
+                      <List.Item.Detail.Metadata.TagList title="Type">
+                        <List.Item.Detail.Metadata.TagList.Item
+                          text={
+                            fieldTypeMapping[ticketField.type]
+                              ? fieldTypeMapping[ticketField.type].label
+                              : ticketField.type || "Unknown Type"
+                          }
+                          color={
+                            fieldTypeMapping[ticketField.type]
+                              ? fieldTypeMapping[ticketField.type].color
+                              : Color.PrimaryText
+                          }
+                        />
+                      </List.Item.Detail.Metadata.TagList>
                       <List.Item.Detail.Metadata.TagList title="Active">
                         <List.Item.Detail.Metadata.TagList.Item
                           text={ticketField.active ? "Active" : "Inactive"}
@@ -1054,8 +1091,7 @@ export default function SearchZendesk() {
             <List.Item
               key={ticket.id}
               title={ticket.subject}
-              icon={{ source: Icon.Circle, tintColor: statusColor }}
-              accessories={[{ text: `#${ticket.id}` }]}
+              accessories={[{ tag: { value: `#${ticket.id}`, color: statusColor } }]}
               detail={
                 <List.Item.Detail
                   markdown={`## ${ticket.subject}
