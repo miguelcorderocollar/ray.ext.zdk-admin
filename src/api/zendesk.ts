@@ -181,6 +181,7 @@ export interface ZendeskSupportAddress {
 
 interface ZendeskSupportAddressSearchResponse {
   recipient_addresses: ZendeskSupportAddress[];
+  next_page: string | null;
 }
 
 export interface ZendeskTicketForm {
@@ -533,39 +534,36 @@ export async function searchZendeskTicketFields(
 }
 
 export async function searchZendeskSupportAddresses(
-  query: string,
   instance: ZendeskInstance,
-): Promise<ZendeskSupportAddress[]> {
-  const url = `${getZendeskUrl(instance)}/recipient_addresses.json`;
-  console.log("Zendesk Support Addresses Search URL:", url);
+  onPage: (addresses: ZendeskSupportAddress[]) => void,
+): Promise<void> {
+  let url: string | null = `${getZendeskUrl(instance)}/recipient_addresses.json`;
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
   };
 
   try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: headers,
-    });
+    while (url) {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: headers,
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      showToast(
-        Toast.Style.Failure,
-        "Zendesk API Error",
-        `Failed to fetch support addresses: ${response.status} - ${errorText}`,
-      );
-      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        showToast(
+          Toast.Style.Failure,
+          "Zendesk API Error",
+          `Failed to fetch support addresses: ${response.status} - ${errorText}`,
+        );
+        throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      }
+
+      const data = (await response.json()) as ZendeskSupportAddressSearchResponse;
+      onPage(data.recipient_addresses);
+      url = data.next_page;
     }
-
-    const data = (await response.json()) as ZendeskSupportAddressSearchResponse;
-
-    if (query) {
-      return data.recipient_addresses.filter((address) => address.email.toLowerCase().includes(query.toLowerCase()));
-    }
-
-    return data.recipient_addresses;
   } catch (error) {
     showToast(
       Toast.Style.Failure,

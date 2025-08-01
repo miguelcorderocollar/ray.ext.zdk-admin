@@ -81,11 +81,17 @@ export default function SearchZendesk() {
 
   const [allDynamicContent, setAllDynamicContent] = useState<ZendeskDynamicContent[]>([]);
   const [dynamicContentLoaded, setDynamicContentLoaded] = useState(false);
+  const [allSupportAddresses, setAllSupportAddresses] = useState<ZendeskSupportAddress[]>([]);
+  const [supportAddressesLoaded, setSupportAddressesLoaded] = useState(false);
 
   useEffect(() => {
     if (searchType === "dynamic_content") {
       setDynamicContentLoaded(false);
       setAllDynamicContent([]);
+      setResults([]);
+    } else if (searchType === "support_addresses") {
+      setSupportAddressesLoaded(false);
+      setAllSupportAddresses([]);
       setResults([]);
     }
   }, [currentInstance, searchType]);
@@ -102,10 +108,21 @@ export default function SearchZendesk() {
         );
         setResults(filteredResults);
       }
+    } else if (searchType === "support_addresses") {
+      if (!supportAddressesLoaded) {
+        performSearch();
+      } else {
+        const filteredResults = allSupportAddresses.filter(
+          (item) =>
+            item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
+            item.email.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+        );
+        setResults(filteredResults);
+      }
     } else {
       performSearch();
     }
-  }, [debouncedSearchText, searchType, currentInstance, dynamicContentLoaded]);
+  }, [debouncedSearchText, searchType, currentInstance, dynamicContentLoaded, supportAddressesLoaded]);
 
   async function performSearch() {
     if (!currentInstance) {
@@ -154,6 +171,37 @@ export default function SearchZendesk() {
           );
           setResults(filteredResults);
         }
+      } else if (searchType === "support_addresses") {
+        if (!supportAddressesLoaded) {
+          setAllSupportAddresses([]);
+          await searchZendeskSupportAddresses(currentInstance, (page) => {
+            setAllSupportAddresses((prev) => [...prev, ...page]);
+            setResults(
+              (prev) =>
+                [...prev, ...page] as
+                  | ZendeskUser[]
+                  | ZendeskOrganization[]
+                  | ZendeskTrigger[]
+                  | ZendeskDynamicContent[]
+                  | ZendeskMacro[]
+                  | ZendeskTicketField[]
+                  | ZendeskSupportAddress[]
+                  | ZendeskTicketForm[]
+                  | ZendeskGroup[]
+                  | ZendeskTicket[]
+                  | ZendeskView[],
+            );
+          });
+          setSupportAddressesLoaded(true);
+          setIsLoading(false);
+        } else {
+          const filteredResults = allSupportAddresses.filter(
+            (item) =>
+              item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
+              item.email.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+          );
+          setResults(filteredResults);
+        }
       } else {
         let searchResults:
           | ZendeskUser[]
@@ -175,8 +223,6 @@ export default function SearchZendesk() {
           searchResults = await searchZendeskMacros(debouncedSearchText, currentInstance);
         } else if (searchType === "ticket_fields") {
           searchResults = await searchZendeskTicketFields(debouncedSearchText, currentInstance);
-        } else if (searchType === "support_addresses") {
-          searchResults = await searchZendeskSupportAddresses(debouncedSearchText, currentInstance);
         } else if (searchType === "ticket_forms") {
           searchResults = await searchZendeskTicketForms(debouncedSearchText, currentInstance);
         } else if (searchType === "groups") {
@@ -219,7 +265,7 @@ export default function SearchZendesk() {
                 : searchType === "ticket_fields"
                   ? "Search ticket fields by title"
                   : searchType === "support_addresses"
-                    ? "Search support addresses by email"
+                    ? "Search support addresses by name or email"
                     : searchType === "ticket_forms"
                       ? "Search ticket forms by name"
                       : searchType === "groups"
