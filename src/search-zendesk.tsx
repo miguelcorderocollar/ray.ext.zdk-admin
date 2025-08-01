@@ -79,9 +79,33 @@ export default function SearchZendesk() {
     | "views"
   >("tickets");
 
+  const [allDynamicContent, setAllDynamicContent] = useState<ZendeskDynamicContent[]>([]);
+  const [dynamicContentLoaded, setDynamicContentLoaded] = useState(false);
+
   useEffect(() => {
-    performSearch();
-  }, [debouncedSearchText, searchType, currentInstance]);
+    if (searchType === "dynamic_content") {
+      setDynamicContentLoaded(false);
+      setAllDynamicContent([]);
+      setResults([]);
+    }
+  }, [currentInstance, searchType]);
+
+  useEffect(() => {
+    if (searchType === "dynamic_content") {
+      if (!dynamicContentLoaded) {
+        performSearch();
+      } else {
+        const filteredResults = allDynamicContent.filter(
+          (item) =>
+            item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
+            item.variants.some((variant) => variant.content.toLowerCase().includes(debouncedSearchText.toLowerCase())),
+        );
+        setResults(filteredResults);
+      }
+    } else {
+      performSearch();
+    }
+  }, [debouncedSearchText, searchType, currentInstance, dynamicContentLoaded]);
 
   async function performSearch() {
     if (!currentInstance) {
@@ -97,42 +121,62 @@ export default function SearchZendesk() {
 
     setIsLoading(true);
     try {
-      let searchResults:
-        | ZendeskUser[]
-        | ZendeskOrganization[]
-        | ZendeskTrigger[]
-        | ZendeskDynamicContent[]
-        | ZendeskMacro[]
-        | ZendeskTicketField[]
-        | ZendeskSupportAddress[]
-        | ZendeskTicketForm[]
-        | ZendeskGroup[]
-        | ZendeskTicket[]
-        | ZendeskView[] = [];
-      if (searchType === "users") {
-        searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
-      } else if (searchType === "organizations") {
-        searchResults = await searchZendeskOrganizations(debouncedSearchText, currentInstance);
-      } else if (searchType === "dynamic_content") {
-        searchResults = await searchZendeskDynamicContent(debouncedSearchText, currentInstance);
-      } else if (searchType === "macros") {
-        searchResults = await searchZendeskMacros(debouncedSearchText, currentInstance);
-      } else if (searchType === "ticket_fields") {
-        searchResults = await searchZendeskTicketFields(debouncedSearchText, currentInstance);
-      } else if (searchType === "support_addresses") {
-        searchResults = await searchZendeskSupportAddresses(debouncedSearchText, currentInstance);
-      } else if (searchType === "ticket_forms") {
-        searchResults = await searchZendeskTicketForms(debouncedSearchText, currentInstance);
-      } else if (searchType === "groups") {
-        searchResults = await searchZendeskGroups(debouncedSearchText, currentInstance);
-      } else if (searchType === "tickets") {
-        searchResults = await searchZendeskTickets(debouncedSearchText, currentInstance);
-      } else if (searchType === "views") {
-        searchResults = await searchZendeskViews(debouncedSearchText, currentInstance);
+      if (searchType === "dynamic_content") {
+        if (!dynamicContentLoaded) {
+          setAllDynamicContent([]);
+          await searchZendeskDynamicContent(debouncedSearchText, currentInstance, (page) => {
+            setAllDynamicContent((prev) => [...prev, ...page]);
+            setResults((prev) => [...prev, ...page] as (ZendeskUser[] | ZendeskOrganization[] | ZendeskTrigger[] | ZendeskDynamicContent[] | ZendeskMacro[] | ZendeskTicketField[] | ZendeskSupportAddress[] | ZendeskTicketForm[] | ZendeskGroup[] | ZendeskTicket[] | ZendeskView[]));
+          });
+          setDynamicContentLoaded(true);
+          setIsLoading(false);
+        } else {
+          const filteredResults = allDynamicContent.filter(
+            (item) =>
+              item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
+              item.variants.some((variant) =>
+                variant.content.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+              ),
+          );
+          setResults(filteredResults);
+        }
       } else {
-        searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
+        let searchResults:
+          | ZendeskUser[]
+          | ZendeskOrganization[]
+          | ZendeskTrigger[]
+          | ZendeskDynamicContent[]
+          | ZendeskMacro[]
+          | ZendeskTicketField[]
+          | ZendeskSupportAddress[]
+          | ZendeskTicketForm[]
+          | ZendeskGroup[]
+          | ZendeskTicket[]
+          | ZendeskView[] = [];
+        if (searchType === "users") {
+          searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
+        } else if (searchType === "organizations") {
+          searchResults = await searchZendeskOrganizations(debouncedSearchText, currentInstance);
+        } else if (searchType === "macros") {
+          searchResults = await searchZendeskMacros(debouncedSearchText, currentInstance);
+        } else if (searchType === "ticket_fields") {
+          searchResults = await searchZendeskTicketFields(debouncedSearchText, currentInstance);
+        } else if (searchType === "support_addresses") {
+          searchResults = await searchZendeskSupportAddresses(debouncedSearchText, currentInstance);
+        } else if (searchType === "ticket_forms") {
+          searchResults = await searchZendeskTicketForms(debouncedSearchText, currentInstance);
+        } else if (searchType === "groups") {
+          searchResults = await searchZendeskGroups(debouncedSearchText, currentInstance);
+        } else if (searchType === "tickets") {
+          searchResults = await searchZendeskTickets(debouncedSearchText, currentInstance);
+        } else if (searchType === "views") {
+          searchResults = await searchZendeskViews(debouncedSearchText, currentInstance);
+        } else {
+          searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
+        }
+        setResults(searchResults);
+        setIsLoading(false);
       }
-      setResults(searchResults);
     } catch (error: unknown) {
       let errorMessage = "An unknown error occurred.";
       if (error instanceof Error) {
@@ -140,7 +184,6 @@ export default function SearchZendesk() {
       }
       showToast(Toast.Style.Failure, "Search Failed", errorMessage);
       setResults([]);
-    } finally {
       setIsLoading(false);
     }
   }

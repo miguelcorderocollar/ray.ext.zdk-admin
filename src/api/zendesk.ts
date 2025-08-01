@@ -109,8 +109,9 @@ export interface ZendeskDynamicContentVariant {
   updated_at: string;
 }
 
-interface ZendeskDynamicContentSearchResponse {
+interface ZendeskDynamicContentListResponse {
   items: ZendeskDynamicContent[];
+  next_page: string | null;
 }
 
 export interface ZendeskMacro {
@@ -413,42 +414,35 @@ export async function updateUser(
 export async function searchZendeskDynamicContent(
   query: string,
   instance: ZendeskInstance,
-): Promise<ZendeskDynamicContent[]> {
-  // TO DO, THIS IS NOT LOADING ALL DYNAMIC CONTENTS
-  const url = `${getZendeskUrl(instance)}/dynamic_content/items.json`;
-  console.log("Zendesk Dynamic Content Search URL:", url);
+  onPage: (items: ZendeskDynamicContent[]) => void,
+): Promise<void> {
+  let url: string | null = `${getZendeskUrl(instance)}/dynamic_content/items.json`;
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
   };
 
   try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: headers,
-    });
+    while (url) {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: headers,
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      showToast(
-        Toast.Style.Failure,
-        "Zendesk API Error",
-        `Failed to fetch dynamic content: ${response.status} - ${errorText}`,
-      );
-      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        showToast(
+          Toast.Style.Failure,
+          "Zendesk API Error",
+          `Failed to fetch dynamic content: ${response.status} - ${errorText}`,
+        );
+        throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      }
+
+      const data = (await response.json()) as ZendeskDynamicContentListResponse;
+      onPage(data.items);
+      url = data.next_page;
     }
-
-    const data = (await response.json()) as ZendeskDynamicContentSearchResponse;
-
-    if (query) {
-      return data.items.filter(
-        (item) =>
-          item.name.toLowerCase().includes(query.toLowerCase()) ||
-          item.variants.some((variant) => variant.content.toLowerCase().includes(query.toLowerCase())),
-      );
-    }
-
-    return data.items;
   } catch (error) {
     showToast(
       Toast.Style.Failure,
@@ -458,6 +452,7 @@ export async function searchZendeskDynamicContent(
     throw error;
   }
 }
+("");
 
 export async function searchZendeskMacros(query: string, instance: ZendeskInstance): Promise<ZendeskMacro[]> {
   const url = `${getZendeskUrl(instance)}/macros.json?active=true`;
