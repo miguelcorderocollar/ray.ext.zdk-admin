@@ -51,12 +51,23 @@ interface ZendeskActionsProps {
 export function ZendeskActions({ item, searchType, instance, onInstanceChange }: ZendeskActionsProps) {
   const allInstances = getZendeskInstances();
 
-  const renderViewTicketsAction = (entityType: any, entityId?: string, entityEmail?: string) => {
+  const renderViewTicketsAction = (
+    entityType: "user" | "organization" | "group" | "recipient" | "form",
+    entityId?: string,
+    entityEmail?: string,
+  ) => {
     return (
       <Action.Push
         title={`View ${entityType.charAt(0).toUpperCase() + entityType.slice(1)}'s Tickets`}
         icon={Icon.Ticket}
-        target={<EntityTicketsList entityType={entityType} entityId={entityId} entityEmail={entityEmail} instance={instance} />}
+        target={
+          <EntityTicketsList
+            entityType={entityType}
+            entityId={entityId}
+            entityEmail={entityEmail}
+            instance={instance}
+          />
+        }
         shortcut={{ modifiers: ["cmd"], key: "t" }}
       />
     );
@@ -75,7 +86,6 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
             title="Copy Link"
             content={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
           />
-          
         </>
       );
     } else if (searchType === "organizations") {
@@ -232,7 +242,7 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
     return null;
   };
 
-  const renderUserActions = () => {
+  const renderEntityActions = () => {
     if (searchType === "users") {
       const user = item as ZendeskUser;
       return (
@@ -251,54 +261,18 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
           target={<AddTicketFieldOptionForm ticketField={ticketField} instance={instance} />}
         />
       );
-    }
-    return null;
-  };
-
-  const renderOrganizationActions = () => {
-    if (searchType === "organizations") {
+    } else if (searchType === "organizations") {
       const organization = item as ZendeskOrganization;
-      return (
-        <>
-          {renderViewTicketsAction("organization", organization.id.toString())}
-        </>
-      );
-    }
-    return null;
-  };
-
-  const renderSupportAddressActions = () => {
-    if (searchType === "support_addresses") {
+      return <>{renderViewTicketsAction("organization", organization.id.toString())}</>;
+    } else if (searchType === "support_addresses") {
       const supportAddress = item as ZendeskSupportAddress;
-      return (
-        <>
-          {renderViewTicketsAction("recipient", undefined, supportAddress.email)}
-        </>
-      );
-    }
-    return null;
-  };
-
-  const renderTicketFormActions = () => {
-    if (searchType === "ticket_forms") {
+      return <>{renderViewTicketsAction("recipient", undefined, supportAddress.email)}</>;
+    } else if (searchType === "ticket_forms") {
       const ticketForm = item as ZendeskTicketForm;
-      return (
-        <>
-          {renderViewTicketsAction("form", ticketForm.id.toString())}
-        </>
-      );
-    }
-    return null;
-  };
-
-  const renderGroupActions = () => {
-    if (searchType === "groups") {
+      return <>{renderViewTicketsAction("form", ticketForm.id.toString())}</>;
+    } else if (searchType === "groups") {
       const group = item as ZendeskGroup;
-      return (
-        <>
-          {renderViewTicketsAction("group", group.id.toString())}
-        </>
-      );
+      return <>{renderViewTicketsAction("group", group.id.toString())}</>;
     }
     return null;
   };
@@ -366,11 +340,9 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
   return (
     <ActionPanel>
       <ActionPanel.Section title="Open">{renderOpenActions()}</ActionPanel.Section>
-      {renderUserActions() && <ActionPanel.Section title="User Actions">{renderUserActions()}</ActionPanel.Section>}
-      {renderOrganizationActions() && <ActionPanel.Section title="Organization Actions">{renderOrganizationActions()}</ActionPanel.Section>}
-      {renderSupportAddressActions() && <ActionPanel.Section title="Support Address Actions">{renderSupportAddressActions()}</ActionPanel.Section>}
-      {renderTicketFormActions() && <ActionPanel.Section title="Ticket Form Actions">{renderTicketFormActions()}</ActionPanel.Section>}
-      {renderGroupActions() && <ActionPanel.Section title="Group Actions">{renderGroupActions()}</ActionPanel.Section>}
+      {renderEntityActions() && (
+        <ActionPanel.Section title="Entity Actions">{renderEntityActions()}</ActionPanel.Section>
+      )}
       <ActionPanel.Section title="General">{renderGeneralActions()}</ActionPanel.Section>
     </ActionPanel>
   );
