@@ -270,7 +270,7 @@ export default function SearchZendesk() {
 
   return (
     <List
-            isShowingDetail
+      isShowingDetail
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
       searchBarPlaceholder={

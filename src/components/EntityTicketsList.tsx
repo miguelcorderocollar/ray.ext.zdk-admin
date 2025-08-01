@@ -21,14 +21,16 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-interface UserTicketsListProps {
-  userEmail: string;
+interface EntityTicketsListProps {
+  entityType: "user" | "group" | "organization" | "brand" | "form" | "recipient";
+  entityId?: string;
+  entityEmail?: string;
   instance: ZendeskInstance | undefined;
 }
 
 type SortOrder = "created_at_desc" | "created_at_asc" | "updated_at_desc" | "updated_at_asc" | "status" | "priority";
 
-export default function UserTicketsList({ userEmail, instance }: UserTicketsListProps) {
+export default function EntityTicketsList({ entityType, entityId, entityEmail, instance }: EntityTicketsListProps) {
   const [searchText, setSearchText] = useState("");
   const debouncedSearchText = useDebounce(searchText, 500);
   const [tickets, setTickets] = useState<ZendeskTicket[]>([]);
@@ -36,12 +38,12 @@ export default function UserTicketsList({ userEmail, instance }: UserTicketsList
   const [sortOrder, setSortOrder] = useState<SortOrder>("updated_at_desc");
 
   useEffect(() => {
-    if (instance && userEmail) {
+    if (instance && (entityId || entityEmail)) {
       performSearch();
     } else {
       setIsLoading(false);
     }
-  }, [debouncedSearchText, sortOrder, instance, userEmail]);
+  }, [debouncedSearchText, sortOrder, instance, entityId, entityEmail]);
 
   async function performSearch() {
     if (!instance) {
@@ -52,7 +54,14 @@ export default function UserTicketsList({ userEmail, instance }: UserTicketsList
 
     setIsLoading(true);
     try {
-      const fetchedTickets = await searchZendeskTickets(debouncedSearchText, instance, userEmail);
+      const fetchedTickets = await searchZendeskTickets(debouncedSearchText, instance, {
+        userEmail: entityType === "user" ? entityEmail : undefined,
+        groupId: entityType === "group" ? entityId : undefined,
+        organizationId: entityType === "organization" ? entityId : undefined,
+        brandId: entityType === "brand" ? entityId : undefined,
+        formId: entityType === "form" ? entityId : undefined,
+        recipient: entityType === "recipient" ? entityEmail : undefined,
+      });
       const sortedTickets = sortTickets(fetchedTickets, sortOrder);
       setTickets(sortedTickets);
     } catch (error: unknown) {
@@ -129,7 +138,7 @@ export default function UserTicketsList({ userEmail, instance }: UserTicketsList
     <List
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
-      searchBarPlaceholder={`Search tickets for ${userEmail}...`}
+      searchBarPlaceholder={`Search tickets for ${entityEmail || entityId || entityType}...`}
       throttle
       isShowingDetail
       searchBarAccessory={
@@ -151,8 +160,8 @@ export default function UserTicketsList({ userEmail, instance }: UserTicketsList
     >
       {tickets.length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title="No tickets found for this user."
-          description="Try a different search query or check the user's email."
+          title="No tickets found for this entity."
+          description="Try a different search query or check the entity's details."
         />
       )}
       {tickets.length === 0 && !isLoading && searchText.length > 0 && (

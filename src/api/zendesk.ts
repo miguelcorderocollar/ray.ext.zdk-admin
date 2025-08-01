@@ -754,11 +754,33 @@ export async function createUser(name: string, email: string, instance: ZendeskI
 export async function searchZendeskTickets(
   query: string,
   instance: ZendeskInstance,
-  requesterEmail?: string,
+  filters?: {
+    userEmail?: string;
+    groupId?: string;
+    organizationId?: string;
+    brandId?: string;
+    formId?: string;
+    recipient?: string;
+  },
 ): Promise<ZendeskTicket[]> {
   let searchTerms = query ? `type:ticket ${query}` : "type:ticket";
-  if (requesterEmail) {
-    searchTerms += ` requester:${requesterEmail}`;
+  if (filters?.userEmail) {
+    searchTerms += ` requester:${filters.userEmail}`;
+  }
+  if (filters?.groupId) {
+    searchTerms += ` group:${filters.groupId}`;
+  }
+  if (filters?.organizationId) {
+    searchTerms += ` organization:${filters.organizationId}`;
+  }
+  if (filters?.brandId) {
+    searchTerms += ` brand:${filters.brandId}`;
+  }
+  if (filters?.formId) {
+    searchTerms += ` form:${filters.formId}`;
+  }
+  if (filters?.recipient) {
+    searchTerms += ` recipient:${filters.recipient}`;
   }
   const url = `${getZendeskUrl(instance)}/search.json?query=${encodeURIComponent(searchTerms)}&per_page=30`;
   console.log("Zendesk Ticket Search URL:", url);

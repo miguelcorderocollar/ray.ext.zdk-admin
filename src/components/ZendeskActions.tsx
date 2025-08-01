@@ -16,7 +16,7 @@ import {
 import EditUserForm from "./EditUserForm";
 import AddTicketFieldOptionForm from "./AddTicketFieldOptionForm";
 import CreateUserForm from "./CreateUserForm";
-import UserTicketsList from "./UserTicketsList";
+import EntityTicketsList from "./EntityTicketsList";
 
 interface ZendeskActionsProps {
   item:
@@ -45,6 +45,7 @@ interface ZendeskActionsProps {
     | "views";
   instance: ZendeskInstance | undefined;
   onInstanceChange: (instance: ZendeskInstance) => void;
+  children?: React.ReactNode;
 }
 
 export function ZendeskActions({ item, searchType, instance, onInstanceChange }: ZendeskActionsProps) {
@@ -67,7 +68,7 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
             <Action.Push
               title="View User's Tickets"
               icon={Icon.Ticket}
-              target={<UserTicketsList userEmail={user.email} instance={instance} />}
+              target={<EntityTicketsList entityType="user" entityEmail={user.email} instance={instance} />}
               shortcut={{ modifiers: ["cmd"], key: "t" }}
             />
           )}
@@ -84,6 +85,14 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
           <Action.CopyToClipboard
             title="Copy Link"
             content={`https://${instance?.subdomain}.zendesk.com/agent/organizations/${organization.id}`}
+          />
+          <Action.Push
+            title="View Organization's Tickets"
+            icon={Icon.Ticket}
+            target={
+              <EntityTicketsList entityType="organization" entityId={organization.id.toString()} instance={instance} />
+            }
+            shortcut={{ modifiers: ["cmd"], key: "t" }}
           />
         </>
       );
@@ -152,6 +161,12 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
       return (
         <>
           <Action.CopyToClipboard title="Copy Email to Clipboard" content={supportAddress.email} />
+          <Action.Push
+            title="View Support Address's Tickets"
+            icon={Icon.Ticket}
+            target={<EntityTicketsList entityType="recipient" entityEmail={supportAddress.email} instance={instance} />}
+            shortcut={{ modifiers: ["cmd"], key: "t" }}
+          />
         </>
       );
     } else if (searchType === "ticket_forms") {
@@ -170,6 +185,12 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
             title="Open Ticket Form Conditions"
             url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-forms/edit/${ticketForm.id}/conditions`}
           />
+          <Action.Push
+            title="View Tickets with This Form"
+            icon={Icon.Ticket}
+            target={<EntityTicketsList entityType="form" entityId={ticketForm.id.toString()} instance={instance} />}
+            shortcut={{ modifiers: ["cmd"], key: "t" }}
+          />
         </>
       );
     } else if (searchType === "groups") {
@@ -183,6 +204,12 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/admin/people/groups/${group.id}`}
+          />
+          <Action.Push
+            title="View Group's Tickets"
+            icon={Icon.Ticket}
+            target={<EntityTicketsList entityType="group" entityId={group.id.toString()} instance={instance} />}
+            shortcut={{ modifiers: ["cmd"], key: "t" }}
           />
         </>
       );
