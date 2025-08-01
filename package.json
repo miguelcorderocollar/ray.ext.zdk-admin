@@ -1,9 +1,9 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "zendesk-search",
+  "name": "zendesk-admin",
   "version": "0.1.0",
-  "title": "Zendesk Search",
-  "description": "Search for users, organizations, and triggers in Zendesk.",
+  "title": "Zendesk Admin",
+  "description": "Perform Zendesk Admin functions and access quickly any entity in Zendesk from Raycast.",
   "icon": "icon.png",
   "author": "gemini",
   "license": "MIT",
