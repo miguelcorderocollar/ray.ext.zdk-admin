@@ -1,6 +1,8 @@
 import { showToast, Toast } from "@raycast/api";
 import { ZendeskInstance } from "../utils/preferences";
 
+export type { ZendeskInstance };
+
 export interface ZendeskUser {
   id: number;
   name: string;
@@ -153,9 +155,16 @@ export interface ZendeskTicketField {
   removable: boolean;
   agent_description: string | null;
   system_field_options: unknown[];
-  custom_field_options: unknown[];
+  custom_field_options?: ZendeskCustomFieldOption[];
   sub_type_id: number | null;
   permission_group_id: number | null;
+}
+
+export interface ZendeskCustomFieldOption {
+  id: number;
+  name: string;
+  value: string | null;
+  default: boolean;
 }
 
 interface ZendeskTicketFieldSearchResponse {

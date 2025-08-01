@@ -675,6 +675,9 @@ export default function SearchZendesk() {
           );
         } else if (searchType === "ticket_fields") {
           const ticketField = item as ZendeskTicketField;
+          if (!ticketField) {
+            return null; // Skip rendering if ticketField is null or undefined
+          }
           const fieldTypeMapping: { [key: string]: string } = {
             text: "Text",
             textarea: "Textarea",
@@ -702,7 +705,7 @@ export default function SearchZendesk() {
                       <List.Item.Detail.Metadata.Label title="ID" text={ticketField.id.toString()} />
                       <List.Item.Detail.Metadata.Label
                         title="Type"
-                        text={fieldTypeMapping[ticketField.type] || ticketField.type}
+                        text={fieldTypeMapping[ticketField.type || ""] || ticketField.type || "Unknown Type"}
                       />
                       <List.Item.Detail.Metadata.TagList title="Active">
                         <List.Item.Detail.Metadata.TagList.Item
@@ -1086,15 +1089,14 @@ ${ticket.description}`}
                       />
                       <List.Item.Detail.Metadata.Separator />
                       <List.Item.Detail.Metadata.TagList title="Custom Fields">
-                        {ticket.custom_fields?.map(
-                          (field) =>
-                            field.value && (
-                              <List.Item.Detail.Metadata.TagList.Item
-                                key={field.id}
-                                text={`${field.id}: ${field.value}`}
-                              />
-                            ),
-                        )}
+                        {ticket.custom_fields
+                          ?.filter((field) => field && field.value) // Add null check for field
+                          ?.map((field) => (
+                            <List.Item.Detail.Metadata.TagList.Item
+                              key={field.id}
+                              text={`${field.id}: ${field.value}`}
+                            />
+                          ))}
                       </List.Item.Detail.Metadata.TagList>
                       <List.Item.Detail.Metadata.Separator />
                       {ticket.external_id && (

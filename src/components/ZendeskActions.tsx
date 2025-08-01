@@ -15,6 +15,7 @@ import {
 } from "../api/zendesk";
 import EditUserForm from "./EditUserForm";
 import AddTicketFieldOptionForm from "./AddTicketFieldOptionForm";
+import TicketFieldOptionsList from "./TicketFieldOptionsList";
 import CreateUserForm from "./CreateUserForm";
 import EntityTicketsList from "./EntityTicketsList";
 
@@ -153,7 +154,7 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
       return (
         <>
           <Action.OpenInBrowser
-            title="Open Ticket Fields"
+            title="Open Ticket Field"
             url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-fields/${ticketField.id}`}
           />
           <Action.CopyToClipboard
@@ -254,13 +255,23 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
       );
     } else if (searchType === "ticket_fields") {
       const ticketField = item as ZendeskTicketField;
-      return (
-        <Action.Push
-          title="Add New Option"
-          icon={Icon.Plus}
-          target={<AddTicketFieldOptionForm ticketField={ticketField} instance={instance} />}
-        />
-      );
+      if (ticketField.type === "multiselect" || ticketField.type === "tagger") {
+        return (
+          <>
+            <Action.Push
+              title="Add New Option"
+              icon={Icon.Plus}
+              target={<AddTicketFieldOptionForm ticketField={ticketField} instance={instance} />}
+            />
+            <Action.Push
+              title="View Options"
+              icon={Icon.List}
+              target={<TicketFieldOptionsList ticketField={ticketField} instance={instance} />}
+            />
+          </>
+        );
+      }
+      return null;
     } else if (searchType === "organizations") {
       const organization = item as ZendeskOrganization;
       return <>{renderViewTicketsAction("organization", organization.id.toString())}</>;
