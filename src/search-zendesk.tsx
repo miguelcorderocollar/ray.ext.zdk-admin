@@ -564,7 +564,7 @@ export default function SearchZendesk() {
           const nameParts = (dynamicContent.name ?? "").split("::");
           const title = nameParts?.length > 1 ? nameParts[nameParts.length - 1] : dynamicContent.name;
           const tags = nameParts?.length > 1 ? nameParts.slice(0, nameParts.length - 1) : [];
-          const defaultVariant = dynamicContent.variants?.find((v) => v.id === dynamicContent.default_locale_id);
+          const defaultVariant = dynamicContent.variants?.find((v) => v.default === true);
 
           return (
             <List.Item
@@ -577,6 +577,11 @@ export default function SearchZendesk() {
               }
               detail={
                 <List.Item.Detail
+                  markdown={
+                    defaultVariant
+                      ? `## ${title}\n\n${defaultVariant.content.replace(/\r\n|\r|\n/g, "\n")}`
+                      : `## ${title}\n\nNo default variant content available.`
+                  }
                   metadata={
                     <List.Item.Detail.Metadata>
                       {currentInstance && (
@@ -601,9 +606,6 @@ export default function SearchZendesk() {
                         title="Updated At"
                         text={new Date(dynamicContent.updated_at).toLocaleString()}
                       />
-                      {defaultVariant && (
-                        <List.Item.Detail.Metadata.Label title="Content" text={defaultVariant.content} />
-                      )}
                       <List.Item.Detail.Metadata.TagList title="Locales">
                         {dynamicContent.variants?.map((variant) => (
                           <List.Item.Detail.Metadata.TagList.Item key={variant.id} text={`${variant.locale_id}`} />
