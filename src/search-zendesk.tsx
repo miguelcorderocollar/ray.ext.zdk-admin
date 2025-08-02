@@ -383,6 +383,18 @@ export default function SearchZendesk() {
                     key={trigger.id}
                     title={trigger.title}
                     icon={undefined}
+                    accessories={
+                      !trigger.active
+                        ? [
+                            {
+                              icon: {
+                                source: Icon.CircleDisabled,
+                              },
+                              tooltip: "Inactive",
+                            },
+                          ]
+                        : []
+                    }
                     detail={
                       <List.Item.Detail
                         metadata={
@@ -724,11 +736,21 @@ export default function SearchZendesk() {
                 <List.Item
                   key={macro.id}
                   title={title}
-                  accessories={
-                    tags.length > 2
+                  accessories={[
+                    ...(tags.length > 2
                       ? [...tags.slice(0, 2).map((tag) => ({ text: tag })), { text: "..." }]
-                      : tags.map((tag) => ({ text: tag }))
-                  }
+                      : tags.map((tag) => ({ text: tag }))),
+                    ...(!macro.active
+                      ? [
+                          {
+                            icon: {
+                              source: Icon.CircleDisabled,
+                            },
+                            tooltip: "Inactive",
+                          },
+                        ]
+                      : []),
+                  ]}
                   detail={
                     <List.Item.Detail
                       metadata={
@@ -814,6 +836,16 @@ export default function SearchZendesk() {
                         color: fieldTypeMapping[ticketField.type]?.color || Color.PrimaryText,
                       },
                     },
+                    ...(!ticketField.active
+                      ? [
+                          {
+                            icon: {
+                              source: Icon.CircleDisabled,
+                            },
+                            tooltip: "Inactive",
+                          },
+                        ]
+                      : []),
                   ]}
                   detail={
                     <List.Item.Detail
@@ -1009,6 +1041,18 @@ export default function SearchZendesk() {
                 <List.Item
                   key={ticketForm.id}
                   title={ticketForm.name}
+                  accessories={
+                    !ticketForm.active
+                      ? [
+                          {
+                            icon: {
+                              source: Icon.CircleDisabled,
+                            },
+                            tooltip: "Inactive",
+                          },
+                        ]
+                      : []
+                  }
                   detail={
                     <List.Item.Detail
                       metadata={
@@ -1156,6 +1200,18 @@ export default function SearchZendesk() {
                   key={view.id}
                   title={view.title}
                   icon={undefined}
+                  accessories={
+                    !view.active
+                      ? [
+                          {
+                            icon: {
+                              source: Icon.CircleDisabled,
+                            },
+                            tooltip: "Inactive",
+                          },
+                        ]
+                      : []
+                  }
                   detail={
                     <List.Item.Detail
                       metadata={
