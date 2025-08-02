@@ -15,6 +15,8 @@ These are features that are highly useful and relatively straightforward to impl
 *   **Search Scope:** Improve search for already loaded items to search across all relevant properties.
 *   **Archived Items:** Implement special rules to move `[ARCHIVE]` items to the bottom of search results or hide them.
 *   **Global Search:** Add a global search feature that queries all supported Zendesk APIs simultaneously, so users do not need to select a specific search type. Results from users, organizations, tickets, triggers, etc. should be shown together, grouped or labeled by type, with clear visual distinction. This would streamline the search experience and make it easier to find any Zendesk object from a single entry point.
+*   **Toggle Details Metadata:** Add a feature to enable or disable the details metadata section in the search results. When disabled, show a simplified view with fewer accessories; when enabled, display the full metadata and all available details for each Zendesk object. This toggle should be easily accessible (e.g., via a command, dropdown, or settings panel) and persist the user's preference across sessions.
+
 
 ### Essential Actions
 *   **Basic Actions:** Ensure all essential actions are available: edit, view tickets, and open in Zendesk for relevant items.
