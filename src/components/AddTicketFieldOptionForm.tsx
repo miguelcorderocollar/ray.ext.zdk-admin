@@ -29,8 +29,8 @@ export default function AddTicketFieldOptionForm({ ticketField, instance }: AddT
     <Form
       actions={
         <ActionPanel>
-          <Action.SubmitForm 
-            title="Add Option" 
+          <Action.SubmitForm
+            title="Add Option"
             onSubmit={handleSubmit}
             shortcut={{
               macOS: { modifiers: ["cmd"], key: "enter" },

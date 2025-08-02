@@ -144,8 +144,8 @@ export function ZendeskActions({
             }}
           />
           {defaultVariant && (
-            <Action.CopyToClipboard 
-              title="Copy Content to Clipboard" 
+            <Action.CopyToClipboard
+              title="Copy Content to Clipboard"
               content={defaultVariant.content}
               shortcut={Keyboard.Shortcut.Common.Copy}
             />
@@ -213,8 +213,8 @@ export function ZendeskActions({
       const supportAddress = item as ZendeskSupportAddress;
       return (
         <>
-          <Action.CopyToClipboard 
-            title="Copy Email to Clipboard" 
+          <Action.CopyToClipboard
+            title="Copy Email to Clipboard"
             content={supportAddress.email}
             shortcut={Keyboard.Shortcut.Common.Copy}
           />
@@ -323,15 +323,15 @@ export function ZendeskActions({
       const user = item as ZendeskUser;
       return (
         <>
-          <Action.Push 
-            title="Edit User" 
-            icon={Icon.Pencil} 
+          <Action.Push
+            title="Edit User"
+            icon={Icon.Pencil}
             target={<EditUserForm user={user} instance={instance} />}
             shortcut={Keyboard.Shortcut.Common.Edit}
           />
-          <Action.Push 
-            title="Create User" 
-            icon={Icon.Plus} 
+          <Action.Push
+            title="Create User"
+            icon={Icon.Plus}
             target={<CreateUserForm instance={instance} />}
             shortcut={Keyboard.Shortcut.Common.New}
           />
@@ -424,10 +424,14 @@ export function ZendeskActions({
         key="general-config"
         title="Open General Configuration"
         url={generalConfigUrl}
-        shortcut={shortcutKey ? {
-          macOS: { modifiers: ["cmd", "shift"], key: shortcutKey },
-          windows: { modifiers: ["ctrl", "shift"], key: shortcutKey },
-        } : undefined}
+        shortcut={
+          shortcutKey
+            ? {
+                macOS: { modifiers: ["cmd", "shift"], key: shortcutKey },
+                windows: { modifiers: ["ctrl", "shift"], key: shortcutKey },
+              }
+            : undefined
+        }
       />,
     );
 
@@ -451,10 +455,19 @@ export function ZendeskActions({
       <ActionPanel.Submenu key="change-instance" title="Change Instance" icon={Icon.House}>
         {allInstances.map((inst, index) => {
           const keyMap: { [key: number]: Keyboard.KeyEquivalent } = {
-            0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9"
+            0: "0",
+            1: "1",
+            2: "2",
+            3: "3",
+            4: "4",
+            5: "5",
+            6: "6",
+            7: "7",
+            8: "8",
+            9: "9",
           };
           const key = index < 9 ? keyMap[index + 1] : keyMap[0];
-          
+
           return (
             <Action
               key={inst.subdomain}
