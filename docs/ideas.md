@@ -2,73 +2,125 @@
 
 This document outlines potential features and improvements for the Raycast Zendesk extension, organized by priority and estimated difficulty.
 
-## High Priority (Easy/Medium Difficulty)
-
-These are features that are highly useful and relatively straightforward to implement.
+## 🚀 High Priority Features
 
 ### Core Search & Display Improvements
-*   **Search Behavior:** Improve search behavior when changing the search type to be more intuitive.
-*   **Detailed Views:** Enhance detailed views for all Zendesk objects (user, organization, group, etc.) to include more relevant information.
-    *   Display options/values/conditions on details for triggers, groups, fields, etc.
-    *   Display correct labels instead of IDs in search details (e.g., brands, groups, forms, fields, trigger categories).
-    *   Add group memberships on group view and user details.
-*   **Search Scope:** Improve search for already loaded items to search across all relevant properties.
-*   **Archived Items:** Implement special rules to move `[ARCHIVE]` items to the bottom of search results or hide them.
-*   **Global Search:** Add a global search feature that queries all supported Zendesk APIs simultaneously, so users do not need to select a specific search type. Results from users, organizations, tickets, triggers, etc. should be shown together, grouped or labeled by type, with clear visual distinction. This would streamline the search experience and make it easier to find any Zendesk object from a single entry point.
-*   **Toggle Details Metadata:** Add a feature to enable or disable the details metadata section in the search results. When disabled, show a simplified view with fewer accessories; when enabled, display the full metadata and all available details for each Zendesk object. This toggle should be easily accessible (e.g., via a command, dropdown, or settings panel) and persist the user's preference across sessions.
 
+| Feature | Description | Difficulty | Impact |
+|---------|-------------|------------|---------|
+| **Search Behavior** | Improve search behavior when changing search type to be more intuitive | Easy | High |
+| **Detailed Views** | Enhance detailed views for all Zendesk objects with more relevant information | Medium | High |
+| **Search Scope** | Improve search for already loaded items across all relevant properties | Medium | High |
 
 ### Essential Actions
-*   **Basic Actions:** Ensure all essential actions are available: edit, view tickets, and open in Zendesk for relevant items.
-*   **Specific Entry Point Actions:** Add direct entry points for common creation tasks:
-    *   Create User
-    *   Create Organization
-    *   Create Ticket Field
-    *   Create Ticket Form
-    *   Create Group
-    *   Create Macro
-    *   Create Trigger
-    *   Create Dynamic Content
-    *   Create Support Address
-    *   Create View
+
+| Feature | Description | Difficulty | Impact |
+|---------|-------------|------------|---------|
+| **Basic Actions** | Ensure edit, view tickets, and open in Zendesk for all relevant items | Easy | High |
+| **Create User** | Direct entry point for user creation | Medium | High |
+| **Create Organization** | Direct entry point for organization creation | Medium | High |
+| **Create Ticket Field** | Direct entry point for ticket field creation | Medium | High |
+| **Create Ticket Form** | Direct entry point for ticket form creation | Medium | High |
+| **Create Group** | Direct entry point for group creation | Medium | High |
+| **Create Macro** | Direct entry point for macro creation | Medium | High |
+| **Create Trigger** | Direct entry point for trigger creation | Medium | High |
+| **Create Dynamic Content** | Direct entry point for dynamic content creation | Medium | High |
+| **Create Support Address** | Direct entry point for support address creation | Medium | High |
+| **Create View** | Direct entry point for view creation | Medium | High |
+| **Bulk Edit** | Edit multiple items simultaneously | Hard | High |
+| **Field-Based Preferences** | Preferences: each property as a field, support multiple instances by comma-separating values | Medium | High | Simplifies multi-instance setup; no JSON needed |
+
+
 
 ### Instance & Configuration Management
-*   **Instance Switching:**
-    *   Allow instance selection via a form upon opening the extension.
-    *   Implement hotkeys for quick instance switching between configured instances.
 
-## Medium Priority (Medium/Hard Difficulty)
+| Feature              | Description                                                              | Difficulty | Impact  | Comment                                                                                                 |
+|----------------------|--------------------------------------------------------------------------|------------|---------|---------------------------------------------------------------------------------------------------------|
+| **Instance Selection** | (Optional setting) Allow instance selection via form upon opening extension | Easy       | High    | Useful for users with multiple Zendesk instances; improves onboarding and workflow flexibility          |
+| **Instance Hotkeys**   | Quick instance switching between configured instances                      | Medium     | Medium  | Raycast would need to enable that commands on sections work without opening the section; improves speed |
 
-These features offer significant value but may require more complex implementation or API exploration.
+## 🔧 Medium Priority Features
 
 ### Advanced Search & Filtering
-*   **Expanded Search Capabilities:** Add search for roles, brands, schedules, automations, and other available APIs.
-*   **Saved Searches:** Allow users to save frequently used search queries.
-*   **Actionable Fields:** Add organization and user fields as actions directly within search entities.
+
+| Feature | Description | Difficulty | Impact |
+|---------|-------------|------------|---------|
+| **Expanded Search** | Add search for roles, brands, schedules, automations | Hard | Medium |
+| **Saved Searches** | Save and reuse frequently used search queries | Medium | Medium |
 
 ### User & Customization Actions
-*   **Bulk Actions:** Implement bulk actions for items like users (e.g., bulk update, bulk delete).
-*   **Quick User Actions:** Create quick actions for users, such as "assign group".
-*   **Custom Field Management:** Add the ability to manage custom fields and their options directly within the extension.
 
-### Instance Tools
-*   **Instance Overview:** Provide an overview of a Zendesk instance (API permitting).
-*   **Configuration Comparison:** Develop a tool to compare configurations between different environments (e.g., production and quality).
-*   **API Explorer/Finder:** Create a tool to explore and find Zendesk API endpoints.
-*   **License Usage per use-case:** Easily see usage of licenses (agents) per usecase.
+| Feature                | Description                                                    | Difficulty | Impact | Comment                                             |
+|------------------------|----------------------------------------------------------------|------------|--------|-----------------------------------------------------|
+| **Bulk Actions**       | Bulk update, delete, or modify multiple items                  | Hard       | High   | Would require a form with multitag select           |
+| **Quick User Actions** | Quick actions like "assign group", "suspend user"              | Medium     | Medium |                                                     |
+| **Custom Field Management** | Manage custom fields and options directly in extension     | Hard       | Medium |                                                     |
+| **Mass Assignment**    | Assign multiple users to groups or organizations               | Medium     | Medium |                                                     |
 
-## Future/Low Priority
+### Instance Tools & Analytics
 
-These are more advanced concepts or features that could be considered for long-term development.
+| Feature | Description | Difficulty | Impact |
+|---------|-------------|------------|---------|
+| **Instance Overview** | Dashboard showing key metrics and instance health | Hard | Medium |
+| **Configuration Comparison** | Compare configs between environments (prod/staging) | Hard | Medium |
+| **API Explorer** | Tool to explore and find Zendesk API endpoints | Medium | Low |
+| **License Usage** | Track license usage per use case and department | Medium | Medium |
+| **Audit Trail** | Track changes made through the extension | Medium | Low |
+| **Performance Metrics** | Monitor API response times and usage patterns | Easy | Low |
 
-*   **Agent-Focused Application:** Develop a separate, dedicated application for Zendesk agents, potentially with its own extension support.
-*   **AI Integration:** Leverage Raycast AI with tools to combine multiple actions into a single command.
-*   **Other API Implementations:** Implement functionalities for other Zendesk APIs, such as Help Center Guide, Voice/Talk, etc.
+## 🔮 Future/Low Priority Features
 
-## Reminders for Development
+### Advanced Integrations
 
-*   **Preferences for Logic:** Move special logic (e.g., separating groups by '.', skipping email verification for user creation) to preferences for user configuration.
+| Feature | Description | Difficulty | Impact |
+|---------|-------------|------------|---------|
+| **Agent-Focused App** | Dedicated application for Zendesk agents | Very Hard | High |
+| **AI Integration** | Leverage Raycast AI for smart actions and suggestions | Hard | Medium |
+| **Help Center Guide** | Integration with Zendesk Help Center APIs | Hard | Medium |
+| **Voice/Talk Integration** | Support for Zendesk Voice and Talk features | Very Hard | Low |
+| **Webhook Management** | Create and manage webhooks through the extension | Hard | Low |
+| **Automation Workflows** | Visual workflow builder for Zendesk automations | Very Hard | Medium |
 
-## TO DO
 
-*   **FIX SEARCH:** Some entities are not returning all, and we need to implement proper search + just initial results
+## 🛠️ Development Reminders
+
+### Technical Improvements
+
+| Task | Description | Priority |
+|------|-------------|----------|
+| **Move Logic to Preferences** | Move special logic (group separation, email verification) to user-configurable preferences | High |
+| **Fix Search Issues** | Some entities not returning all results - implement proper search + initial results | Critical |
+| **Error Handling** | Improve error handling and user feedback | High |
+| **Performance Optimization** | Optimize API calls and caching strategies | Medium |
+| **Accessibility** | Ensure extension is accessible to users with disabilities | Medium |
+| **Internationalization** | Support for multiple languages | Low |
+
+### Code Quality
+
+| Task | Description | Priority |
+|------|-------------|----------|
+| **Type Safety** | Improve TypeScript types and interfaces | High |
+| **Testing** | Add comprehensive unit and integration tests | High |
+| **Documentation** | Improve code documentation and API docs | Medium |
+| **Code Review** | Implement automated code quality checks | Medium |
+
+## 📊 Feature Impact Matrix
+
+| Impact Level | Description | Examples |
+|--------------|-------------|----------|
+| **Very High** | Core functionality that significantly improves user experience | Global Search, Basic Actions |
+| **High** | Important features that enhance productivity | Detailed Views, Bulk Actions |
+| **Medium** | Useful features that provide value | Saved Searches, Instance Tools |
+| **Low** | Nice-to-have features | Search History, Configuration Backup |
+
+## 🎯 Implementation Strategy
+
+1. **Phase 1**: Focus on High Priority features with Easy/Medium difficulty
+2. **Phase 2**: Implement remaining High Priority features and Medium Priority essentials
+3. **Phase 3**: Add advanced features and integrations
+4. **Phase 4**: Polish and optimize based on user feedback
+
+---
+
+*Last updated: [Current Date]*
+*Total features planned: 50+*
