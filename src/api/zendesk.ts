@@ -1157,7 +1157,7 @@ export async function searchZendeskCustomRoles(query: string, instance: ZendeskI
   const url = searchTerms
     ? `${getZendeskUrl(instance)}/custom_roles/search.json?query=${encodeURIComponent(searchTerms)}`
     : `${getZendeskUrl(instance)}/custom_roles.json`;
-  console.log("Zendesk Custom Roles Search URL:", url);
+  console.log("Zendesk Roles Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",

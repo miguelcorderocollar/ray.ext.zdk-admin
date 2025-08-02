@@ -364,7 +364,7 @@ export default function SearchZendesk() {
                               : searchType === "automations"
                                 ? "Search automations by name"
                                 : searchType === "custom_roles"
-                                  ? "Search custom roles by name"
+                                  ? "Search roles by name"
                                   : "Search Zendesk triggers by name"
       }
       throttle
@@ -375,7 +375,7 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : searchType === "tickets" ? "Tickets" : searchType === "views" ? "Views" : searchType === "brands" ? "Brands" : searchType === "automations" ? "Automations" : searchType === "custom_roles" ? "Custom Roles" : "Triggers"}`}
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : searchType === "tickets" ? "Tickets" : searchType === "views" ? "Views" : searchType === "brands" ? "Brands" : searchType === "automations" ? "Automations" : searchType === "custom_roles" ? "Roles" : "Triggers"}`}
           description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}

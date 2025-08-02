@@ -35,7 +35,7 @@ const searchTypeOptions = [
   { value: "triggers", title: "Triggers" },
   { value: "brands", title: "Brands" },
   { value: "automations", title: "Automations" },
-  { value: "custom_roles", title: "Custom Roles" },
+  { value: "custom_roles", title: "Roles" },
 ] as const;
 
 /**
@@ -62,7 +62,7 @@ export function SearchTypeSelector({ value, onChange }: SearchTypeSelectorProps)
       <List.Dropdown.Item title="Ticket Forms" value="ticket_forms" icon={Icon.Document} />
       <List.Dropdown.Item title="Dynamic Content" value="dynamic_content" icon={Icon.Text} />
       <List.Dropdown.Item title="Support Addresses" value="support_addresses" icon={Icon.Envelope} />
-      <List.Dropdown.Item title="Custom Roles" value="custom_roles" icon={Icon.Shield} />
+      <List.Dropdown.Item title="Roles" value="custom_roles" icon={Icon.Shield} />
     </List.Dropdown>
   );
 }
