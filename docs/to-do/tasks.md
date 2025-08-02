@@ -1,0 +1,5 @@
+- Add screenshots
+- Implement basic missing functions (create, delete, etc.)
+- Add support for basic missing entities
+- Cache previous results
+- Final README check
