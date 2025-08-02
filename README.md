@@ -20,20 +20,29 @@ A Raycast extension for comprehensive Zendesk administration. Search, view, and 
 ## Setup
 
 1. Install the extension
-2. Configure Zendesk instances in Raycast preferences with JSON:
+2. Configure Zendesk instances in Raycast preferences using comma-separated values:
 
-```json
-[
-  {
-    "name": "My Company",
-    "subdomain": "yourcompany",
-    "user": "api_user@yourcompany.com/token",
-    "api_key": "your_api_key",
-    "color": "#007bff",
-    "production": true
-  }
-]
-```
+### Required Fields:
+- **Instance Names**: `My Company, Test Instance, Production`
+- **Subdomains**: `yourcompany, testcompany, prodcompany`
+- **API Users**: `api_user@yourcompany.com/token, test@testcompany.com/token, prod@prodcompany.com/token`
+- **API Keys**: `your_api_key_1, your_api_key_2, your_api_key_3`
+
+### Optional Fields:
+- **Colors**: `#007bff, #28a745, #dc3545`
+- **Production Flags**: `true, false, true`
+
+### Example Configuration:
+For 3 Zendesk instances, you would configure:
+
+**Instance Names**: `My Company, Test Instance, Production`
+**Subdomains**: `yourcompany, testcompany, prodcompany`
+**API Users**: `api_user@yourcompany.com/token, test@testcompany.com/token, prod@prodcompany.com/token`
+**API Keys**: `your_api_key_1, your_api_key_2, your_api_key_3`
+**Colors**: `#007bff, #28a745, #dc3545`
+**Production Flags**: `true, false, true`
+
+**Important**: All comma-separated lists must have the same number of items. The extension will validate this and show an error if there's a mismatch.
 
 ## Requirements
 

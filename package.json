@@ -25,11 +25,46 @@
   ],
   "preferences": [
     {
-      "name": "zendeskInstances",
-      "title": "Zendesk Instances Configuration (JSON)",
-      "description": "A JSON array of Zendesk instance configurations. See README.md for example.",
+      "name": "instanceNames",
+      "title": "Instance Names",
+      "description": "Comma-separated list of Zendesk instance names (e.g., 'My Company, Test Instance, Production')",
+      "type": "textfield",
+      "required": true
+    },
+    {
+      "name": "subdomains",
+      "title": "Subdomains",
+      "description": "Comma-separated list of Zendesk subdomains (e.g., 'yourcompany, testcompany, prodcompany')",
+      "type": "textfield",
+      "required": true
+    },
+    {
+      "name": "users",
+      "title": "API Users",
+      "description": "Comma-separated list of API users (e.g., 'api_user@yourcompany.com/token, test@testcompany.com/token')",
+      "type": "textfield",
+      "required": true
+    },
+    {
+      "name": "apiKeys",
+      "title": "API Keys",
+      "description": "Comma-separated list of API keys corresponding to each instance",
       "type": "password",
       "required": true
+    },
+    {
+      "name": "colors",
+      "title": "Colors (Optional)",
+      "description": "Comma-separated list of hex colors for each instance (e.g., '#007bff, #28a745, #dc3545')",
+      "type": "textfield",
+      "required": false
+    },
+    {
+      "name": "productionFlags",
+      "title": "Production Flags (Optional)",
+      "description": "Comma-separated list of 'true' or 'false' values indicating if each instance is production",
+      "type": "textfield",
+      "required": false
     }
   ],
   "dependencies": {
