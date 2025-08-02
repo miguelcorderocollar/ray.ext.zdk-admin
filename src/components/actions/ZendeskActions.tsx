@@ -13,6 +13,7 @@ import {
   ZendeskTicket,
   ZendeskView,
   ZendeskGroupMembership,
+  ZendeskBrand,
 } from "../../api/zendesk";
 import EditUserForm from "../forms/EditUserForm";
 import AddTicketFieldOptionForm from "../forms/AddTicketFieldOptionForm";
@@ -35,7 +36,8 @@ interface ZendeskActionsProps {
     | ZendeskGroup
     | ZendeskTicket
     | ZendeskView
-    | ZendeskGroupMembership;
+    | ZendeskGroupMembership
+    | ZendeskBrand;
   searchType:
     | "users"
     | "organizations"
@@ -48,7 +50,8 @@ interface ZendeskActionsProps {
     | "groups"
     | "tickets"
     | "views"
-    | "group_memberships";
+    | "group_memberships"
+    | "brands";
   instance: ZendeskInstance | undefined;
   onInstanceChange: (instance: ZendeskInstance) => void;
   showDetails?: boolean;
@@ -67,7 +70,7 @@ export function ZendeskActions({
   const allInstances = getZendeskInstances();
 
   const renderViewTicketsAction = (
-    entityType: "user" | "organization" | "group" | "recipient" | "form",
+    entityType: "user" | "organization" | "group" | "recipient" | "form" | "brand",
     entityId?: string,
     entityEmail?: string,
   ) => {
@@ -319,6 +322,35 @@ export function ZendeskActions({
           />
         </>
       );
+    } else if (searchType === "brands") {
+      const brand = item as ZendeskBrand;
+      return (
+        <>
+          <Action.OpenInBrowser
+            title="Open in Zendesk"
+            url={`https://${instance?.subdomain}.zendesk.com/admin/brands/${brand.id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
+          />
+          {brand.has_help_center && brand.brand_url && (
+            <Action.OpenInBrowser
+              title="Open Help Center"
+              url={brand.brand_url}
+              shortcut={{
+                macOS: { modifiers: ["cmd"], key: "h" },
+                windows: { modifiers: ["ctrl"], key: "h" },
+              }}
+            />
+          )}
+          <Action.CopyToClipboard
+            title="Copy Brand Link"
+            content={`https://${instance?.subdomain}.zendesk.com/admin/brands/${brand.id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "l" },
+              windows: { modifiers: ["ctrl"], key: "l" },
+            }}
+          />
+        </>
+      );
     }
     return null;
   };
@@ -403,6 +435,9 @@ export function ZendeskActions({
           {renderViewTicketsAction("group", group.id.toString())}
         </>
       );
+    } else if (searchType === "brands") {
+      const brand = item as ZendeskBrand;
+      return <>{renderViewTicketsAction("brand", brand.id.toString())}</>;
     } else if (searchType === "group_memberships") {
       const membership = item as ZendeskGroupMembership;
       return (
@@ -465,6 +500,9 @@ export function ZendeskActions({
     } else if (searchType === "views") {
       generalConfigUrl = `${generalConfigUrl}/admin/objects-rules/rules/views`;
       shortcutKey = "v";
+    } else if (searchType === "brands") {
+      generalConfigUrl = `${generalConfigUrl}/admin/brands`;
+      shortcutKey = "b";
     }
 
     actions.push(

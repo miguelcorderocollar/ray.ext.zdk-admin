@@ -31,9 +31,12 @@ import {
   ZendeskTicket,
   searchZendeskViews,
   ZendeskView,
+  searchZendeskBrands,
+  ZendeskBrand,
 } from "./api/zendesk";
 
 import { TicketListItem } from "./components/lists/TicketListItem";
+import { BrandListItem } from "./components/lists/BrandListItem";
 import { ZendeskActions } from "./components/actions/ZendeskActions";
 
 export default function SearchZendesk() {
@@ -53,6 +56,7 @@ export default function SearchZendesk() {
     | ZendeskGroup[]
     | ZendeskTicket[]
     | ZendeskView[]
+    | ZendeskBrand[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState<SearchType>("tickets");
@@ -215,7 +219,8 @@ export default function SearchZendesk() {
           | ZendeskTicketForm[]
           | ZendeskGroup[]
           | ZendeskTicket[]
-          | ZendeskView[] = [];
+          | ZendeskView[]
+          | ZendeskBrand[] = [];
         if (searchType === "users") {
           searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
         } else if (searchType === "organizations") {
@@ -232,6 +237,8 @@ export default function SearchZendesk() {
           searchResults = await searchZendeskViews(debouncedSearchText, currentInstance);
         } else if (searchType === "triggers") {
           searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
+        } else if (searchType === "brands") {
+          searchResults = await searchZendeskBrands(debouncedSearchText, currentInstance);
         }
         setResults(searchResults);
         setIsLoading(false);
@@ -273,7 +280,9 @@ export default function SearchZendesk() {
                           ? "Search tickets by subject, description, etc."
                           : searchType === "views"
                             ? "Search views by title"
-                            : "Search Zendesk triggers by name"
+                            : searchType === "brands"
+                              ? "Search brands by name or subdomain"
+                              : "Search Zendesk triggers by name"
       }
       throttle
       searchBarAccessory={<SearchTypeSelector value={searchType} onChange={setSearchType} />}
@@ -283,7 +292,7 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : searchType === "tickets" ? "Tickets" : "Triggers"}`}
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : searchType === "tickets" ? "Tickets" : searchType === "views" ? "Views" : searchType === "brands" ? "Brands" : "Triggers"}`}
           description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}
@@ -1071,6 +1080,18 @@ export default function SearchZendesk() {
                       onShowDetailsChange={setShowDetails}
                     />
                   }
+                />
+              );
+            } else if (searchType === "brands") {
+              const brand = item as ZendeskBrand;
+              return (
+                <BrandListItem
+                  key={brand.id}
+                  brand={brand}
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                  showDetails={showDetails}
+                  onShowDetailsChange={setShowDetails}
                 />
               );
             }

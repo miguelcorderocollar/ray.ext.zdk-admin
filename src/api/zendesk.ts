@@ -266,6 +266,49 @@ interface ZendeskViewSearchResponse {
   count: number;
 }
 
+export interface ZendeskBrand {
+  id: number;
+  name: string;
+  active: boolean;
+  brand_url: string;
+  created_at: string;
+  updated_at: string;
+  default: boolean;
+  has_help_center: boolean;
+  help_center_state: string;
+  host_mapping: string;
+  is_deleted: boolean;
+  logo?: {
+    content_type: string;
+    content_url: string;
+    file_name: string;
+    id: number;
+    mapped_content_url: string;
+    size: number;
+    thumbnails: Array<{
+      content_type: string;
+      content_url: string;
+      file_name: string;
+      id: number;
+      mapped_content_url: string;
+      size: number;
+      url: string;
+    }>;
+    url: string;
+  };
+  signature_template: string;
+  subdomain: string;
+  ticket_form_ids?: number[];
+  url: string;
+}
+
+interface ZendeskBrandSearchResponse {
+  brands: ZendeskBrand[];
+  count: number;
+  next_page: string | null;
+  previous_page: string | null;
+}
+
 export interface ZendeskGroupMembership {
   id: number;
   user_id: number;
@@ -672,6 +715,41 @@ export async function searchZendeskGroups(instance: ZendeskInstance): Promise<Ze
       url = data.next_page;
     }
     return allGroups;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskBrands(query: string, instance: ZendeskInstance): Promise<ZendeskBrand[]> {
+  const searchTerms = query;
+  const url = searchTerms
+    ? `${getZendeskUrl(instance)}/brands/search.json?query=${encodeURIComponent(searchTerms)}`
+    : `${getZendeskUrl(instance)}/brands.json`;
+  console.log("Zendesk Brands Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(Toast.Style.Failure, "Zendesk API Error", `Failed to fetch brands: ${response.status} - ${errorText}`);
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskBrandSearchResponse;
+    return data.brands;
   } catch (error) {
     showToast(
       Toast.Style.Failure,

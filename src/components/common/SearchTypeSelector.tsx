@@ -11,7 +11,8 @@ export type SearchType =
   | "groups"
   | "tickets"
   | "views"
-  | "triggers";
+  | "triggers"
+  | "brands";
 
 interface SearchTypeSelectorProps {
   value: SearchType;
@@ -30,6 +31,7 @@ const searchTypeOptions = [
   { value: "tickets", title: "Tickets" },
   { value: "views", title: "Views" },
   { value: "triggers", title: "Triggers" },
+  { value: "brands", title: "Brands" },
 ] as const;
 
 /**
@@ -48,6 +50,7 @@ export function SearchTypeSelector({ value, onChange }: SearchTypeSelectorProps)
         <List.Dropdown.Item title="Users" value="users" />
         <List.Dropdown.Item title="Organizations" value="organizations" />
         <List.Dropdown.Item title="Views" value="views" />
+        <List.Dropdown.Item title="Brands" value="brands" />
       </List.Dropdown.Section>
       <List.Dropdown.Section title="Admin">
         <List.Dropdown.Item title="Groups" value="groups" />

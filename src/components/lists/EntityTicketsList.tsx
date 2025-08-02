@@ -88,7 +88,7 @@ export default function EntityTicketsList({ entityType, entityId, entityEmail, i
     <List
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
-      searchBarPlaceholder={`Search tickets for ${entityEmail || entityId || entityType}...`}
+      searchBarPlaceholder={`Search tickets...`}
       throttle
       isShowingDetail={showDetails}
       searchBarAccessory={
