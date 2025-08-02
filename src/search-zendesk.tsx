@@ -1,6 +1,8 @@
 import { List, showToast, Toast, Image, Color, Icon } from "@raycast/api";
 import { getUserRoleColor, getActiveStatusColor, getVerificationStatusColor, getBooleanIcon } from "./utils/colors";
 import { getFieldTypeInfo } from "./utils/fieldTypes";
+import { formatInstanceColor } from "./utils/formatters";
+import { TimestampMetadata, InstanceMetadata } from "./components/common/MetadataHelpers";
 
 import { useState, useEffect } from "react";
 import { getZendeskInstances, ZendeskInstance } from "./utils/preferences";
@@ -407,7 +409,7 @@ export default function SearchZendesk() {
                                 <List.Item.Detail.Metadata.TagList title="Instance">
                                   <List.Item.Detail.Metadata.TagList.Item
                                     text={currentInstance.subdomain}
-                                    color={currentInstance.color || Color.Blue}
+                                    color={formatInstanceColor(currentInstance.color)}
                                   />
                                 </List.Item.Detail.Metadata.TagList>
                                 <List.Item.Detail.Metadata.Separator />
@@ -422,17 +424,8 @@ export default function SearchZendesk() {
                                 color={getActiveStatusColor(trigger.active)}
                               />
                             </List.Item.Detail.Metadata.TagList>
-                            {trigger.created_at && (
-                              <List.Item.Detail.Metadata.Label
-                                title="Created At"
-                                text={new Date(trigger.created_at).toLocaleString()}
-                              />
-                            )}
-                            {trigger.updated_at && (
-                              <List.Item.Detail.Metadata.Label
-                                title="Updated At"
-                                text={new Date(trigger.updated_at).toLocaleString()}
-                              />
+                            {trigger.created_at && trigger.updated_at && (
+                              <TimestampMetadata created_at={trigger.created_at} updated_at={trigger.updated_at} />
                             )}
                             <List.Item.Detail.Metadata.Separator />
                             <List.Item.Detail.Metadata.Link
@@ -491,17 +484,7 @@ export default function SearchZendesk() {
                     <List.Item.Detail
                       metadata={
                         <List.Item.Detail.Metadata>
-                          {currentInstance && (
-                            <>
-                              <List.Item.Detail.Metadata.TagList title="Instance">
-                                <List.Item.Detail.Metadata.TagList.Item
-                                  text={currentInstance.subdomain}
-                                  color={currentInstance.color || Color.Blue}
-                                />
-                              </List.Item.Detail.Metadata.TagList>
-                              <List.Item.Detail.Metadata.Separator />
-                            </>
-                          )}
+                          {currentInstance && <InstanceMetadata instance={currentInstance} />}
                           <List.Item.Detail.Metadata.Label title="Name" text={user.name} />
                           <List.Item.Detail.Metadata.Label title="ID" text={user.id.toString()} />
                           {user.email && <List.Item.Detail.Metadata.Label title="Email" text={user.email} />}
@@ -534,17 +517,8 @@ export default function SearchZendesk() {
                           {hasTimestamps && (
                             <>
                               <List.Item.Detail.Metadata.Separator />
-                              {user.created_at && (
-                                <List.Item.Detail.Metadata.Label
-                                  title="Created At"
-                                  text={new Date(user.created_at).toLocaleString()}
-                                />
-                              )}
-                              {user.updated_at && (
-                                <List.Item.Detail.Metadata.Label
-                                  title="Updated At"
-                                  text={new Date(user.updated_at).toLocaleString()}
-                                />
+                              {user.created_at && user.updated_at && (
+                                <TimestampMetadata created_at={user.created_at} updated_at={user.updated_at} />
                               )}
                             </>
                           )}
@@ -623,16 +597,10 @@ export default function SearchZendesk() {
                           {organization.external_id && (
                             <List.Item.Detail.Metadata.Label title="External ID" text={organization.external_id} />
                           )}
-                          {organization.created_at && (
-                            <List.Item.Detail.Metadata.Label
-                              title="Created At"
-                              text={new Date(organization.created_at).toLocaleString()}
-                            />
-                          )}
-                          {organization.updated_at && (
-                            <List.Item.Detail.Metadata.Label
-                              title="Updated At"
-                              text={new Date(organization.updated_at).toLocaleString()}
+                          {organization.created_at && organization.updated_at && (
+                            <TimestampMetadata
+                              created_at={organization.created_at}
+                              updated_at={organization.updated_at}
                             />
                           )}
 
@@ -697,13 +665,9 @@ export default function SearchZendesk() {
                           <List.Item.Detail.Metadata.Label title="Name" text={dynamicContent.name} />
                           <List.Item.Detail.Metadata.Label title="ID" text={dynamicContent.id.toString()} />
                           <List.Item.Detail.Metadata.Label title="Placeholder" text={dynamicContent.placeholder} />
-                          <List.Item.Detail.Metadata.Label
-                            title="Created At"
-                            text={new Date(dynamicContent.created_at).toLocaleString()}
-                          />
-                          <List.Item.Detail.Metadata.Label
-                            title="Updated At"
-                            text={new Date(dynamicContent.updated_at).toLocaleString()}
+                          <TimestampMetadata
+                            created_at={dynamicContent.created_at}
+                            updated_at={dynamicContent.updated_at}
                           />
                           <List.Item.Detail.Metadata.TagList title="Locales">
                             {dynamicContent.variants?.map((variant) => (
@@ -777,14 +741,7 @@ export default function SearchZendesk() {
                           {macro.description && (
                             <List.Item.Detail.Metadata.Label title="Description" text={macro.description} />
                           )}
-                          <List.Item.Detail.Metadata.Label
-                            title="Created At"
-                            text={new Date(macro.created_at).toLocaleString()}
-                          />
-                          <List.Item.Detail.Metadata.Label
-                            title="Updated At"
-                            text={new Date(macro.updated_at).toLocaleString()}
-                          />
+                          <TimestampMetadata created_at={macro.created_at} updated_at={macro.updated_at} />
                         </List.Item.Detail.Metadata>
                       }
                     />
@@ -868,14 +825,7 @@ export default function SearchZendesk() {
                           />
                           <List.Item.Detail.Metadata.Separator />
                           {ticketField.tag && <List.Item.Detail.Metadata.Label title="Tag" text={ticketField.tag} />}
-                          <List.Item.Detail.Metadata.Label
-                            title="Created At"
-                            text={new Date(ticketField.created_at).toLocaleString()}
-                          />
-                          <List.Item.Detail.Metadata.Label
-                            title="Updated At"
-                            text={new Date(ticketField.updated_at).toLocaleString()}
-                          />
+                          <TimestampMetadata created_at={ticketField.created_at} updated_at={ticketField.updated_at} />
                         </List.Item.Detail.Metadata>
                       }
                     />
@@ -969,16 +919,10 @@ export default function SearchZendesk() {
                             </List.Item.Detail.Metadata.TagList>
                           )}
                           <List.Item.Detail.Metadata.Separator />
-                          {supportAddress.created_at && (
-                            <List.Item.Detail.Metadata.Label
-                              title="Created At"
-                              text={new Date(supportAddress.created_at).toLocaleString()}
-                            />
-                          )}
-                          {supportAddress.updated_at && (
-                            <List.Item.Detail.Metadata.Label
-                              title="Updated At"
-                              text={new Date(supportAddress.updated_at).toLocaleString()}
+                          {supportAddress.created_at && supportAddress.updated_at && (
+                            <TimestampMetadata
+                              created_at={supportAddress.created_at}
+                              updated_at={supportAddress.updated_at}
                             />
                           )}
                         </List.Item.Detail.Metadata>
@@ -1048,14 +992,7 @@ export default function SearchZendesk() {
                             </List.Item.Detail.Metadata.TagList>
                           )}
                           <List.Item.Detail.Metadata.Separator />
-                          <List.Item.Detail.Metadata.Label
-                            title="Created At"
-                            text={new Date(ticketForm.created_at).toLocaleString()}
-                          />
-                          <List.Item.Detail.Metadata.Label
-                            title="Updated At"
-                            text={new Date(ticketForm.updated_at).toLocaleString()}
-                          />
+                          <TimestampMetadata created_at={ticketForm.created_at} updated_at={ticketForm.updated_at} />
                         </List.Item.Detail.Metadata>
                       }
                     />
@@ -1102,14 +1039,7 @@ export default function SearchZendesk() {
                           <List.Item.Detail.Metadata.Label title="Deleted" icon={getBooleanIcon(group.deleted)} />
                           <List.Item.Detail.Metadata.Label title="Is Public" icon={getBooleanIcon(group.is_public)} />
                           <List.Item.Detail.Metadata.Separator />
-                          <List.Item.Detail.Metadata.Label
-                            title="Created At"
-                            text={new Date(group.created_at).toLocaleString()}
-                          />
-                          <List.Item.Detail.Metadata.Label
-                            title="Updated At"
-                            text={new Date(group.updated_at).toLocaleString()}
-                          />
+                          <TimestampMetadata created_at={group.created_at} updated_at={group.updated_at} />
                         </List.Item.Detail.Metadata>
                       }
                     />
@@ -1179,17 +1109,8 @@ export default function SearchZendesk() {
                               color={getActiveStatusColor(view.active)}
                             />
                           </List.Item.Detail.Metadata.TagList>
-                          {view.created_at && (
-                            <List.Item.Detail.Metadata.Label
-                              title="Created At"
-                              text={new Date(view.created_at).toLocaleString()}
-                            />
-                          )}
-                          {view.updated_at && (
-                            <List.Item.Detail.Metadata.Label
-                              title="Updated At"
-                              text={new Date(view.updated_at).toLocaleString()}
-                            />
+                          {view.created_at && view.updated_at && (
+                            <TimestampMetadata created_at={view.created_at} updated_at={view.updated_at} />
                           )}
                           <List.Item.Detail.Metadata.Separator />
                           <List.Item.Detail.Metadata.Link

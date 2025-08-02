@@ -1,9 +1,11 @@
-import { List, showToast, Toast, Color, Icon, Image } from "@raycast/api";
+import { List, Color, Icon, Image } from "@raycast/api";
 import { getUserRoleColor, getDefaultStatusColor } from "../utils/colors";
-import { useState, useEffect } from "react";
+import { TimestampMetadata } from "./common/MetadataHelpers";
+import { useEntitySearch } from "../hooks/useEntitySearch";
 import { ZendeskInstance } from "../utils/preferences";
 import { searchZendeskGroupMemberships, ZendeskGroupMembership, getGroupUsers, ZendeskUser } from "../api/zendesk";
 import { ZendeskActions } from "./ZendeskActions";
+import { useState } from "react";
 
 interface GroupMembershipsListProps {
   groupId: number;
@@ -16,27 +18,11 @@ interface MembershipWithUser extends ZendeskGroupMembership {
 }
 
 export default function GroupMembershipsList({ groupId, groupName, instance }: GroupMembershipsListProps) {
-  const [memberships, setMemberships] = useState<MembershipWithUser[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [showDetails, setShowDetails] = useState(true);
 
-  useEffect(() => {
-    if (instance) {
-      performSearch();
-    } else {
-      setIsLoading(false);
-    }
-  }, [instance, groupId]);
-
-  async function performSearch() {
-    if (!instance) {
-      showToast(Toast.Style.Failure, "Configuration Error", "No Zendesk instances configured.");
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    try {
+  // Use the new search hook
+  const { results: memberships, isLoading } = useEntitySearch<MembershipWithUser>({
+    searchFunction: async (instance, onPage) => {
       // First, get the group memberships
       const membershipData: MembershipWithUser[] = [];
       await searchZendeskGroupMemberships(groupId, instance, (page) => {
@@ -53,23 +39,16 @@ export default function GroupMembershipsList({ groupId, groupName, instance }: G
           return { ...membership, user };
         });
 
-        setMemberships(enrichedMemberships);
+        onPage(enrichedMemberships);
       } catch (userError) {
         // If user data fetch fails, still show memberships with just IDs
         console.warn("Failed to fetch user data:", userError);
-        setMemberships(membershipData);
+        onPage(membershipData);
       }
-    } catch (error: unknown) {
-      let errorMessage = "An unknown error occurred.";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      showToast(Toast.Style.Failure, "Search Failed", errorMessage);
-      setMemberships([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+    },
+    instance,
+    dependencies: [groupId],
+  });
 
   return (
     <List
@@ -102,7 +81,7 @@ export default function GroupMembershipsList({ groupId, groupName, instance }: G
                       source: Icon.Person,
                       tintColor: getUserRoleColor(membership.user.role),
                     },
-                    tooltip: membership.user.role === "agent" ? "Agent" : "Admin",
+                    tooltip: membership.user.role,
                   },
                 ]
               : []),
@@ -127,7 +106,7 @@ export default function GroupMembershipsList({ groupId, groupName, instance }: G
                   <List.Item.Detail.Metadata.Label title="Group ID" text={membership.group_id.toString()} />
                   {membership.user && (
                     <>
-                      <List.Item.Detail.Metadata.Label title="Name" text={membership.user.name} />
+                      <List.Item.Detail.Metadata.Label title="User Name" text={membership.user.name} />
                       {membership.user.email && (
                         <List.Item.Detail.Metadata.Label title="Email" text={membership.user.email} />
                       )}
@@ -139,23 +118,20 @@ export default function GroupMembershipsList({ groupId, groupName, instance }: G
                           />
                         </List.Item.Detail.Metadata.TagList>
                       )}
+                      {membership.user.phone && (
+                        <List.Item.Detail.Metadata.Label title="Phone" text={membership.user.phone} />
+                      )}
                     </>
                   )}
-                  <List.Item.Detail.Metadata.TagList title="Default">
+                  <List.Item.Detail.Metadata.TagList title="Default Membership">
                     <List.Item.Detail.Metadata.TagList.Item
                       text={membership.default ? "Default" : "Not Default"}
                       color={getDefaultStatusColor(membership.default)}
                     />
                   </List.Item.Detail.Metadata.TagList>
                   <List.Item.Detail.Metadata.Separator />
-                  <List.Item.Detail.Metadata.Label
-                    title="Created At"
-                    text={new Date(membership.created_at).toLocaleString()}
-                  />
-                  <List.Item.Detail.Metadata.Label
-                    title="Updated At"
-                    text={new Date(membership.updated_at).toLocaleString()}
-                  />
+                  {/* Use the new TimestampMetadata component */}
+                  <TimestampMetadata created_at={membership.created_at} updated_at={membership.updated_at} />
                   <List.Item.Detail.Metadata.Separator />
                   <List.Item.Detail.Metadata.Link
                     title="Open User Profile"

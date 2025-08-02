@@ -66,7 +66,7 @@ This document outlines the approach for developing with Cursor AI, emphasizing a
 - Run the full test suite when available
 
 ## Documentation
-- Update relevant documentation when making significant changes
+- Update relevant existing documentation when making significant changes
 - Add inline comments for complex logic
 - Keep README files and other documentation current
 - Document any new APIs or interfaces created 

@@ -2,6 +2,7 @@ import { List } from "@raycast/api";
 import { ZendeskTicket, ZendeskInstance } from "../api/zendesk";
 import { ZendeskActions } from "./ZendeskActions";
 import { getStatusColor, getPriorityColor } from "../utils/colors";
+import { TimestampMetadata } from "./common/MetadataHelpers";
 
 interface TicketListItemProps {
   ticket: ZendeskTicket;
@@ -43,8 +44,7 @@ export function TicketListItem({
                 {ticket.group_id && <List.Item.Detail.Metadata.TagList.Item text={`Group: ${ticket.group_id}`} />}
               </List.Item.Detail.Metadata.TagList>
               <List.Item.Detail.Metadata.Separator />
-              <List.Item.Detail.Metadata.Label title="Created At" text={new Date(ticket.created_at).toLocaleString()} />
-              <List.Item.Detail.Metadata.Label title="Updated At" text={new Date(ticket.updated_at).toLocaleString()} />
+              <TimestampMetadata created_at={ticket.created_at} updated_at={ticket.updated_at} />
               <List.Item.Detail.Metadata.Separator />
               <List.Item.Detail.Metadata.TagList title="Custom Fields">
                 {ticket.custom_fields

@@ -1,5 +1,6 @@
 import { List, showToast, Toast, Color, Icon } from "@raycast/api";
 import { getDefaultStatusColor, getBooleanIcon } from "../utils/colors";
+import { TimestampMetadata } from "./common/MetadataHelpers";
 import { useState, useEffect } from "react";
 import { ZendeskInstance } from "../utils/preferences";
 import { searchZendeskUserGroupMemberships, ZendeskGroupMembership, getUserGroups, ZendeskGroup } from "../api/zendesk";
@@ -145,14 +146,7 @@ export default function UserGroupMembershipsList({ userId, userName, instance }:
                       />
                     </List.Item.Detail.Metadata.TagList>
                     <List.Item.Detail.Metadata.Separator />
-                    <List.Item.Detail.Metadata.Label
-                      title="Created At"
-                      text={new Date(membership.created_at).toLocaleString()}
-                    />
-                    <List.Item.Detail.Metadata.Label
-                      title="Updated At"
-                      text={new Date(membership.updated_at).toLocaleString()}
-                    />
+                    <TimestampMetadata created_at={membership.created_at} updated_at={membership.updated_at} />
                     <List.Item.Detail.Metadata.Separator />
                     <List.Item.Detail.Metadata.Link
                       title="Open User Profile"
