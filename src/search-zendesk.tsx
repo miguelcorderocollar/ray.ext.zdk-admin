@@ -86,6 +86,7 @@ export default function SearchZendesk() {
   const [supportAddressesLoaded, setSupportAddressesLoaded] = useState(false);
   const [allGroups, setAllGroups] = useState<ZendeskGroup[]>([]);
   const [groupsLoaded, setGroupsLoaded] = useState(false);
+  const [showDetails, setShowDetails] = useState(true);
 
   useEffect(() => {
     setResults([]);
@@ -271,7 +272,7 @@ export default function SearchZendesk() {
 
   return (
     <List
-      isShowingDetail
+      isShowingDetail={showDetails}
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
       searchBarPlaceholder={
@@ -447,6 +448,8 @@ export default function SearchZendesk() {
                         searchType="triggers"
                         instance={currentInstance}
                         onInstanceChange={setCurrentInstance}
+                        showDetails={showDetails}
+                        onShowDetailsChange={setShowDetails}
                       />
                     }
                   />
@@ -571,6 +574,8 @@ export default function SearchZendesk() {
                       searchType="users"
                       instance={currentInstance}
                       onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
                     />
                   }
                 />
@@ -656,6 +661,8 @@ export default function SearchZendesk() {
                       searchType="organizations"
                       instance={currentInstance}
                       onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
                     />
                   }
                 />
@@ -722,6 +729,8 @@ export default function SearchZendesk() {
                       searchType="dynamic_content"
                       instance={currentInstance}
                       onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
                     />
                   }
                 />
@@ -795,6 +804,8 @@ export default function SearchZendesk() {
                       searchType="macros"
                       instance={currentInstance}
                       onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
                     />
                   }
                 />
@@ -927,6 +938,8 @@ export default function SearchZendesk() {
                       searchType="ticket_fields"
                       instance={currentInstance}
                       onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
                     />
                   }
                 />
@@ -1030,6 +1043,8 @@ export default function SearchZendesk() {
                       searchType="support_addresses"
                       instance={currentInstance}
                       onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
                     />
                   }
                 />
@@ -1111,6 +1126,8 @@ export default function SearchZendesk() {
                       searchType="ticket_forms"
                       instance={currentInstance}
                       onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
                     />
                   }
                 />
@@ -1184,6 +1201,8 @@ export default function SearchZendesk() {
                       searchType="groups"
                       instance={currentInstance}
                       onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
                     />
                   }
                 />
@@ -1191,7 +1210,13 @@ export default function SearchZendesk() {
             } else if (searchType === "tickets") {
               const ticket = item as ZendeskTicket;
               return (
-                <TicketListItem ticket={ticket} instance={currentInstance} onInstanceChange={setCurrentInstance} />
+                <TicketListItem
+                  ticket={ticket}
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                  showDetails={showDetails}
+                  onShowDetailsChange={setShowDetails}
+                />
               );
             } else if (searchType === "views") {
               const view = item as ZendeskView;
@@ -1273,6 +1298,8 @@ export default function SearchZendesk() {
                       searchType="views"
                       instance={currentInstance}
                       onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
                     />
                   }
                 />

@@ -36,6 +36,7 @@ export default function EntityTicketsList({ entityType, entityId, entityEmail, i
   const [tickets, setTickets] = useState<ZendeskTicket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState<SortOrder>("updated_at_desc");
+  const [showDetails, setShowDetails] = useState(true);
 
   useEffect(() => {
     if (instance && (entityId || entityEmail)) {
@@ -105,7 +106,7 @@ export default function EntityTicketsList({ entityType, entityId, entityEmail, i
       onSearchTextChange={setSearchText}
       searchBarPlaceholder={`Search tickets for ${entityEmail || entityId || entityType}...`}
       throttle
-      isShowingDetail
+      isShowingDetail={showDetails}
       searchBarAccessory={
         <List.Dropdown
           tooltip="Sort Tickets"
@@ -140,6 +141,8 @@ export default function EntityTicketsList({ entityType, entityId, entityEmail, i
           onInstanceChange={() => {
             /* No-op for now, instance change not directly supported here */
           }}
+          showDetails={showDetails}
+          onShowDetailsChange={setShowDetails}
         />
       ))}
     </List>

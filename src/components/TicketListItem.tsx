@@ -7,9 +7,17 @@ interface TicketListItemProps {
   ticket: ZendeskTicket;
   instance: ZendeskInstance | undefined;
   onInstanceChange: (instance: ZendeskInstance) => void;
+  showDetails?: boolean;
+  onShowDetailsChange?: (show: boolean) => void;
 }
 
-export function TicketListItem({ ticket, instance, onInstanceChange }: TicketListItemProps) {
+export function TicketListItem({
+  ticket,
+  instance,
+  onInstanceChange,
+  showDetails,
+  onShowDetailsChange,
+}: TicketListItemProps) {
   const statusColor = getStatusColor(ticket.status);
   const priorityColor = getPriorityColor(ticket.priority);
 
@@ -78,7 +86,14 @@ export function TicketListItem({ ticket, instance, onInstanceChange }: TicketLis
         />
       }
       actions={
-        <ZendeskActions item={ticket} searchType="tickets" instance={instance} onInstanceChange={onInstanceChange} />
+        <ZendeskActions
+          item={ticket}
+          searchType="tickets"
+          instance={instance}
+          onInstanceChange={onInstanceChange}
+          showDetails={showDetails}
+          onShowDetailsChange={onShowDetailsChange}
+        />
       }
     />
   );

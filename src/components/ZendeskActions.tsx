@@ -46,10 +46,19 @@ interface ZendeskActionsProps {
     | "views";
   instance: ZendeskInstance | undefined;
   onInstanceChange: (instance: ZendeskInstance) => void;
+  showDetails?: boolean;
+  onShowDetailsChange?: (show: boolean) => void;
   children?: React.ReactNode;
 }
 
-export function ZendeskActions({ item, searchType, instance, onInstanceChange }: ZendeskActionsProps) {
+export function ZendeskActions({
+  item,
+  searchType,
+  instance,
+  onInstanceChange,
+  showDetails,
+  onShowDetailsChange,
+}: ZendeskActionsProps) {
   const allInstances = getZendeskInstances();
 
   const renderViewTicketsAction = (
@@ -292,6 +301,8 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
     let generalConfigUrl = `https://${instance?.subdomain}.zendesk.com`;
     let shortcutKey: Keyboard.KeyEquivalent | undefined = undefined;
 
+    const actions = [];
+
     if (searchType === "users") {
       generalConfigUrl = `${generalConfigUrl}/agent/user_filters`;
       shortcutKey = "u";
@@ -327,25 +338,42 @@ export function ZendeskActions({ item, searchType, instance, onInstanceChange }:
       shortcutKey = "v";
     }
 
-    return (
-      <>
-        <Action.OpenInBrowser
-          title="Open General Configuration"
-          url={generalConfigUrl}
-          shortcut={shortcutKey ? { modifiers: ["cmd", "shift"], key: shortcutKey } : undefined}
-        />
-        <ActionPanel.Submenu title="Change Instance" icon={Icon.House}>
-          {allInstances.map((inst) => (
-            <Action
-              key={inst.subdomain}
-              title={`${inst.subdomain}`}
-              icon={instance?.subdomain === inst.subdomain ? { source: Icon.Dot, tintColor: Color.Green } : undefined}
-              onAction={() => onInstanceChange(inst)}
-            />
-          ))}
-        </ActionPanel.Submenu>
-      </>
+    actions.push(
+      <Action.OpenInBrowser
+        key="general-config"
+        title="Open General Configuration"
+        url={generalConfigUrl}
+        shortcut={shortcutKey ? { modifiers: ["cmd", "shift"], key: shortcutKey } : undefined}
+      />,
     );
+
+    // Add show/hide details toggle if the props are provided
+    if (showDetails !== undefined && onShowDetailsChange) {
+      actions.push(
+        <Action
+          key="toggle-details"
+          title={showDetails ? "Hide Details" : "Show Details"}
+          icon={showDetails ? Icon.EyeDisabled : Icon.Eye}
+          onAction={() => onShowDetailsChange(!showDetails)}
+          shortcut={{ modifiers: ["cmd"], key: "d" }}
+        />,
+      );
+    }
+
+    actions.push(
+      <ActionPanel.Submenu key="change-instance" title="Change Instance" icon={Icon.House}>
+        {allInstances.map((inst) => (
+          <Action
+            key={inst.subdomain}
+            title={`${inst.subdomain}`}
+            icon={instance?.subdomain === inst.subdomain ? { source: Icon.Dot, tintColor: Color.Green } : undefined}
+            onAction={() => onInstanceChange(inst)}
+          />
+        ))}
+      </ActionPanel.Submenu>,
+    );
+
+    return <>{actions}</>;
   };
 
   return (
