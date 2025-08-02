@@ -1,38 +1,26 @@
-# Zendesk Raycast Extension
+# Zendesk Admin
 
-This Raycast extension allows you to search for users in Zendesk across different instances and manage your Zendesk instances.
+A Raycast extension for comprehensive Zendesk administration. Search, view, and manage all aspects of your Zendesk instances directly from Raycast.
 
 ## Features
 
-- Search for users by common queries.
-- Configure multiple Zendesk instances to search across.
-- Select a Zendesk instance and then search for users within it.
-- Configure which user properties to display in the search results and user details.
-- Open user profiles in the browser directly from the extension.
-- Manage and open Zendesk instances.
+- **Search 14 entity types**: Tickets, Users, Organizations, Groups, Views, Brands, Triggers, Automations, Macros, Ticket Fields, Forms, Dynamic Content, Support Addresses, Custom Roles
+- **Multi-instance support** with color coding
+- **Real-time search** with smart filtering
+- **Quick access** to all Zendesk products (Support, Guide, Admin, Explore, Sell, Chat, Talk)
+- **User management**: Create, edit, view tickets, manage group memberships
+- **Ticket management**: View details, open in browser, search related tickets
+- **Configuration management**: View and edit automations, triggers, fields, brands
 
 ## Commands
 
-### Search Zendesk
+- **Search Zendesk**: Main search interface for all entity types
+- **Open Zendesk Instance**: Quick access to Zendesk products
 
-Search for users, organizations, and triggers in Zendesk.
+## Setup
 
-### Open Zendesk Instance
-
-Manage and open your configured Zendesk instances. You can quickly open a specific product (Support, Guide, Admin, etc.) for any of your instances.
-
-## Configuration
-
-To configure the extension, you will need to set up your Zendesk instance(s) as a secret in Raycast. The configuration should be a JSON array of objects, where each object represents a Zendesk instance and has the following properties:
-
-- `name`: A name for your Zendesk instance (e.g., "My Company").
-- `subdomain`: Your Zendesk subdomain (e.g., `yourcompany`).
-- `user`: Your Zendesk API user email (e.g., `api_user@yourcompany.com/token`).
-- `api_key`: Your Zendesk API token.
-- `color`: (Optional) A color to represent this instance in the UI (e.g., `"#FF0000"` for red).
-- `production`: (Optional) A boolean to indicate if the instance is a production instance. Defaults to `false`.
-
-Example Configuration:
+1. Install the extension
+2. Configure Zendesk instances in Raycast preferences with JSON:
 
 ```json
 [
@@ -43,13 +31,25 @@ Example Configuration:
     "api_key": "your_api_key",
     "color": "#007bff",
     "production": true
-  },
-  {
-    "name": "Another Company",
-    "subdomain": "anothercompany",
-    "user": "another_api_user@anothercompany.com/token",
-    "api_key": "another_api_key",
-    "color": "#28a745"
   }
 ]
 ```
+
+## Requirements
+
+- Zendesk API access with permissions for user management, ticket access, organization management, group administration, and configuration management
+
+## Usage
+
+- Use "Search Zendesk" to find and manage entities across your instances
+- Use "Open Zendesk Instance" for quick navigation to Zendesk products
+- Switch between instances using the dropdown
+- Use keyboard shortcuts for common actions
+
+## Author
+
+gemini
+
+## License
+
+MIT
