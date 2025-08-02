@@ -1,6 +1,7 @@
 import { List, ActionPanel, Action, Icon, Color, Keyboard } from "@raycast/api";
 import { ZendeskTicketField, ZendeskInstance } from "../../api/zendesk";
 import { useState, useMemo } from "react";
+import AddTicketFieldOptionForm from "../forms/AddTicketFieldOptionForm";
 
 interface TicketFieldOptionsListProps {
   ticketField: ZendeskTicketField;
@@ -56,6 +57,12 @@ export default function TicketFieldOptionsList({ ticketField, instance }: Ticket
                 title="Copy Name to Clipboard"
                 content={option.name}
                 shortcut={Keyboard.Shortcut.Common.CopyName}
+              />
+              <Action.Push
+                title="Add Option"
+                icon={Icon.Plus}
+                target={<AddTicketFieldOptionForm ticketField={ticketField} instance={instance} />}
+                shortcut={Keyboard.Shortcut.Common.New}
               />
             </ActionPanel>
           }
