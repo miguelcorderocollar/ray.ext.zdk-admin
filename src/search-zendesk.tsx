@@ -113,6 +113,9 @@ export default function SearchZendesk() {
       setAllSupportAddresses([]);
       setBrandsLoaded(false);
       setAllBrands([]);
+    } else if (searchType === "brands") {
+      setBrandsLoaded(false);
+      setAllBrands([]);
     } else if (searchType === "groups") {
       setGroupsLoaded(false);
       setAllGroups([]);
@@ -178,6 +181,17 @@ export default function SearchZendesk() {
         );
         setResults(filteredResults);
       }
+    } else if (searchType === "brands") {
+      if (!brandsLoaded) {
+        performSearch();
+      } else {
+        const filteredResults = allBrands.filter(
+          (item) =>
+            item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
+            item.subdomain.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+        );
+        setResults(filteredResults);
+      }
     } else {
       performSearch();
     }
@@ -239,8 +253,9 @@ export default function SearchZendesk() {
           // Load brands if not already loaded
           if (!brandsLoaded) {
             setAllBrands([]);
-            const fetchedBrands = await searchZendeskBrands("", currentInstance);
-            setAllBrands(fetchedBrands);
+            await searchZendeskBrands(currentInstance, (page) => {
+              setAllBrands((prev) => [...prev, ...page]);
+            });
             setBrandsLoaded(true);
           }
 
@@ -344,7 +359,40 @@ export default function SearchZendesk() {
           }
           searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
         } else if (searchType === "brands") {
-          searchResults = await searchZendeskBrands(debouncedSearchText, currentInstance);
+          if (!brandsLoaded) {
+            setAllBrands([]);
+            await searchZendeskBrands(currentInstance, (page) => {
+              setAllBrands((prev) => [...prev, ...page]);
+              setResults(
+                (prev) =>
+                  [...prev, ...page] as
+                    | ZendeskUser[]
+                    | ZendeskOrganization[]
+                    | ZendeskTrigger[]
+                    | ZendeskDynamicContent[]
+                    | ZendeskMacro[]
+                    | ZendeskTicketField[]
+                    | ZendeskSupportAddress[]
+                    | ZendeskTicketForm[]
+                    | ZendeskGroup[]
+                    | ZendeskTicket[]
+                    | ZendeskView[]
+                    | ZendeskBrand[]
+                    | ZendeskAutomation[]
+                    | ZendeskCustomRole[]
+                    | ZendeskTriggerCategory[],
+              );
+            });
+            setBrandsLoaded(true);
+            setIsLoading(false);
+          } else {
+            const filteredResults = allBrands.filter(
+              (item) =>
+                item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
+                item.subdomain.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+            );
+            setResults(filteredResults);
+          }
         } else if (searchType === "automations") {
           searchResults = await searchZendeskAutomations(debouncedSearchText, currentInstance);
         } else if (searchType === "custom_roles") {

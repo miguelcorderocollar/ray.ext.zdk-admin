@@ -1,6 +1,5 @@
 - Add screenshots
 - Implement basic missing functions (create, delete, etc.)
     - Delete: User, Organization, Ticket, Form, Ticket Field, Ticket field option, Group, Dynamic Content, Views, Macros, Automations
-- Cache previous results
 - Final README check
 - Add suspended tickets API https://developer.zendesk.com/api-reference/ticketing/tickets/suspended_tickets/#list-suspended-tickets

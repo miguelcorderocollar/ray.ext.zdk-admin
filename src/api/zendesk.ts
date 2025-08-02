@@ -910,31 +910,38 @@ export async function searchZendeskGroups(instance: ZendeskInstance): Promise<Ze
   }
 }
 
-export async function searchZendeskBrands(query: string, instance: ZendeskInstance): Promise<ZendeskBrand[]> {
-  const searchTerms = query;
-  const url = searchTerms
-    ? `${getZendeskUrl(instance)}/brands/search.json?query=${encodeURIComponent(searchTerms)}`
-    : `${getZendeskUrl(instance)}/brands.json`;
-  console.log("Zendesk Brands Search URL:", url);
+export async function searchZendeskBrands(
+  instance: ZendeskInstance,
+  onPage: (brands: ZendeskBrand[]) => void,
+): Promise<void> {
+  let currentUrl = `${getZendeskUrl(instance)}/brands`;
+  console.log("Zendesk Brands URL:", currentUrl);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
   };
 
   try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: headers,
-    });
+    while (currentUrl) {
+      const response = await fetch(currentUrl, {
+        method: "GET",
+        headers: headers,
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      showToast(Toast.Style.Failure, "Zendesk API Error", `Failed to fetch brands: ${response.status} - ${errorText}`);
-      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        showToast(
+          Toast.Style.Failure,
+          "Zendesk API Error",
+          `Failed to fetch brands: ${response.status} - ${errorText}`,
+        );
+        throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      }
+
+      const data = (await response.json()) as ZendeskBrandSearchResponse;
+      onPage(data.brands);
+      currentUrl = data.next_page || "";
     }
-
-    const data = (await response.json()) as ZendeskBrandSearchResponse;
-    return data.brands;
   } catch (error) {
     showToast(
       Toast.Style.Failure,
