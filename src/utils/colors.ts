@@ -1,4 +1,4 @@
-import { Color } from "@raycast/api";
+import { Color, Icon } from "@raycast/api";
 
 export const getStatusColor = (status: string) => {
   switch (status) {
@@ -46,4 +46,24 @@ export const getUserRoleColor = (role: string) => {
     default:
       return Color.PrimaryText;
   }
+};
+
+// New utility functions for repeated patterns
+
+export const getActiveStatusColor = (active: boolean) => {
+  return active ? Color.Green : Color.Red;
+};
+
+export const getVerificationStatusColor = (verified: boolean) => {
+  return verified ? Color.Green : Color.Orange;
+};
+
+export const getDefaultStatusColor = (isDefault: boolean) => {
+  return isDefault ? Color.Green : Color.Orange;
+};
+
+export const getBooleanIcon = (condition: boolean) => {
+  return condition
+    ? { source: Icon.CheckCircle, tintColor: Color.Green }
+    : { source: Icon.XMarkCircle, tintColor: Color.Red };
 };

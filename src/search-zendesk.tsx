@@ -1,5 +1,6 @@
 import { List, showToast, Toast, Image, Color, Icon } from "@raycast/api";
-import { getUserRoleColor } from "./utils/colors";
+import { getUserRoleColor, getActiveStatusColor, getVerificationStatusColor, getBooleanIcon } from "./utils/colors";
+import { getFieldTypeInfo } from "./utils/fieldTypes";
 
 import { useState, useEffect } from "react";
 import { getZendeskInstances, ZendeskInstance } from "./utils/preferences";
@@ -418,7 +419,7 @@ export default function SearchZendesk() {
                             <List.Item.Detail.Metadata.TagList title="Active">
                               <List.Item.Detail.Metadata.TagList.Item
                                 text={trigger.active ? "Active" : "Inactive"}
-                                color={trigger.active ? Color.Green : Color.Red}
+                                color={getActiveStatusColor(trigger.active)}
                               />
                             </List.Item.Detail.Metadata.TagList>
                             {trigger.created_at && (
@@ -770,7 +771,7 @@ export default function SearchZendesk() {
                           <List.Item.Detail.Metadata.TagList title="Active">
                             <List.Item.Detail.Metadata.TagList.Item
                               text={macro.active ? "Active" : "Inactive"}
-                              color={macro.active ? Color.Green : Color.Red}
+                              color={getActiveStatusColor(macro.active)}
                             />
                           </List.Item.Detail.Metadata.TagList>
                           {macro.description && (
@@ -805,26 +806,7 @@ export default function SearchZendesk() {
               if (!ticketField) {
                 return null; // Skip rendering if ticketField is null or undefined
               }
-              const fieldTypeMapping: { [key: string]: { label: string; color: string } } = {
-                text: { label: "Text", color: "#00796B" }, // Teal
-                textarea: { label: "Textarea", color: "Green" },
-                checkbox: { label: "Checkbox", color: "#FF9800" }, // Orange
-                date: { label: "Date", color: "Orange" },
-                integer: { label: "Integer", color: "#3F51B5" }, // Indigo
-                decimal: { label: "Decimal", color: "Red" },
-                regexp: { label: "Regex", color: "Yellow" },
-                partialcreditcard: { label: "Partial Credit Card", color: "PrimaryText" },
-                multiselect: { label: "Multi-select", color: "#9C27B0" }, // Purple
-                tagger: { label: "Dropdown", color: "#1E90FF" }, // Dodger Blue
-                lookup: { label: "Lookup", color: "#8A2BE2" }, // Blue Violet
-                group: { label: "System", color: "Gray" },
-                tickettype: { label: "System", color: "Gray" },
-                subject: { label: "System", color: "Gray" },
-                status: { label: "System", color: "Gray" },
-                description: { label: "System", color: "Gray" },
-                assignee: { label: "System", color: "Gray" },
-                priority: { label: "System", color: "Gray" },
-              };
+              const fieldTypeInfo = getFieldTypeInfo(ticketField.type);
 
               return (
                 <List.Item
@@ -833,8 +815,8 @@ export default function SearchZendesk() {
                   accessories={[
                     {
                       tag: {
-                        value: fieldTypeMapping[ticketField.type]?.label || ticketField.type,
-                        color: fieldTypeMapping[ticketField.type]?.color || Color.PrimaryText,
+                        value: fieldTypeInfo.label,
+                        color: fieldTypeInfo.color,
                       },
                     },
                     ...(!ticketField.active
@@ -856,57 +838,33 @@ export default function SearchZendesk() {
                           <List.Item.Detail.Metadata.Label title="ID" text={ticketField.id.toString()} />
                           <List.Item.Detail.Metadata.TagList title="Type">
                             <List.Item.Detail.Metadata.TagList.Item
-                              text={
-                                fieldTypeMapping[ticketField.type]
-                                  ? fieldTypeMapping[ticketField.type].label
-                                  : ticketField.type || "Unknown Type"
-                              }
-                              color={
-                                fieldTypeMapping[ticketField.type]
-                                  ? fieldTypeMapping[ticketField.type].color
-                                  : Color.PrimaryText
-                              }
+                              text={fieldTypeInfo.label}
+                              color={fieldTypeInfo.color}
                             />
                           </List.Item.Detail.Metadata.TagList>
                           <List.Item.Detail.Metadata.TagList title="Active">
                             <List.Item.Detail.Metadata.TagList.Item
                               text={ticketField.active ? "Active" : "Inactive"}
-                              color={ticketField.active ? Color.Green : Color.Red}
+                              color={getActiveStatusColor(ticketField.active)}
                             />
                           </List.Item.Detail.Metadata.TagList>
                           <List.Item.Detail.Metadata.Separator />
                           <List.Item.Detail.Metadata.Label
                             title="Visible in Portal"
-                            icon={
-                              ticketField.visible_in_portal
-                                ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                                : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                            }
+                            icon={getBooleanIcon(ticketField.visible_in_portal)}
                           />
                           <List.Item.Detail.Metadata.Label
                             title="Editable in Portal"
-                            icon={
-                              ticketField.editable_in_portal
-                                ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                                : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                            }
+                            icon={getBooleanIcon(ticketField.editable_in_portal)}
                           />
                           <List.Item.Detail.Metadata.Label
                             title="Required in Portal"
-                            icon={
-                              ticketField.required_in_portal
-                                ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                                : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                            }
+                            icon={getBooleanIcon(ticketField.required_in_portal)}
                           />
                           <List.Item.Detail.Metadata.Separator />
                           <List.Item.Detail.Metadata.Label
                             title="Agent Can Edit"
-                            icon={
-                              ticketField.editable_in_portal
-                                ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                                : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                            }
+                            icon={getBooleanIcon(ticketField.editable_in_portal)}
                           />
                           <List.Item.Detail.Metadata.Separator />
                           {ticketField.tag && <List.Item.Detail.Metadata.Label title="Tag" text={ticketField.tag} />}
@@ -970,7 +928,7 @@ export default function SearchZendesk() {
                             <List.Item.Detail.Metadata.TagList title="CNAME Status">
                               <List.Item.Detail.Metadata.TagList.Item
                                 text={supportAddress.cname_status}
-                                color={supportAddress.cname_status === "verified" ? Color.Green : Color.Orange}
+                                color={getVerificationStatusColor(supportAddress.cname_status === "verified")}
                               />
                             </List.Item.Detail.Metadata.TagList>
                           )}
@@ -987,9 +945,9 @@ export default function SearchZendesk() {
                             <List.Item.Detail.Metadata.TagList title="Domain Verification Status">
                               <List.Item.Detail.Metadata.TagList.Item
                                 text={supportAddress.domain_verification_status}
-                                color={
-                                  supportAddress.domain_verification_status === "verified" ? Color.Green : Color.Orange
-                                }
+                                color={getVerificationStatusColor(
+                                  supportAddress.domain_verification_status === "verified",
+                                )}
                               />
                             </List.Item.Detail.Metadata.TagList>
                           )}
@@ -997,7 +955,7 @@ export default function SearchZendesk() {
                             <List.Item.Detail.Metadata.TagList title="SPF Status">
                               <List.Item.Detail.Metadata.TagList.Item
                                 text={supportAddress.spf_status}
-                                color={supportAddress.spf_status === "verified" ? Color.Green : Color.Orange}
+                                color={getVerificationStatusColor(supportAddress.spf_status === "verified")}
                               />
                             </List.Item.Detail.Metadata.TagList>
                           )}
@@ -1006,7 +964,7 @@ export default function SearchZendesk() {
                             <List.Item.Detail.Metadata.TagList title="Forwarding Status">
                               <List.Item.Detail.Metadata.TagList.Item
                                 text={supportAddress.forwarding_status}
-                                color={supportAddress.forwarding_status === "verified" ? Color.Green : Color.Orange}
+                                color={getVerificationStatusColor(supportAddress.forwarding_status === "verified")}
                               />
                             </List.Item.Detail.Metadata.TagList>
                           )}
@@ -1070,25 +1028,17 @@ export default function SearchZendesk() {
                           <List.Item.Detail.Metadata.TagList title="Active">
                             <List.Item.Detail.Metadata.TagList.Item
                               text={ticketForm.active ? "Active" : "Inactive"}
-                              color={ticketForm.active ? Color.Green : Color.Red}
+                              color={getActiveStatusColor(ticketForm.active)}
                             />
                           </List.Item.Detail.Metadata.TagList>
                           <List.Item.Detail.Metadata.Separator />
                           <List.Item.Detail.Metadata.Label
                             title="End User Visible"
-                            icon={
-                              ticketForm.end_user_visible
-                                ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                                : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                            }
+                            icon={getBooleanIcon(ticketForm.end_user_visible)}
                           />
                           <List.Item.Detail.Metadata.Label
                             title="In All Brands"
-                            icon={
-                              ticketForm.in_all_brands
-                                ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                                : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                            }
+                            icon={getBooleanIcon(ticketForm.in_all_brands)}
                           />
                           {ticketForm.restricted_brand_ids && ticketForm.restricted_brand_ids.length > 0 && (
                             <List.Item.Detail.Metadata.TagList title="Restricted Brand IDs">
@@ -1148,30 +1098,9 @@ export default function SearchZendesk() {
                             target={`https://${currentInstance?.subdomain}.zendesk.com/admin/people/groups/${group.id}`}
                           />
                           <List.Item.Detail.Metadata.Separator />
-                          <List.Item.Detail.Metadata.Label
-                            title="Default"
-                            icon={
-                              group.default
-                                ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                                : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                            }
-                          />
-                          <List.Item.Detail.Metadata.Label
-                            title="Deleted"
-                            icon={
-                              group.deleted
-                                ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                                : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                            }
-                          />
-                          <List.Item.Detail.Metadata.Label
-                            title="Is Public"
-                            icon={
-                              group.is_public
-                                ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                                : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                            }
-                          />
+                          <List.Item.Detail.Metadata.Label title="Default" icon={getBooleanIcon(group.default)} />
+                          <List.Item.Detail.Metadata.Label title="Deleted" icon={getBooleanIcon(group.deleted)} />
+                          <List.Item.Detail.Metadata.Label title="Is Public" icon={getBooleanIcon(group.is_public)} />
                           <List.Item.Detail.Metadata.Separator />
                           <List.Item.Detail.Metadata.Label
                             title="Created At"
@@ -1247,7 +1176,7 @@ export default function SearchZendesk() {
                           <List.Item.Detail.Metadata.TagList title="Active">
                             <List.Item.Detail.Metadata.TagList.Item
                               text={view.active ? "Active" : "Inactive"}
-                              color={view.active ? Color.Green : Color.Red}
+                              color={getActiveStatusColor(view.active)}
                             />
                           </List.Item.Detail.Metadata.TagList>
                           {view.created_at && (

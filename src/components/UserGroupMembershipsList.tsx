@@ -1,4 +1,5 @@
 import { List, showToast, Toast, Color, Icon } from "@raycast/api";
+import { getDefaultStatusColor, getBooleanIcon } from "../utils/colors";
 import { useState, useEffect } from "react";
 import { ZendeskInstance } from "../utils/preferences";
 import { searchZendeskUserGroupMemberships, ZendeskGroupMembership, getUserGroups, ZendeskGroup } from "../api/zendesk";
@@ -125,34 +126,22 @@ export default function UserGroupMembershipsList({ userId, userName, instance }:
                         )}
                         <List.Item.Detail.Metadata.Label
                           title="Default"
-                          icon={
-                            membership.group.default
-                              ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                              : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                          }
+                          icon={getBooleanIcon(membership.group.default)}
                         />
                         <List.Item.Detail.Metadata.Label
                           title="Deleted"
-                          icon={
-                            membership.group.deleted
-                              ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                              : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                          }
+                          icon={getBooleanIcon(membership.group.deleted)}
                         />
                         <List.Item.Detail.Metadata.Label
                           title="Is Public"
-                          icon={
-                            membership.group.is_public
-                              ? { source: Icon.CheckCircle, tintColor: Color.Green }
-                              : { source: Icon.XMarkCircle, tintColor: Color.Red }
-                          }
+                          icon={getBooleanIcon(membership.group.is_public)}
                         />
                       </>
                     )}
                     <List.Item.Detail.Metadata.TagList title="Default Membership">
                       <List.Item.Detail.Metadata.TagList.Item
                         text={membership.default ? "Default" : "Not Default"}
-                        color={membership.default ? Color.Green : Color.Orange}
+                        color={getDefaultStatusColor(membership.default)}
                       />
                     </List.Item.Detail.Metadata.TagList>
                     <List.Item.Detail.Metadata.Separator />

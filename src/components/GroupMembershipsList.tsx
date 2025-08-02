@@ -1,5 +1,5 @@
 import { List, showToast, Toast, Color, Icon, Image } from "@raycast/api";
-import { getUserRoleColor } from "../utils/colors";
+import { getUserRoleColor, getDefaultStatusColor } from "../utils/colors";
 import { useState, useEffect } from "react";
 import { ZendeskInstance } from "../utils/preferences";
 import { searchZendeskGroupMemberships, ZendeskGroupMembership, getGroupUsers, ZendeskUser } from "../api/zendesk";
@@ -144,7 +144,7 @@ export default function GroupMembershipsList({ groupId, groupName, instance }: G
                   <List.Item.Detail.Metadata.TagList title="Default">
                     <List.Item.Detail.Metadata.TagList.Item
                       text={membership.default ? "Default" : "Not Default"}
-                      color={membership.default ? Color.Green : Color.Orange}
+                      color={getDefaultStatusColor(membership.default)}
                     />
                   </List.Item.Detail.Metadata.TagList>
                   <List.Item.Detail.Metadata.Separator />
