@@ -45,20 +45,6 @@ export function AutomationListItem({
 
                 <List.Item.Detail.Metadata.Label title="Active" icon={getBooleanIcon(automation.active)} />
 
-                {automation.actions && automation.actions.length > 0 && (
-                  <>
-                    <List.Item.Detail.Metadata.Separator />
-                    <List.Item.Detail.Metadata.Label title="Actions" text={`${automation.actions.length} action(s)`} />
-                    {automation.actions.map((action, index) => (
-                      <List.Item.Detail.Metadata.Label
-                        key={index}
-                        title={`Action ${index + 1}`}
-                        text={`${action.field}: ${Array.isArray(action.value) ? action.value.join(", ") : action.value}`}
-                      />
-                    ))}
-                  </>
-                )}
-
                 <List.Item.Detail.Metadata.Separator />
 
                 <TimestampMetadata created_at={automation.created_at} updated_at={automation.updated_at} />

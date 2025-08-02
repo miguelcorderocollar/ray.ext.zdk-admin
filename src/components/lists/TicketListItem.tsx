@@ -3,6 +3,7 @@ import { ZendeskTicket, ZendeskInstance } from "../../api/zendesk";
 import { ZendeskActions } from "../actions/ZendeskActions";
 import { getStatusColor, getPriorityColor } from "../../utils/colors";
 import { TimestampMetadata } from "../common/MetadataHelpers";
+import { getViaChannelInfo } from "../../utils/viaChannelMapping";
 
 interface TicketListItemProps {
   ticket: ZendeskTicket;
@@ -78,7 +79,10 @@ export function TicketListItem({
               )}
               {ticket.via && (
                 <List.Item.Detail.Metadata.TagList title="Via">
-                  <List.Item.Detail.Metadata.TagList.Item text={ticket.via.channel} />
+                  {(() => {
+                    const viaInfo = getViaChannelInfo(ticket.via.channel);
+                    return <List.Item.Detail.Metadata.TagList.Item text={viaInfo.label} icon={viaInfo.icon} />;
+                  })()}
                 </List.Item.Detail.Metadata.TagList>
               )}
             </List.Item.Detail.Metadata>

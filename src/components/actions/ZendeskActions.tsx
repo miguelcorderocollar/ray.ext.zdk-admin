@@ -164,6 +164,14 @@ export function ZendeskActions({
               shortcut={Keyboard.Shortcut.Common.Copy}
             />
           )}
+          <Action.CopyToClipboard
+            title="Copy Placeholder to Clipboard"
+            content={dynamicContent.placeholder}
+            shortcut={{
+              macOS: { modifiers: ["cmd", "shift"], key: "p" },
+              windows: { modifiers: ["ctrl", "shift"], key: "p" },
+            }}
+          />
         </>
       );
     } else if (searchType === "macros") {

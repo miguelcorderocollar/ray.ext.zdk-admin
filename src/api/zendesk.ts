@@ -58,6 +58,9 @@ export interface ZendeskOrganization {
   shared_tickets?: boolean;
   shared_comments?: boolean;
   external_id?: string;
+  group_id?: number;
+  organization_fields?: Record<string, unknown>;
+  tags?: string[];
 }
 
 interface ZendeskUserSearchResponse {
@@ -84,6 +87,27 @@ export interface ZendeskTrigger {
 interface ZendeskTriggerSearchResponse {
   triggers: ZendeskTrigger[];
   count: number;
+}
+
+export interface ZendeskTriggerCategory {
+  id: string;
+  name: string;
+  position: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ZendeskTriggerCategorySearchResponse {
+  trigger_categories: ZendeskTriggerCategory[];
+  links?: {
+    next?: string;
+    prev?: string;
+  };
+  meta?: {
+    after_cursor?: string;
+    before_cursor?: string;
+    has_more?: boolean;
+  };
 }
 
 export interface ZendeskAutomation {
@@ -504,6 +528,57 @@ export async function searchZendeskTriggers(query: string, instance: ZendeskInst
 
     const data = (await response.json()) as ZendeskTriggerSearchResponse;
     return data.triggers;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskTriggerCategories(
+  instance: ZendeskInstance,
+  onPage: (categories: ZendeskTriggerCategory[]) => void,
+): Promise<void> {
+  let url: string | null = `${getZendeskUrl(instance)}/trigger_categories.json?include=rule_counts&sort=position`;
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    while (url) {
+      console.log("Zendesk Trigger Categories Search URL:", url);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: headers,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        showToast(
+          Toast.Style.Failure,
+          "Zendesk API Error",
+          `Failed to fetch trigger categories: ${response.status} - ${errorText}`,
+        );
+        throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      }
+
+      const data = (await response.json()) as ZendeskTriggerCategorySearchResponse;
+      onPage(data.trigger_categories);
+
+      // Use cursor navigation as recommended
+      if (data.meta?.has_more && data.meta?.after_cursor) {
+        const urlObj: URL = new URL(url as string);
+        urlObj.searchParams.set("page[after]", data.meta.after_cursor);
+        urlObj.searchParams.set("page[size]", "100");
+        url = urlObj.toString();
+      } else {
+        url = null;
+      }
+    }
   } catch (error) {
     showToast(
       Toast.Style.Failure,

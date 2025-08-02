@@ -1,5 +1,5 @@
 import { List } from "@raycast/api";
-import { formatDate, formatInstanceColor } from "../../utils/formatters";
+import { formatDateCompact, formatInstanceColor } from "../../utils/formatters";
 import { ZendeskInstance } from "../../utils/preferences";
 
 interface TimestampMetadataProps {
@@ -13,8 +13,8 @@ interface InstanceMetadataProps {
 
 export const TimestampMetadata = ({ created_at, updated_at }: TimestampMetadataProps) => (
   <>
-    <List.Item.Detail.Metadata.Label title="Created At" text={formatDate(created_at)} />
-    <List.Item.Detail.Metadata.Label title="Updated At" text={formatDate(updated_at)} />
+    <List.Item.Detail.Metadata.Label title="Created At" text={formatDateCompact(created_at)} />
+    <List.Item.Detail.Metadata.Label title="Updated At" text={formatDateCompact(updated_at)} />
   </>
 );
 
