@@ -14,6 +14,7 @@ These are features that are highly useful and relatively straightforward to impl
     *   Add group memberships on group view and user details.
 *   **Search Scope:** Improve search for already loaded items to search across all relevant properties.
 *   **Archived Items:** Implement special rules to move `[ARCHIVE]` items to the bottom of search results or hide them.
+*   **Global Search:** Add a global search feature that queries all supported Zendesk APIs simultaneously, so users do not need to select a specific search type. Results from users, organizations, tickets, triggers, etc. should be shown together, grouped or labeled by type, with clear visual distinction. This would streamline the search experience and make it easier to find any Zendesk object from a single entry point.
 
 ### Essential Actions
 *   **Basic Actions:** Ensure all essential actions are available: edit, view tickets, and open in Zendesk for relevant items.

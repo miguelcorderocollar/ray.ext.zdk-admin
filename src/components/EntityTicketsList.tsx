@@ -1,8 +1,8 @@
-import { List, showToast, Toast, Color, Icon } from "@raycast/api";
+import { List, showToast, Toast } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { ZendeskInstance } from "../utils/preferences";
 import { searchZendeskTickets, ZendeskTicket } from "../api/zendesk";
-import { ZendeskActions } from "./ZendeskActions";
+import { TicketListItem } from "./TicketListItem";
 
 // Custom useDebounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -99,41 +99,6 @@ export default function EntityTicketsList({ entityType, entityId, entityEmail, i
     });
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "new":
-        return Color.Yellow;
-      case "open":
-        return Color.Red;
-      case "pending":
-        return Color.Blue;
-      case "hold":
-      case "on-hold":
-        return Color.Purple;
-      case "solved":
-        return Color.Green;
-      case "closed":
-        return Color.PrimaryText;
-      default:
-        return Color.PrimaryText;
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "urgent":
-        return Color.Red;
-      case "high":
-        return Color.Orange;
-      case "normal":
-        return Color.Blue;
-      case "low":
-        return Color.Green;
-      default:
-        return Color.PrimaryText;
-    }
-  };
-
   return (
     <List
       isLoading={isLoading}
@@ -168,84 +133,13 @@ export default function EntityTicketsList({ entityType, entityId, entityEmail, i
         <List.EmptyView title="No matching tickets found." description="Try a different search query." />
       )}
       {tickets.map((ticket) => (
-        <List.Item
+        <TicketListItem
           key={ticket.id}
-          title={ticket.subject}
-          icon={{ source: Icon.Circle, tintColor: getStatusColor(ticket.status) }}
-          accessories={[
-            { text: `#${ticket.id}` },
-            { tag: { value: ticket.status, color: getStatusColor(ticket.status) } },
-            ...(ticket.priority ? [{ tag: { value: ticket.priority, color: getPriorityColor(ticket.priority) } }] : []),
-            { date: new Date(ticket.updated_at), tooltip: `Updated: ${new Date(ticket.updated_at).toLocaleString()}` },
-          ]}
-          detail={
-            <List.Item.Detail
-              markdown={`## ${ticket.subject}
-
-${ticket.description}`}
-              metadata={
-                <List.Item.Detail.Metadata>
-                  <List.Item.Detail.Metadata.TagList title="Status">
-                    <List.Item.Detail.Metadata.TagList.Item
-                      text={ticket.status}
-                      color={getStatusColor(ticket.status)}
-                    />
-                  </List.Item.Detail.Metadata.TagList>
-                  <List.Item.Detail.Metadata.Separator />
-                  <List.Item.Detail.Metadata.Label
-                    title="Created At"
-                    text={new Date(ticket.created_at).toLocaleString()}
-                  />
-                  <List.Item.Detail.Metadata.Label
-                    title="Updated At"
-                    text={new Date(ticket.updated_at).toLocaleString()}
-                  />
-                  <List.Item.Detail.Metadata.Separator />
-                  {ticket.priority && (
-                    <List.Item.Detail.Metadata.TagList title="Priority">
-                      <List.Item.Detail.Metadata.TagList.Item
-                        text={ticket.priority}
-                        color={getPriorityColor(ticket.priority)}
-                      />
-                    </List.Item.Detail.Metadata.TagList>
-                  )}
-                  {ticket.type && (
-                    <List.Item.Detail.Metadata.TagList title="Type">
-                      <List.Item.Detail.Metadata.TagList.Item text={ticket.type} />
-                    </List.Item.Detail.Metadata.TagList>
-                  )}
-                  {ticket.via && (
-                    <List.Item.Detail.Metadata.TagList title="Via">
-                      <List.Item.Detail.Metadata.TagList.Item text={ticket.via.channel} />
-                    </List.Item.Detail.Metadata.TagList>
-                  )}
-                  {ticket.tags && ticket.tags.length > 0 && (
-                    <List.Item.Detail.Metadata.TagList title="Tags">
-                      {ticket.tags.map((tag) => (
-                        <List.Item.Detail.Metadata.TagList.Item key={tag} text={tag} />
-                      ))}
-                    </List.Item.Detail.Metadata.TagList>
-                  )}
-                  {ticket.custom_fields?.map(
-                    (field) =>
-                      field.value && (
-                        <List.Item.Detail.Metadata.TagList.Item key={field.id} text={`${field.id}: ${field.value}`} />
-                      ),
-                  )}
-                </List.Item.Detail.Metadata>
-              }
-            />
-          }
-          actions={
-            <ZendeskActions
-              item={ticket}
-              searchType="tickets"
-              instance={instance}
-              onInstanceChange={() => {
-                /* No-op for now, instance change not directly supported here */
-              }}
-            />
-          }
+          ticket={ticket}
+          instance={instance}
+          onInstanceChange={() => {
+            /* No-op for now, instance change not directly supported here */
+          }}
         />
       ))}
     </List>
