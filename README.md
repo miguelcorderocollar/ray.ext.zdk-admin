@@ -12,6 +12,13 @@ A Raycast extension for comprehensive Zendesk administration. Search, view, and 
 - **Ticket management**: View details, open in browser, search related tickets
 - **Configuration management**: View and edit automations, triggers, fields, brands
 
+## Future Plans
+
+- **Delete Actions**: Delete functionality for all entities (Users, Organizations, Tickets, Forms, etc.)
+- **Additional Entities**: Custom objects, Help Center, Apps, Webhooks, SLAs
+- **Advanced Actions**: Assign users to groups, manage form fields, bulk ticket operations
+- **AI Extension**: Smart search, automated actions, natural language interface
+
 ## Commands
 
 - **Search Zendesk**: Main search interface for all entity types
