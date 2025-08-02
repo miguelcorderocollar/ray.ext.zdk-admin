@@ -1,7 +1,8 @@
 import { List, ActionPanel, Action, Icon, Keyboard, Color } from "@raycast/api";
 import { ZendeskBrand, ZendeskInstance } from "../../api/zendesk";
-import { formatDate } from "../../utils/formatters";
 import { getZendeskInstances } from "../../utils/preferences";
+import { getActiveStatusColor, getDefaultStatusColor, getHelpCenterStateColor } from "../../utils/colors";
+import { InstanceMetadata, TimestampMetadata } from "../common/MetadataHelpers";
 import EntityTicketsList from "./EntityTicketsList";
 
 interface BrandListItemProps {
@@ -22,7 +23,7 @@ export function BrandListItem({
   const allInstances = getZendeskInstances();
 
   const accessories: List.Item.Accessory[] = [
-    ...(brand.active ? [] : [{ icon: Icon.MinusCircle, tooltip: "Inactive" }]),
+    ...(brand.default ? [{ icon: Icon.CheckCircle, tooltip: "Default Brand" }] : []),
     ...(!showDetails ? [{ text: brand.subdomain || "No subdomain" }] : []),
   ];
 
@@ -37,29 +38,62 @@ export function BrandListItem({
           <List.Item.Detail
             metadata={
               <List.Item.Detail.Metadata>
+                {instance && <InstanceMetadata instance={instance} />}
+
                 <List.Item.Detail.Metadata.Label title="Brand ID" text={brand.id?.toString() || "N/A"} />
                 <List.Item.Detail.Metadata.Label title="Name" text={brand.name || "N/A"} />
                 <List.Item.Detail.Metadata.Label title="Subdomain" text={brand.subdomain || "N/A"} />
                 <List.Item.Detail.Metadata.Label title="Host Mapping" text={brand.host_mapping || "N/A"} />
-                <List.Item.Detail.Metadata.Label title="Status" text={brand.active ? "Active" : "Inactive"} />
-                <List.Item.Detail.Metadata.Label title="Default" text={brand.default ? "Yes" : "No"} />
-                <List.Item.Detail.Metadata.Label
-                  title="Help Center"
-                  text={brand.has_help_center ? "Enabled" : "Disabled"}
-                />
-                <List.Item.Detail.Metadata.Label title="Help Center State" text={brand.help_center_state || "N/A"} />
-                <List.Item.Detail.Metadata.Label title="Brand URL" text={brand.brand_url || "N/A"} />
-                <List.Item.Detail.Metadata.Label title="Created" text={formatDate(brand.created_at || "")} />
-                <List.Item.Detail.Metadata.Label title="Updated" text={formatDate(brand.updated_at || "")} />
-                {brand.ticket_form_ids && brand.ticket_form_ids.length > 0 && (
-                  <List.Item.Detail.Metadata.Label
-                    title="Ticket Forms"
-                    text={brand.ticket_form_ids.length.toString()}
+                {brand.brand_url && (
+                  <List.Item.Detail.Metadata.Link title="Brand URL" text={brand.brand_url} target={brand.brand_url} />
+                )}
+
+                <List.Item.Detail.Metadata.Separator />
+
+                <List.Item.Detail.Metadata.TagList title="Status">
+                  <List.Item.Detail.Metadata.TagList.Item
+                    text={brand.active ? "Active" : "Inactive"}
+                    color={getActiveStatusColor(brand.active)}
                   />
+                </List.Item.Detail.Metadata.TagList>
+
+                <List.Item.Detail.Metadata.TagList title="Default">
+                  <List.Item.Detail.Metadata.TagList.Item
+                    text={brand.default ? "Default" : "Not Default"}
+                    color={getDefaultStatusColor(brand.default)}
+                  />
+                </List.Item.Detail.Metadata.TagList>
+
+                <List.Item.Detail.Metadata.TagList title="Help Center">
+                  <List.Item.Detail.Metadata.TagList.Item
+                    text={brand.has_help_center ? "Enabled" : "Disabled"}
+                    color={getActiveStatusColor(brand.has_help_center)}
+                  />
+                </List.Item.Detail.Metadata.TagList>
+
+                {brand.help_center_state && (
+                  <List.Item.Detail.Metadata.TagList title="Help Center State">
+                    <List.Item.Detail.Metadata.TagList.Item
+                      text={brand.help_center_state}
+                      color={getHelpCenterStateColor(brand.help_center_state)}
+                    />
+                  </List.Item.Detail.Metadata.TagList>
                 )}
-                {brand.logo && brand.logo.file_name && (
-                  <List.Item.Detail.Metadata.Label title="Logo" text={brand.logo.file_name} />
+
+                <List.Item.Detail.Metadata.Separator />
+
+                {brand.ticket_form_ids && brand.ticket_form_ids.length > 0 && (
+                  <List.Item.Detail.Metadata.TagList title="Ticket Forms">
+                    <List.Item.Detail.Metadata.TagList.Item
+                      text={`${brand.ticket_form_ids.length} form(s)`}
+                      color={Color.Blue}
+                    />
+                  </List.Item.Detail.Metadata.TagList>
                 )}
+
+                <List.Item.Detail.Metadata.Separator />
+
+                <TimestampMetadata created_at={brand.created_at} updated_at={brand.updated_at} />
               </List.Item.Detail.Metadata>
             }
           />
@@ -70,7 +104,7 @@ export function BrandListItem({
           <ActionPanel.Section title="Open">
             <Action.OpenInBrowser
               title="Open in Zendesk"
-              url={`https://${instance?.subdomain}.zendesk.com/admin/brands/${brand.id}`}
+              url={`https://${instance?.subdomain}.zendesk.com/admin/account/brand_management/brands/${brand.id}`}
               shortcut={Keyboard.Shortcut.Common.Open}
             />
             {brand.has_help_center && brand.brand_url && (
@@ -85,7 +119,7 @@ export function BrandListItem({
             )}
             <Action.CopyToClipboard
               title="Copy Brand Link"
-              content={`https://${instance?.subdomain}.zendesk.com/admin/brands/${brand.id}`}
+              content={`https://${instance?.subdomain}.zendesk.com/admin/account/brand_management/brands/${brand.id}`}
               shortcut={{
                 macOS: { modifiers: ["cmd"], key: "l" },
                 windows: { modifiers: ["ctrl"], key: "l" },
@@ -106,7 +140,7 @@ export function BrandListItem({
           <ActionPanel.Section title="General">
             <Action.OpenInBrowser
               title="Open General Configuration"
-              url={`https://${instance?.subdomain}.zendesk.com/admin/brands`}
+              url={`https://${instance?.subdomain}.zendesk.com/admin/account/brand_management/brands`}
               shortcut={{
                 macOS: { modifiers: ["cmd", "shift"], key: "b" },
                 windows: { modifiers: ["ctrl", "shift"], key: "b" },

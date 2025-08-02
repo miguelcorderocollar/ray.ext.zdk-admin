@@ -67,3 +67,16 @@ export const getBooleanIcon = (condition: boolean) => {
     ? { source: Icon.CheckCircle, tintColor: Color.Green }
     : { source: Icon.XMarkCircle, tintColor: Color.Red };
 };
+
+export const getHelpCenterStateColor = (state: string) => {
+  switch (state) {
+    case "enabled":
+      return Color.Green;
+    case "disabled":
+      return Color.Red;
+    case "restricted":
+      return Color.Orange;
+    default:
+      return Color.PrimaryText;
+  }
+};

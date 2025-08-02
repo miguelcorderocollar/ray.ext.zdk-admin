@@ -424,7 +424,13 @@ export default function SearchZendesk() {
                           {currentInstance && <InstanceMetadata instance={currentInstance} />}
                           <List.Item.Detail.Metadata.Label title="Name" text={user.name} />
                           <List.Item.Detail.Metadata.Label title="ID" text={user.id.toString()} />
-                          {user.email && <List.Item.Detail.Metadata.Label title="Email" text={user.email} />}
+                          {user.email && (
+                            <List.Item.Detail.Metadata.Link
+                              title="Email"
+                              text={user.email}
+                              target={`mailto:${user.email}`}
+                            />
+                          )}
                           {user.alias && <List.Item.Detail.Metadata.Label title="Alias" text={user.alias} />}
                           {user.phone && <List.Item.Detail.Metadata.Label title="Phone" text={user.phone} />}
                           {user.role && (
@@ -794,7 +800,11 @@ export default function SearchZendesk() {
                           {supportAddress.name && (
                             <List.Item.Detail.Metadata.Label title="Name" text={supportAddress.name} />
                           )}
-                          <List.Item.Detail.Metadata.Label title="Email" text={supportAddress.email} />
+                          <List.Item.Detail.Metadata.Link
+                            title="Email"
+                            text={supportAddress.email}
+                            target={`mailto:${supportAddress.email}`}
+                          />
                           <List.Item.Detail.Metadata.Label title="ID" text={supportAddress.id.toString()} />
                           {supportAddress.brand_id && (
                             <List.Item.Detail.Metadata.Label

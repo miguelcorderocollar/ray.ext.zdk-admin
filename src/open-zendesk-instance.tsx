@@ -70,14 +70,6 @@ export default function OpenZendeskInstance() {
           icon={{ source: Icon.House, tintColor: instance.color || Color.PrimaryText }}
           actions={
             <ActionPanel>
-              <Action.OpenInBrowser
-                title={`Open ${productTitles[product]}`}
-                url={getProductUrl(instance.subdomain, product)}
-                shortcut={{
-                  macOS: { modifiers: ["cmd"], key: "enter" },
-                  windows: { modifiers: ["ctrl"], key: "enter" },
-                }}
-              />
               <ActionPanel.Section>
                 {Object.entries(productTitles).map(([value, title], index) => {
                   const productKeyMap: { [key: number]: Keyboard.KeyEquivalent } = {

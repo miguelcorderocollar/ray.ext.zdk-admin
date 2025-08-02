@@ -108,7 +108,11 @@ export default function GroupMembershipsList({ groupId, groupName, instance }: G
                     <>
                       <List.Item.Detail.Metadata.Label title="User Name" text={membership.user.name} />
                       {membership.user.email && (
-                        <List.Item.Detail.Metadata.Label title="Email" text={membership.user.email} />
+                        <List.Item.Detail.Metadata.Link
+                          title="Email"
+                          text={membership.user.email}
+                          target={`mailto:${membership.user.email}`}
+                        />
                       )}
                       {membership.user.role && (
                         <List.Item.Detail.Metadata.TagList title="Role">
