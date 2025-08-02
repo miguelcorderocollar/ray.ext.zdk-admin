@@ -33,10 +33,16 @@ import {
   ZendeskView,
   searchZendeskBrands,
   ZendeskBrand,
+  searchZendeskAutomations,
+  ZendeskAutomation,
+  searchZendeskCustomRoles,
+  ZendeskCustomRole,
 } from "./api/zendesk";
 
 import { TicketListItem } from "./components/lists/TicketListItem";
 import { BrandListItem } from "./components/lists/BrandListItem";
+import { CustomRoleListItem } from "./components/lists/CustomRoleListItem";
+import { AutomationListItem } from "./components/lists/AutomationListItem";
 import { ZendeskActions } from "./components/actions/ZendeskActions";
 
 export default function SearchZendesk() {
@@ -57,6 +63,8 @@ export default function SearchZendesk() {
     | ZendeskTicket[]
     | ZendeskView[]
     | ZendeskBrand[]
+    | ZendeskAutomation[]
+    | ZendeskCustomRole[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState<SearchType>("tickets");
@@ -67,6 +75,10 @@ export default function SearchZendesk() {
   const [supportAddressesLoaded, setSupportAddressesLoaded] = useState(false);
   const [allGroups, setAllGroups] = useState<ZendeskGroup[]>([]);
   const [groupsLoaded, setGroupsLoaded] = useState(false);
+  const [allAutomations, setAllAutomations] = useState<ZendeskAutomation[]>([]);
+  const [automationsLoaded, setAutomationsLoaded] = useState(false);
+  const [allCustomRoles, setAllCustomRoles] = useState<ZendeskCustomRole[]>([]);
+  const [customRolesLoaded, setCustomRolesLoaded] = useState(false);
   const [showDetails, setShowDetails] = useState(true);
 
   useEffect(() => {
@@ -81,6 +93,12 @@ export default function SearchZendesk() {
     } else if (searchType === "groups") {
       setGroupsLoaded(false);
       setAllGroups([]);
+    } else if (searchType === "automations") {
+      setAutomationsLoaded(false);
+      setAllAutomations([]);
+    } else if (searchType === "custom_roles") {
+      setCustomRolesLoaded(false);
+      setAllCustomRoles([]);
     }
   }, [currentInstance, searchType]);
 
@@ -116,10 +134,37 @@ export default function SearchZendesk() {
         );
         setResults(filteredResults);
       }
+    } else if (searchType === "automations") {
+      if (!automationsLoaded) {
+        performSearch();
+      } else {
+        const filteredResults = allAutomations.filter((item) =>
+          item.title.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+        );
+        setResults(filteredResults);
+      }
+    } else if (searchType === "custom_roles") {
+      if (!customRolesLoaded) {
+        performSearch();
+      } else {
+        const filteredResults = allCustomRoles.filter((item) =>
+          item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+        );
+        setResults(filteredResults);
+      }
     } else {
       performSearch();
     }
-  }, [debouncedSearchText, searchType, currentInstance, dynamicContentLoaded, supportAddressesLoaded, groupsLoaded]);
+  }, [
+    debouncedSearchText,
+    searchType,
+    currentInstance,
+    dynamicContentLoaded,
+    supportAddressesLoaded,
+    groupsLoaded,
+    automationsLoaded,
+    customRolesLoaded,
+  ]);
 
   async function performSearch() {
     if (!currentInstance) {
@@ -207,6 +252,34 @@ export default function SearchZendesk() {
           );
           setResults(filteredResults);
         }
+      } else if (searchType === "automations") {
+        if (!automationsLoaded) {
+          setAllAutomations([]);
+          const fetchedAutomations = await searchZendeskAutomations(debouncedSearchText, currentInstance);
+          setAllAutomations(fetchedAutomations);
+          setResults(fetchedAutomations);
+          setAutomationsLoaded(true);
+          setIsLoading(false);
+        } else {
+          const filteredResults = allAutomations.filter((item) =>
+            item.title.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+          );
+          setResults(filteredResults);
+        }
+      } else if (searchType === "custom_roles") {
+        if (!customRolesLoaded) {
+          setAllCustomRoles([]);
+          const fetchedCustomRoles = await searchZendeskCustomRoles(debouncedSearchText, currentInstance);
+          setAllCustomRoles(fetchedCustomRoles);
+          setResults(fetchedCustomRoles);
+          setCustomRolesLoaded(true);
+          setIsLoading(false);
+        } else {
+          const filteredResults = allCustomRoles.filter((item) =>
+            item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()),
+          );
+          setResults(filteredResults);
+        }
       } else {
         let searchResults:
           | ZendeskUser[]
@@ -220,7 +293,9 @@ export default function SearchZendesk() {
           | ZendeskGroup[]
           | ZendeskTicket[]
           | ZendeskView[]
-          | ZendeskBrand[] = [];
+          | ZendeskBrand[]
+          | ZendeskAutomation[]
+          | ZendeskCustomRole[] = [];
         if (searchType === "users") {
           searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
         } else if (searchType === "organizations") {
@@ -239,6 +314,10 @@ export default function SearchZendesk() {
           searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
         } else if (searchType === "brands") {
           searchResults = await searchZendeskBrands(debouncedSearchText, currentInstance);
+        } else if (searchType === "automations") {
+          searchResults = await searchZendeskAutomations(debouncedSearchText, currentInstance);
+        } else if (searchType === "custom_roles") {
+          searchResults = await searchZendeskCustomRoles(debouncedSearchText, currentInstance);
         }
         setResults(searchResults);
         setIsLoading(false);
@@ -282,7 +361,11 @@ export default function SearchZendesk() {
                             ? "Search views by title"
                             : searchType === "brands"
                               ? "Search brands by name or subdomain"
-                              : "Search Zendesk triggers by name"
+                              : searchType === "automations"
+                                ? "Search automations by name"
+                                : searchType === "custom_roles"
+                                  ? "Search custom roles by name"
+                                  : "Search Zendesk triggers by name"
       }
       throttle
       searchBarAccessory={<SearchTypeSelector value={searchType} onChange={setSearchType} />}
@@ -292,7 +375,7 @@ export default function SearchZendesk() {
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : searchType === "tickets" ? "Tickets" : searchType === "views" ? "Views" : searchType === "brands" ? "Brands" : "Triggers"}`}
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : searchType === "tickets" ? "Tickets" : searchType === "views" ? "Views" : searchType === "brands" ? "Brands" : searchType === "automations" ? "Automations" : searchType === "custom_roles" ? "Custom Roles" : "Triggers"}`}
           description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}
@@ -1098,6 +1181,30 @@ export default function SearchZendesk() {
                 <BrandListItem
                   key={brand.id}
                   brand={brand}
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                  showDetails={showDetails}
+                  onShowDetailsChange={setShowDetails}
+                />
+              );
+            } else if (searchType === "automations") {
+              const automation = item as ZendeskAutomation;
+              return (
+                <AutomationListItem
+                  key={automation.id}
+                  automation={automation}
+                  instance={currentInstance}
+                  onInstanceChange={setCurrentInstance}
+                  showDetails={showDetails}
+                  onShowDetailsChange={setShowDetails}
+                />
+              );
+            } else if (searchType === "custom_roles") {
+              const customRole = item as ZendeskCustomRole;
+              return (
+                <CustomRoleListItem
+                  key={customRole.id}
+                  customRole={customRole}
                   instance={currentInstance}
                   onInstanceChange={setCurrentInstance}
                   showDetails={showDetails}

@@ -86,6 +86,25 @@ interface ZendeskTriggerSearchResponse {
   count: number;
 }
 
+export interface ZendeskAutomation {
+  id: number;
+  title: string;
+  raw_title: string;
+  active: boolean;
+  position: number;
+  actions: Array<{ field: string; value: string | string[] }>;
+  conditions: { all: Array<unknown>; any: Array<unknown> };
+  created_at: string;
+  updated_at: string;
+}
+
+interface ZendeskAutomationSearchResponse {
+  automations: ZendeskAutomation[];
+  count: number;
+  next_page: string | null;
+  previous_page: string | null;
+}
+
 interface ZendeskOrganizationSearchResponse {
   results: ZendeskOrganization[];
   count: number;
@@ -322,6 +341,58 @@ interface ZendeskGroupMembershipResponse {
   group_memberships: ZendeskGroupMembership[];
 }
 
+export interface ZendeskCustomRole {
+  id: number;
+  name: string;
+  description: string;
+  role_type: number;
+  team_member_count: number;
+  created_at: string;
+  updated_at: string;
+  configuration?: {
+    assign_tickets_to_any_group: boolean;
+    chat_access: boolean;
+    end_user_list_access: string;
+    end_user_profile_access: string;
+    explore_access: string;
+    forum_access: string;
+    forum_access_restricted_content: boolean;
+    group_access: boolean;
+    light_agent: boolean;
+    macro_access: string;
+    manage_business_rules: boolean;
+    manage_contextual_workspaces: boolean;
+    manage_dynamic_content: boolean;
+    manage_extensions_and_channels: boolean;
+    manage_facebook: boolean;
+    manage_organization_fields: boolean;
+    manage_ticket_fields: boolean;
+    manage_ticket_forms: boolean;
+    manage_user_fields: boolean;
+    moderate_forums: boolean;
+    organization_editing: boolean;
+    organization_notes_editing: boolean;
+    report_access: string;
+    side_conversation_create: boolean;
+    ticket_access: string;
+    ticket_comment_access: string;
+    ticket_deletion: boolean;
+    ticket_editing: boolean;
+    ticket_merge: boolean;
+    ticket_tag_editing: boolean;
+    twitter_search_access: boolean;
+    user_view_access: string;
+    view_access: string;
+    view_deleted_tickets: boolean;
+    voice_access: boolean;
+    voice_dashboard_access: boolean;
+  };
+}
+
+interface ZendeskCustomRoleSearchResponse {
+  custom_roles: ZendeskCustomRole[];
+}
+
 export function getZendeskAuthHeader(instance: ZendeskInstance): string {
   const credentials = `${instance.user}/token:${instance.api_key}`;
   return `Basic ${Buffer.from(credentials).toString("base64")}`;
@@ -433,6 +504,45 @@ export async function searchZendeskTriggers(query: string, instance: ZendeskInst
 
     const data = (await response.json()) as ZendeskTriggerSearchResponse;
     return data.triggers;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskAutomations(query: string, instance: ZendeskInstance): Promise<ZendeskAutomation[]> {
+  const searchTerms = query;
+  const url = searchTerms
+    ? `${getZendeskUrl(instance)}/automations/search.json?query=${encodeURIComponent(searchTerms)}`
+    : `${getZendeskUrl(instance)}/automations.json`;
+  console.log("Zendesk Automation Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(
+        Toast.Style.Failure,
+        "Zendesk API Error",
+        `Failed to fetch automations: ${response.status} - ${errorText}`,
+      );
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskAutomationSearchResponse;
+    return data.automations;
   } catch (error) {
     showToast(
       Toast.Style.Failure,
@@ -863,6 +973,7 @@ export async function searchZendeskTickets(
     brandId?: string;
     formId?: string;
     recipient?: string;
+    roleId?: string;
   },
 ): Promise<ZendeskTicket[]> {
   let searchTerms = query ? `type:ticket ${query}` : "type:ticket";
@@ -883,6 +994,9 @@ export async function searchZendeskTickets(
   }
   if (filters?.recipient) {
     searchTerms += ` recipient:${filters.recipient}`;
+  }
+  if (filters?.roleId) {
+    searchTerms += ` role:${filters.roleId}`;
   }
   const url = `${getZendeskUrl(instance)}/search.json?query=${encodeURIComponent(searchTerms)}&per_page=30`;
   console.log("Zendesk Ticket Search URL:", url);
@@ -1028,6 +1142,45 @@ export async function searchZendeskUserGroupMemberships(
       onPage(data.group_memberships);
       url = null; // No next page for this endpoint
     }
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskCustomRoles(query: string, instance: ZendeskInstance): Promise<ZendeskCustomRole[]> {
+  const searchTerms = query;
+  const url = searchTerms
+    ? `${getZendeskUrl(instance)}/custom_roles/search.json?query=${encodeURIComponent(searchTerms)}`
+    : `${getZendeskUrl(instance)}/custom_roles.json`;
+  console.log("Zendesk Custom Roles Search URL:", url);
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(
+        Toast.Style.Failure,
+        "Zendesk API Error",
+        `Failed to fetch custom roles: ${response.status} - ${errorText}`,
+      );
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskCustomRoleSearchResponse;
+    return data.custom_roles;
   } catch (error) {
     showToast(
       Toast.Style.Failure,

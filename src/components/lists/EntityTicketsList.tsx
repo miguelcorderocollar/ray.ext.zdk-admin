@@ -6,7 +6,7 @@ import { TicketListItem } from "./TicketListItem";
 import { useDebounce } from "../../hooks/useDebounce";
 
 interface EntityTicketsListProps {
-  entityType: "user" | "group" | "organization" | "brand" | "form" | "recipient";
+  entityType: "user" | "group" | "organization" | "brand" | "form" | "recipient" | "role";
   entityId?: string;
   entityEmail?: string;
   instance: ZendeskInstance | undefined;
@@ -46,6 +46,7 @@ export default function EntityTicketsList({ entityType, entityId, entityEmail, i
         brandId: entityType === "brand" ? entityId : undefined,
         formId: entityType === "form" ? entityId : undefined,
         recipient: entityType === "recipient" ? entityEmail : undefined,
+        roleId: entityType === "role" ? entityId : undefined,
       });
       const sortedTickets = sortTickets(fetchedTickets, sortOrder);
       setTickets(sortedTickets);

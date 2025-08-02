@@ -12,7 +12,9 @@ export type SearchType =
   | "tickets"
   | "views"
   | "triggers"
-  | "brands";
+  | "brands"
+  | "automations"
+  | "custom_roles";
 
 interface SearchTypeSelectorProps {
   value: SearchType;
@@ -32,6 +34,8 @@ const searchTypeOptions = [
   { value: "views", title: "Views" },
   { value: "triggers", title: "Triggers" },
   { value: "brands", title: "Brands" },
+  { value: "automations", title: "Automations" },
+  { value: "custom_roles", title: "Custom Roles" },
 ] as const;
 
 /**
@@ -52,11 +56,13 @@ export function SearchTypeSelector({ value, onChange }: SearchTypeSelectorProps)
       <List.Dropdown.Item title="Views" value="views" icon={Icon.Eye} />
       <List.Dropdown.Item title="Brands" value="brands" icon={Icon.Tag} />
       <List.Dropdown.Item title="Triggers" value="triggers" icon={Icon.Bolt} />
+      <List.Dropdown.Item title="Automations" value="automations" icon={Icon.Gear} />
       <List.Dropdown.Item title="Macros" value="macros" icon={Icon.Code} />
       <List.Dropdown.Item title="Ticket Fields" value="ticket_fields" icon={Icon.List} />
       <List.Dropdown.Item title="Ticket Forms" value="ticket_forms" icon={Icon.Document} />
       <List.Dropdown.Item title="Dynamic Content" value="dynamic_content" icon={Icon.Text} />
       <List.Dropdown.Item title="Support Addresses" value="support_addresses" icon={Icon.Envelope} />
+      <List.Dropdown.Item title="Custom Roles" value="custom_roles" icon={Icon.Shield} />
     </List.Dropdown>
   );
 }
