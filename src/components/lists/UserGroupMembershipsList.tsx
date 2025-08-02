@@ -1,10 +1,15 @@
 import { List, showToast, Toast, Color, Icon } from "@raycast/api";
-import { getDefaultStatusColor, getBooleanIcon } from "../utils/colors";
-import { TimestampMetadata } from "./common/MetadataHelpers";
+import { getDefaultStatusColor, getBooleanIcon } from "../../utils/colors";
+import { TimestampMetadata } from "../common/MetadataHelpers";
 import { useState, useEffect } from "react";
-import { ZendeskInstance } from "../utils/preferences";
-import { searchZendeskUserGroupMemberships, ZendeskGroupMembership, getUserGroups, ZendeskGroup } from "../api/zendesk";
-import { ZendeskActions } from "./ZendeskActions";
+import { ZendeskInstance } from "../../utils/preferences";
+import {
+  searchZendeskUserGroupMemberships,
+  ZendeskGroupMembership,
+  getUserGroups,
+  ZendeskGroup,
+} from "../../api/zendesk";
+import { ZendeskActions } from "../actions/ZendeskActions";
 
 interface UserGroupMembershipsListProps {
   userId: number;

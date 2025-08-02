@@ -1,25 +1,9 @@
 import { List, showToast, Toast } from "@raycast/api";
 import { useState, useEffect } from "react";
-import { ZendeskInstance } from "../utils/preferences";
-import { searchZendeskTickets, ZendeskTicket } from "../api/zendesk";
+import { ZendeskInstance } from "../../utils/preferences";
+import { searchZendeskTickets, ZendeskTicket } from "../../api/zendesk";
 import { TicketListItem } from "./TicketListItem";
-
-// Custom useDebounce hook
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
+import { useDebounce } from "../../hooks/useDebounce";
 
 interface EntityTicketsListProps {
   entityType: "user" | "group" | "organization" | "brand" | "form" | "recipient";

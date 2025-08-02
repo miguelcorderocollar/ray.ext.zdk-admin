@@ -1,6 +1,6 @@
 import { ActionPanel, Action, Form, Icon, useNavigation, confirmAlert, Alert, showToast, Toast } from "@raycast/api";
-import { ZendeskUser, updateUser } from "../api/zendesk";
-import { ZendeskInstance } from "../utils/preferences";
+import { ZendeskUser, updateUser } from "../../api/zendesk";
+import { ZendeskInstance } from "../../utils/preferences";
 
 interface EditUserFormProps {
   user: ZendeskUser;

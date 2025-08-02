@@ -7,6 +7,7 @@ import { SearchTypeSelector, SearchType } from "./components/common/SearchTypeSe
 
 import { useState, useEffect } from "react";
 import { getZendeskInstances, ZendeskInstance } from "./utils/preferences";
+import { useDebounce } from "./hooks/useDebounce";
 import {
   searchZendeskUsers,
   ZendeskUser,
@@ -32,25 +33,8 @@ import {
   ZendeskView,
 } from "./api/zendesk";
 
-import { TicketListItem } from "./components/TicketListItem";
-import { ZendeskActions } from "./components/ZendeskActions";
-
-// Custom useDebounce hook
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
+import { TicketListItem } from "./components/lists/TicketListItem";
+import { ZendeskActions } from "./components/actions/ZendeskActions";
 
 export default function SearchZendesk() {
   const allInstances = getZendeskInstances();

@@ -1,6 +1,6 @@
 import { Form, ActionPanel, Action, showToast, Toast, useNavigation } from "@raycast/api";
-import { ZendeskTicketField, addTicketFieldOption } from "../api/zendesk";
-import { ZendeskInstance } from "../utils/preferences";
+import { ZendeskTicketField, addTicketFieldOption } from "../../api/zendesk";
+import { ZendeskInstance } from "../../utils/preferences";
 
 interface AddTicketFieldOptionFormProps {
   ticketField: ZendeskTicketField;

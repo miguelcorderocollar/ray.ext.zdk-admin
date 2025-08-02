@@ -1,5 +1,5 @@
 import { List, ActionPanel, Action, Icon, Color, Keyboard } from "@raycast/api";
-import { ZendeskTicketField, ZendeskInstance } from "../api/zendesk";
+import { ZendeskTicketField, ZendeskInstance } from "../../api/zendesk";
 import { useState, useMemo } from "react";
 
 interface TicketFieldOptionsListProps {

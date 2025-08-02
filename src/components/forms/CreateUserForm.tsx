@@ -1,8 +1,8 @@
 import { Form, ActionPanel, Action, showToast, Toast, useNavigation, Icon } from "@raycast/api";
 import { useForm, FormValidation } from "@raycast/utils";
 import { useState } from "react";
-import { ZendeskInstance } from "../utils/preferences";
-import { createUser } from "../api/zendesk";
+import { ZendeskInstance } from "../../utils/preferences";
+import { createUser } from "../../api/zendesk";
 
 interface CreateUserFormProps {
   instance: ZendeskInstance | undefined;

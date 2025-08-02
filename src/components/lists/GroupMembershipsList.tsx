@@ -1,10 +1,10 @@
 import { List, Color, Icon, Image } from "@raycast/api";
-import { getUserRoleColor, getDefaultStatusColor } from "../utils/colors";
-import { TimestampMetadata } from "./common/MetadataHelpers";
-import { useEntitySearch } from "../hooks/useEntitySearch";
-import { ZendeskInstance } from "../utils/preferences";
-import { searchZendeskGroupMemberships, ZendeskGroupMembership, getGroupUsers, ZendeskUser } from "../api/zendesk";
-import { ZendeskActions } from "./ZendeskActions";
+import { getUserRoleColor, getDefaultStatusColor } from "../../utils/colors";
+import { TimestampMetadata } from "../common/MetadataHelpers";
+import { useEntitySearch } from "../../hooks/useEntitySearch";
+import { ZendeskInstance } from "../../utils/preferences";
+import { searchZendeskGroupMemberships, ZendeskGroupMembership, getGroupUsers, ZendeskUser } from "../../api/zendesk";
+import { ZendeskActions } from "../actions/ZendeskActions";
 import { useState } from "react";
 
 interface GroupMembershipsListProps {

@@ -1,5 +1,5 @@
 import { ActionPanel, Action, Icon, Keyboard, Color } from "@raycast/api";
-import { getZendeskInstances, ZendeskInstance } from "../utils/preferences";
+import { getZendeskInstances, ZendeskInstance } from "../../utils/preferences";
 import {
   ZendeskUser,
   ZendeskOrganization,
@@ -13,14 +13,14 @@ import {
   ZendeskTicket,
   ZendeskView,
   ZendeskGroupMembership,
-} from "../api/zendesk";
-import EditUserForm from "./EditUserForm";
-import AddTicketFieldOptionForm from "./AddTicketFieldOptionForm";
-import TicketFieldOptionsList from "./TicketFieldOptionsList";
-import CreateUserForm from "./CreateUserForm";
-import EntityTicketsList from "./EntityTicketsList";
-import GroupMembershipsList from "./GroupMembershipsList";
-import UserGroupMembershipsList from "./UserGroupMembershipsList";
+} from "../../api/zendesk";
+import EditUserForm from "../forms/EditUserForm";
+import AddTicketFieldOptionForm from "../forms/AddTicketFieldOptionForm";
+import TicketFieldOptionsList from "../lists/TicketFieldOptionsList";
+import CreateUserForm from "../forms/CreateUserForm";
+import EntityTicketsList from "../lists/EntityTicketsList";
+import GroupMembershipsList from "../lists/GroupMembershipsList";
+import UserGroupMembershipsList from "../lists/UserGroupMembershipsList";
 
 interface ZendeskActionsProps {
   item:

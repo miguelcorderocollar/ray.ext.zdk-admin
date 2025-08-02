@@ -1,8 +1,8 @@
 import { List } from "@raycast/api";
-import { ZendeskTicket, ZendeskInstance } from "../api/zendesk";
-import { ZendeskActions } from "./ZendeskActions";
-import { getStatusColor, getPriorityColor } from "../utils/colors";
-import { TimestampMetadata } from "./common/MetadataHelpers";
+import { ZendeskTicket, ZendeskInstance } from "../../api/zendesk";
+import { ZendeskActions } from "../actions/ZendeskActions";
+import { getStatusColor, getPriorityColor } from "../../utils/colors";
+import { TimestampMetadata } from "../common/MetadataHelpers";
 
 interface TicketListItemProps {
   ticket: ZendeskTicket;
