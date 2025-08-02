@@ -1,4 +1,4 @@
-import { List, ActionPanel, Action, Icon, Color } from "@raycast/api";
+import { List, ActionPanel, Action, Icon, Color, Keyboard } from "@raycast/api";
 import { ZendeskTicketField, ZendeskInstance } from "../api/zendesk";
 import { useState, useMemo } from "react";
 
@@ -42,13 +42,20 @@ export default function TicketFieldOptionsList({ ticketField, instance }: Ticket
               <Action.OpenInBrowser
                 title="Open in Zendesk"
                 url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-fields/${ticketField.id}`}
-                shortcut={{ modifiers: ["cmd"], key: "o" }}
+                shortcut={Keyboard.Shortcut.Common.Open}
               />
-              <Action.CopyToClipboard title="Copy Tag to Clipboard" content={option.value || ""} />
+              <Action.CopyToClipboard 
+                title="Copy Tag to Clipboard" 
+                content={option.value || ""}
+                shortcut={{
+                  macOS: { modifiers: ["cmd"], key: "t" },
+                  windows: { modifiers: ["ctrl"], key: "t" },
+                }}
+              />
               <Action.CopyToClipboard
                 title="Copy Name to Clipboard"
                 content={option.name}
-                shortcut={{ modifiers: ["cmd"], key: "n" }}
+                shortcut={Keyboard.Shortcut.Common.CopyName}
               />
             </ActionPanel>
           }

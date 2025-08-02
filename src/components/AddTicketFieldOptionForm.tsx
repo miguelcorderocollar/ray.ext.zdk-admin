@@ -29,7 +29,14 @@ export default function AddTicketFieldOptionForm({ ticketField, instance }: AddT
     <Form
       actions={
         <ActionPanel>
-          <Action.SubmitForm title="Add Option" onSubmit={handleSubmit} />
+          <Action.SubmitForm 
+            title="Add Option" 
+            onSubmit={handleSubmit}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "enter" },
+              windows: { modifiers: ["ctrl"], key: "enter" },
+            }}
+          />
         </ActionPanel>
       }
     >

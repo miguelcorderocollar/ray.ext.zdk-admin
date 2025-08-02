@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Color, Icon, List } from "@raycast/api";
+import { Action, ActionPanel, Color, Icon, List, Keyboard } from "@raycast/api";
 import { useState } from "react";
 import { getZendeskInstances } from "./utils/preferences";
 
@@ -73,15 +73,30 @@ export default function OpenZendeskInstance() {
               <Action.OpenInBrowser
                 title={`Open ${productTitles[product]}`}
                 url={getProductUrl(instance.subdomain, product)}
+                shortcut={{
+                  macOS: { modifiers: ["cmd"], key: "enter" },
+                  windows: { modifiers: ["ctrl"], key: "enter" },
+                }}
               />
               <ActionPanel.Section>
-                {Object.entries(productTitles).map(([value, title]) => (
-                  <Action.OpenInBrowser
-                    key={value}
-                    title={`Open ${title}`}
-                    url={getProductUrl(instance.subdomain, value as ZendeskProduct)}
-                  />
-                ))}
+                {Object.entries(productTitles).map(([value, title], index) => {
+                  const productKeyMap: { [key: number]: Keyboard.KeyEquivalent } = {
+                    0: "s", 1: "g", 2: "d", 3: "e", 4: "s", 5: "c", 6: "t"
+                  };
+                  const key = productKeyMap[index] || "s";
+                  
+                  return (
+                    <Action.OpenInBrowser
+                      key={value}
+                      title={`Open ${title}`}
+                      url={getProductUrl(instance.subdomain, value as ZendeskProduct)}
+                      shortcut={{
+                        macOS: { modifiers: ["cmd"], key },
+                        windows: { modifiers: ["ctrl"], key },
+                      }}
+                    />
+                  );
+                })}
               </ActionPanel.Section>
             </ActionPanel>
           }

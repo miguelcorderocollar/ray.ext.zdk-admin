@@ -78,7 +78,10 @@ export function ZendeskActions({
             instance={instance}
           />
         }
-        shortcut={{ modifiers: ["cmd"], key: "t" }}
+        shortcut={{
+          macOS: { modifiers: ["cmd"], key: "t" },
+          windows: { modifiers: ["ctrl"], key: "t" },
+        }}
       />
     );
   };
@@ -91,10 +94,15 @@ export function ZendeskActions({
           <Action.OpenInBrowser
             title="Open in Browser"
             url={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy Link"
             content={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "l" },
+              windows: { modifiers: ["ctrl"], key: "l" },
+            }}
           />
         </>
       );
@@ -105,10 +113,15 @@ export function ZendeskActions({
           <Action.OpenInBrowser
             title="Open in Browser"
             url={`https://${instance?.subdomain}.zendesk.com/agent/organizations/${organization.id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy Link"
             content={`https://${instance?.subdomain}.zendesk.com/agent/organizations/${organization.id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "l" },
+              windows: { modifiers: ["ctrl"], key: "l" },
+            }}
           />
         </>
       );
@@ -120,13 +133,22 @@ export function ZendeskActions({
           <Action.OpenInBrowser
             title="Open Dynamic Content"
             url={`https://${instance?.subdomain}.zendesk.com/dynamic_content/items/${dynamicContent.id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/dynamic_content/items/${dynamicContent.id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "l" },
+              windows: { modifiers: ["ctrl"], key: "l" },
+            }}
           />
           {defaultVariant && (
-            <Action.CopyToClipboard title="Copy Content to Clipboard" content={defaultVariant.content} />
+            <Action.CopyToClipboard 
+              title="Copy Content to Clipboard" 
+              content={defaultVariant.content}
+              shortcut={Keyboard.Shortcut.Common.Copy}
+            />
           )}
         </>
       );
@@ -137,10 +159,15 @@ export function ZendeskActions({
           <Action.OpenInBrowser
             title="Open Macro in Zendesk"
             url={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/macros/${macro.id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy Macro Link"
             content={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/macros/${macro.id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "l" },
+              windows: { modifiers: ["ctrl"], key: "l" },
+            }}
           />
         </>
       );
@@ -151,10 +178,15 @@ export function ZendeskActions({
           <Action.OpenInBrowser
             title="Open in Browser"
             url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/triggers/${trigger.id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy URL to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/triggers/${trigger.id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "l" },
+              windows: { modifiers: ["ctrl"], key: "l" },
+            }}
           />
         </>
       );
@@ -165,10 +197,15 @@ export function ZendeskActions({
           <Action.OpenInBrowser
             title="Open Ticket Field"
             url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-fields/${ticketField.id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-fields/${ticketField.id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "l" },
+              windows: { modifiers: ["ctrl"], key: "l" },
+            }}
           />
         </>
       );
@@ -176,7 +213,11 @@ export function ZendeskActions({
       const supportAddress = item as ZendeskSupportAddress;
       return (
         <>
-          <Action.CopyToClipboard title="Copy Email to Clipboard" content={supportAddress.email} />
+          <Action.CopyToClipboard 
+            title="Copy Email to Clipboard" 
+            content={supportAddress.email}
+            shortcut={Keyboard.Shortcut.Common.Copy}
+          />
         </>
       );
     } else if (searchType === "ticket_forms") {
@@ -186,14 +227,20 @@ export function ZendeskActions({
           <Action.OpenInBrowser
             title="Open Ticket Form"
             url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-forms/edit/${ticketForm.id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-forms/edit/${ticketForm.id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "l" },
+              windows: { modifiers: ["ctrl"], key: "l" },
+            }}
           />
           <Action.OpenInBrowser
             title="Open Ticket Form Conditions"
             url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-forms/edit/${ticketForm.id}/conditions`}
+            shortcut={Keyboard.Shortcut.Common.Edit}
           />
         </>
       );
@@ -204,12 +251,16 @@ export function ZendeskActions({
           <Action.OpenInBrowser
             title="Open Group Details"
             url={`https://${instance?.subdomain}.zendesk.com/admin/people/groups/${group.id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/admin/people/groups/${group.id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "l" },
+              windows: { modifiers: ["ctrl"], key: "l" },
+            }}
           />
-          {renderViewTicketsAction("group", group.id.toString())}
         </>
       );
     } else if (searchType === "tickets") {
@@ -219,10 +270,15 @@ export function ZendeskActions({
           <Action.OpenInBrowser
             title="Open Ticket"
             url={`https://${instance?.subdomain}.zendesk.com/agent/tickets/${ticket.id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/agent/tickets/${ticket.id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "l" },
+              windows: { modifiers: ["ctrl"], key: "l" },
+            }}
           />
         </>
       );
@@ -233,18 +289,28 @@ export function ZendeskActions({
           <Action.OpenInBrowser
             title="Open Agent View"
             url={`https://${instance?.subdomain}.zendesk.com/agent/filters/${view.id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.OpenInBrowser
             title="Open Admin Edit View"
             url={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/views/${view.id}`}
+            shortcut={Keyboard.Shortcut.Common.Edit}
           />
           <Action.OpenInBrowser
             title="Open Admin Views Page"
             url={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/views`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "a" },
+              windows: { modifiers: ["ctrl"], key: "a" },
+            }}
           />
           <Action.CopyToClipboard
             title="Copy Agent View Link"
             content={`https://${instance?.subdomain}.zendesk.com/agent/views/${view.id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "l" },
+              windows: { modifiers: ["ctrl"], key: "l" },
+            }}
           />
         </>
       );
@@ -257,8 +323,18 @@ export function ZendeskActions({
       const user = item as ZendeskUser;
       return (
         <>
-          <Action.Push title="Edit User" icon={Icon.Pencil} target={<EditUserForm user={user} instance={instance} />} />
-          <Action.Push title="Create User" icon={Icon.Plus} target={<CreateUserForm instance={instance} />} />
+          <Action.Push 
+            title="Edit User" 
+            icon={Icon.Pencil} 
+            target={<EditUserForm user={user} instance={instance} />}
+            shortcut={Keyboard.Shortcut.Common.Edit}
+          />
+          <Action.Push 
+            title="Create User" 
+            icon={Icon.Plus} 
+            target={<CreateUserForm instance={instance} />}
+            shortcut={Keyboard.Shortcut.Common.New}
+          />
           {user.email && renderViewTicketsAction("user", undefined, user.email)}
         </>
       );
@@ -271,11 +347,16 @@ export function ZendeskActions({
               title="Add New Option"
               icon={Icon.Plus}
               target={<AddTicketFieldOptionForm ticketField={ticketField} instance={instance} />}
+              shortcut={Keyboard.Shortcut.Common.New}
             />
             <Action.Push
               title="View Options"
               icon={Icon.List}
               target={<TicketFieldOptionsList ticketField={ticketField} instance={instance} />}
+              shortcut={{
+                macOS: { modifiers: ["cmd"], key: "v" },
+                windows: { modifiers: ["ctrl"], key: "v" },
+              }}
             />
           </>
         );
@@ -343,7 +424,10 @@ export function ZendeskActions({
         key="general-config"
         title="Open General Configuration"
         url={generalConfigUrl}
-        shortcut={shortcutKey ? { modifiers: ["cmd", "shift"], key: shortcutKey } : undefined}
+        shortcut={shortcutKey ? {
+          macOS: { modifiers: ["cmd", "shift"], key: shortcutKey },
+          windows: { modifiers: ["ctrl", "shift"], key: shortcutKey },
+        } : undefined}
       />,
     );
 
@@ -355,21 +439,35 @@ export function ZendeskActions({
           title={showDetails ? "Hide Details" : "Show Details"}
           icon={showDetails ? Icon.EyeDisabled : Icon.Eye}
           onAction={() => onShowDetailsChange(!showDetails)}
-          shortcut={{ modifiers: ["cmd"], key: "d" }}
+          shortcut={{
+            macOS: { modifiers: ["cmd"], key: "d" },
+            windows: { modifiers: ["ctrl"], key: "d" },
+          }}
         />,
       );
     }
 
     actions.push(
       <ActionPanel.Submenu key="change-instance" title="Change Instance" icon={Icon.House}>
-        {allInstances.map((inst) => (
-          <Action
-            key={inst.subdomain}
-            title={`${inst.subdomain}`}
-            icon={instance?.subdomain === inst.subdomain ? { source: Icon.Dot, tintColor: Color.Green } : undefined}
-            onAction={() => onInstanceChange(inst)}
-          />
-        ))}
+        {allInstances.map((inst, index) => {
+          const keyMap: { [key: number]: Keyboard.KeyEquivalent } = {
+            0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9"
+          };
+          const key = index < 9 ? keyMap[index + 1] : keyMap[0];
+          
+          return (
+            <Action
+              key={inst.subdomain}
+              title={`${inst.subdomain}`}
+              icon={instance?.subdomain === inst.subdomain ? { source: Icon.Dot, tintColor: Color.Green } : undefined}
+              onAction={() => onInstanceChange(inst)}
+              shortcut={{
+                macOS: { modifiers: ["cmd"], key },
+                windows: { modifiers: ["ctrl"], key },
+              }}
+            />
+          );
+        })}
       </ActionPanel.Submenu>,
     );
 
