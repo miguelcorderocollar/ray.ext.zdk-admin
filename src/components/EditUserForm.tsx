@@ -81,8 +81,8 @@ export default function EditUserForm({ user, instance }: EditUserFormProps) {
     <Form
       actions={
         <ActionPanel>
-          <Action.SubmitForm 
-            title="Save Changes" 
+          <Action.SubmitForm
+            title="Save Changes"
             onSubmit={handleSubmit}
             shortcut={{
               macOS: { modifiers: ["cmd"], key: "enter" },

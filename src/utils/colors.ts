@@ -34,3 +34,16 @@ export const getPriorityColor = (priority: string) => {
       return Color.PrimaryText;
   }
 };
+
+export const getUserRoleColor = (role: string) => {
+  switch (role) {
+    case "end-user":
+      return Color.Blue;
+    case "agent":
+      return Color.Green;
+    case "admin":
+      return Color.Red;
+    default:
+      return Color.PrimaryText;
+  }
+};

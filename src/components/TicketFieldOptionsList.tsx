@@ -44,8 +44,8 @@ export default function TicketFieldOptionsList({ ticketField, instance }: Ticket
                 url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-fields/${ticketField.id}`}
                 shortcut={Keyboard.Shortcut.Common.Open}
               />
-              <Action.CopyToClipboard 
-                title="Copy Tag to Clipboard" 
+              <Action.CopyToClipboard
+                title="Copy Tag to Clipboard"
                 content={option.value || ""}
                 shortcut={{
                   macOS: { modifiers: ["cmd"], key: "t" },

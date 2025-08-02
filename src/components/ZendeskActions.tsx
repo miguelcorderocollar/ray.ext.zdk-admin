@@ -12,12 +12,15 @@ import {
   ZendeskGroup,
   ZendeskTicket,
   ZendeskView,
+  ZendeskGroupMembership,
 } from "../api/zendesk";
 import EditUserForm from "./EditUserForm";
 import AddTicketFieldOptionForm from "./AddTicketFieldOptionForm";
 import TicketFieldOptionsList from "./TicketFieldOptionsList";
 import CreateUserForm from "./CreateUserForm";
 import EntityTicketsList from "./EntityTicketsList";
+import GroupMembershipsList from "./GroupMembershipsList";
+import UserGroupMembershipsList from "./UserGroupMembershipsList";
 
 interface ZendeskActionsProps {
   item:
@@ -31,7 +34,8 @@ interface ZendeskActionsProps {
     | ZendeskTicketForm
     | ZendeskGroup
     | ZendeskTicket
-    | ZendeskView;
+    | ZendeskView
+    | ZendeskGroupMembership;
   searchType:
     | "users"
     | "organizations"
@@ -43,7 +47,8 @@ interface ZendeskActionsProps {
     | "ticket_forms"
     | "groups"
     | "tickets"
-    | "views";
+    | "views"
+    | "group_memberships";
   instance: ZendeskInstance | undefined;
   onInstanceChange: (instance: ZendeskInstance) => void;
   showDetails?: boolean;
@@ -144,8 +149,8 @@ export function ZendeskActions({
             }}
           />
           {defaultVariant && (
-            <Action.CopyToClipboard 
-              title="Copy Content to Clipboard" 
+            <Action.CopyToClipboard
+              title="Copy Content to Clipboard"
               content={defaultVariant.content}
               shortcut={Keyboard.Shortcut.Common.Copy}
             />
@@ -213,8 +218,8 @@ export function ZendeskActions({
       const supportAddress = item as ZendeskSupportAddress;
       return (
         <>
-          <Action.CopyToClipboard 
-            title="Copy Email to Clipboard" 
+          <Action.CopyToClipboard
+            title="Copy Email to Clipboard"
             content={supportAddress.email}
             shortcut={Keyboard.Shortcut.Common.Copy}
           />
@@ -323,18 +328,29 @@ export function ZendeskActions({
       const user = item as ZendeskUser;
       return (
         <>
-          <Action.Push 
-            title="Edit User" 
-            icon={Icon.Pencil} 
+          <Action.Push
+            title="Edit User"
+            icon={Icon.Pencil}
             target={<EditUserForm user={user} instance={instance} />}
             shortcut={Keyboard.Shortcut.Common.Edit}
           />
-          <Action.Push 
-            title="Create User" 
-            icon={Icon.Plus} 
+          <Action.Push
+            title="Create User"
+            icon={Icon.Plus}
             target={<CreateUserForm instance={instance} />}
             shortcut={Keyboard.Shortcut.Common.New}
           />
+          {(user.role === "agent" || user.role === "admin") && (
+            <Action.Push
+              title="View User's Group Memberships"
+              icon={Icon.Person}
+              target={<UserGroupMembershipsList userId={user.id} userName={user.name} instance={instance} />}
+              shortcut={{
+                macOS: { modifiers: ["cmd"], key: "g" },
+                windows: { modifiers: ["ctrl"], key: "g" },
+              }}
+            />
+          )}
           {user.email && renderViewTicketsAction("user", undefined, user.email)}
         </>
       );
@@ -373,7 +389,39 @@ export function ZendeskActions({
       return <>{renderViewTicketsAction("form", ticketForm.id.toString())}</>;
     } else if (searchType === "groups") {
       const group = item as ZendeskGroup;
-      return <>{renderViewTicketsAction("group", group.id.toString())}</>;
+      return (
+        <>
+          <Action.Push
+            title="View Group Memberships"
+            icon={Icon.Person}
+            target={<GroupMembershipsList groupId={group.id} groupName={group.name} instance={instance} />}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "m" },
+              windows: { modifiers: ["ctrl"], key: "m" },
+            }}
+          />
+          {renderViewTicketsAction("group", group.id.toString())}
+        </>
+      );
+    } else if (searchType === "group_memberships") {
+      const membership = item as ZendeskGroupMembership;
+      return (
+        <>
+          <Action.OpenInBrowser
+            title="Open User Profile"
+            url={`https://${instance?.subdomain}.zendesk.com/agent/users/${membership.user_id}`}
+            shortcut={Keyboard.Shortcut.Common.Open}
+          />
+          <Action.OpenInBrowser
+            title="Open Group Details"
+            url={`https://${instance?.subdomain}.zendesk.com/admin/people/groups/${membership.group_id}`}
+            shortcut={{
+              macOS: { modifiers: ["cmd"], key: "g" },
+              windows: { modifiers: ["ctrl"], key: "g" },
+            }}
+          />
+        </>
+      );
     }
     return null;
   };
@@ -424,10 +472,14 @@ export function ZendeskActions({
         key="general-config"
         title="Open General Configuration"
         url={generalConfigUrl}
-        shortcut={shortcutKey ? {
-          macOS: { modifiers: ["cmd", "shift"], key: shortcutKey },
-          windows: { modifiers: ["ctrl", "shift"], key: shortcutKey },
-        } : undefined}
+        shortcut={
+          shortcutKey
+            ? {
+                macOS: { modifiers: ["cmd", "shift"], key: shortcutKey },
+                windows: { modifiers: ["ctrl", "shift"], key: shortcutKey },
+              }
+            : undefined
+        }
       />,
     );
 
@@ -451,10 +503,19 @@ export function ZendeskActions({
       <ActionPanel.Submenu key="change-instance" title="Change Instance" icon={Icon.House}>
         {allInstances.map((inst, index) => {
           const keyMap: { [key: number]: Keyboard.KeyEquivalent } = {
-            0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9"
+            0: "0",
+            1: "1",
+            2: "2",
+            3: "3",
+            4: "4",
+            5: "5",
+            6: "6",
+            7: "7",
+            8: "8",
+            9: "9",
           };
           const key = index < 9 ? keyMap[index + 1] : keyMap[0];
-          
+
           return (
             <Action
               key={inst.subdomain}

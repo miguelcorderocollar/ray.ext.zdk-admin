@@ -81,10 +81,16 @@ export default function OpenZendeskInstance() {
               <ActionPanel.Section>
                 {Object.entries(productTitles).map(([value, title], index) => {
                   const productKeyMap: { [key: number]: Keyboard.KeyEquivalent } = {
-                    0: "s", 1: "g", 2: "d", 3: "e", 4: "m", 5: "c", 6: "t"
+                    0: "s",
+                    1: "g",
+                    2: "d",
+                    3: "e",
+                    4: "m",
+                    5: "c",
+                    6: "t",
                   };
                   const key = productKeyMap[index] || "s";
-                  
+
                   return (
                     <Action.OpenInBrowser
                       key={value}

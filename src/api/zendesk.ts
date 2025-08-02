@@ -266,6 +266,19 @@ interface ZendeskViewSearchResponse {
   count: number;
 }
 
+export interface ZendeskGroupMembership {
+  id: number;
+  user_id: number;
+  group_id: number;
+  default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ZendeskGroupMembershipResponse {
+  group_memberships: ZendeskGroupMembership[];
+}
+
 export function getZendeskAuthHeader(instance: ZendeskInstance): string {
   const credentials = `${instance.user}/token:${instance.api_key}`;
   return `Basic ${Buffer.from(credentials).toString("base64")}`;
@@ -466,7 +479,6 @@ export async function searchZendeskDynamicContent(
     throw error;
   }
 }
-("");
 
 export async function searchZendeskMacros(query: string, instance: ZendeskInstance): Promise<ZendeskMacro[]> {
   const url = query
@@ -852,6 +864,164 @@ export async function searchZendeskViews(query: string, instance: ZendeskInstanc
     }
 
     return data.views;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskGroupMemberships(
+  groupId: number,
+  instance: ZendeskInstance,
+  onPage: (memberships: ZendeskGroupMembership[]) => void,
+): Promise<void> {
+  let url: string | null = `${getZendeskUrl(instance)}/groups/${groupId}/memberships.json`;
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    while (url) {
+      console.log("Zendesk Group Memberships Search URL:", url);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: headers,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        showToast(
+          Toast.Style.Failure,
+          "Zendesk API Error",
+          `Failed to fetch group memberships: ${response.status} - ${errorText}`,
+        );
+        throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      }
+
+      const data = (await response.json()) as ZendeskGroupMembershipResponse;
+      onPage(data.group_memberships);
+      url = null; // No next page for this endpoint
+    }
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function searchZendeskUserGroupMemberships(
+  userId: number,
+  instance: ZendeskInstance,
+  onPage: (memberships: ZendeskGroupMembership[]) => void,
+): Promise<void> {
+  let url: string | null = `${getZendeskUrl(instance)}/users/${userId}/group_memberships.json`;
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    while (url) {
+      console.log("Zendesk User Group Memberships Search URL:", url);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: headers,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        showToast(
+          Toast.Style.Failure,
+          "Zendesk API Error",
+          `Failed to fetch user group memberships: ${response.status} - ${errorText}`,
+        );
+        throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+      }
+
+      const data = (await response.json()) as ZendeskGroupMembershipResponse;
+      onPage(data.group_memberships);
+      url = null; // No next page for this endpoint
+    }
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function getGroupUsers(groupId: number, instance: ZendeskInstance): Promise<ZendeskUser[]> {
+  const url = `${getZendeskUrl(instance)}/groups/${groupId}/users.json`;
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    console.log("Zendesk Group Users URL:", url);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(
+        Toast.Style.Failure,
+        "Zendesk API Error",
+        `Failed to fetch group users: ${response.status} - ${errorText}`,
+      );
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskUserSearchResponse;
+    return data.users;
+  } catch (error) {
+    showToast(
+      Toast.Style.Failure,
+      "Connection Error",
+      "Could not connect to Zendesk API. Please check your internet connection or API settings.",
+    );
+    throw error;
+  }
+}
+
+export async function getUserGroups(userId: number, instance: ZendeskInstance): Promise<ZendeskGroup[]> {
+  const url = `${getZendeskUrl(instance)}/users/${userId}/groups.json`;
+  const headers = {
+    Authorization: getZendeskAuthHeader(instance),
+    "Content-Type": "application/json",
+  };
+
+  try {
+    console.log("Zendesk User Groups URL:", url);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      showToast(
+        Toast.Style.Failure,
+        "Zendesk API Error",
+        `Failed to fetch user groups: ${response.status} - ${errorText}`,
+      );
+      throw new Error(`Zendesk API Error: ${response.status} - ${errorText}`);
+    }
+
+    const data = (await response.json()) as ZendeskGroupSearchResponse;
+    return data.groups;
   } catch (error) {
     showToast(
       Toast.Style.Failure,

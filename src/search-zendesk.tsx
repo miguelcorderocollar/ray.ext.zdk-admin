@@ -1,4 +1,5 @@
 import { List, showToast, Toast, Image, Color, Icon } from "@raycast/api";
+import { getUserRoleColor } from "./utils/colors";
 
 import { useState, useEffect } from "react";
 import { getZendeskInstances, ZendeskInstance } from "./utils/preferences";
@@ -478,7 +479,7 @@ export default function SearchZendesk() {
                           {
                             icon: {
                               source: Icon.Person,
-                              tintColor: user.role === "agent" ? Color.Green : Color.Red,
+                              tintColor: getUserRoleColor(user.role),
                             },
                             tooltip: user.role === "agent" ? "Agent" : "Admin",
                           },
@@ -509,18 +510,7 @@ export default function SearchZendesk() {
                             <List.Item.Detail.Metadata.TagList title="Role">
                               <List.Item.Detail.Metadata.TagList.Item
                                 text={user.role}
-                                color={(() => {
-                                  switch (user.role) {
-                                    case "end-user":
-                                      return Color.Blue;
-                                    case "agent":
-                                      return Color.Green;
-                                    case "admin":
-                                      return Color.Red;
-                                    default:
-                                      return Color.PrimaryText;
-                                  }
-                                })()}
+                                color={getUserRoleColor(user.role)}
                               />
                             </List.Item.Detail.Metadata.TagList>
                           )}
