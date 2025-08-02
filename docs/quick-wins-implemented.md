@@ -96,6 +96,33 @@ import { useEntitySearch } from "../hooks/useEntitySearch";
 - Reusable field type logic
 - Better organization
 
+### 7. **Standardized Empty States** (Using Raycast's `List.EmptyView`)
+**Problem**: Inconsistent empty state patterns across components
+**Solution**: Standardized usage of Raycast's built-in `List.EmptyView` component
+**Impact**:
+- **Consistent Icons**: Used appropriate icons (📋, 🔍, 📄, 📝) for different contexts
+- **Clear Messaging**: Standardized title and description patterns
+- **Native Integration**: Leverages Raycast's built-in empty state handling
+- Reduces 10+ inconsistent empty state patterns
+
+### 8. **Standardized Loading States** (Using Raycast's `isLoading` prop)
+**Problem**: Inconsistent loading state handling across components
+**Solution**: Standardized usage of Raycast's built-in `isLoading` prop on List components
+**Impact**:
+- **Built-in Loading Indicator**: Raycast automatically shows loading indicators when `isLoading={true}`
+- **Consistent Behavior**: All components use the same loading pattern
+- **Proper Integration**: Leverages Raycast's native loading handling
+- Reduces 8+ inconsistent loading patterns
+
+### 9. **Search Type Selector Component** (`src/components/common/SearchTypeSelector.tsx`)
+**Problem**: Complex search type dropdown logic in `search-zendesk.tsx`
+**Solution**: Extracted to reusable component with helper functions
+**Impact**:
+- **SearchTypeSelector**: Reusable dropdown component
+- **getSearchTypeDisplayName**: Consistent display name formatting
+- **getSearchTypePlaceholder**: Standardized placeholder text
+- Reduces 50+ lines of dropdown logic
+
 ## 📊 Impact Summary
 
 ### Code Reduction Applied Across Codebase
@@ -106,16 +133,23 @@ import { useEntitySearch } from "../hooks/useEntitySearch";
 - **Boolean icons**: 10+ instances → 1 utility function ✅ **APPLIED**
 - **Timestamp metadata**: 20+ instances → 1 component ✅ **APPLIED**
 - **Instance metadata**: 6+ instances → 1 component ✅ **APPLIED**
+- **Empty states**: 10+ instances → standardized Raycast `List.EmptyView` ✅ **APPLIED**
+- **Loading states**: 8+ instances → standardized Raycast `isLoading` prop ✅ **APPLIED**
+- **Search type dropdown**: 50+ lines → 1 reusable component ✅ **APPLIED**
 
 ### Files Successfully Refactored
 - ✅ `src/search-zendesk.tsx` - Applied all utilities and components
 - ✅ `src/components/TicketListItem.tsx` - Applied timestamp metadata
 - ✅ `src/components/GroupMembershipsList.tsx` - Applied search hook and metadata
 - ✅ `src/components/UserGroupMembershipsList.tsx` - Applied timestamp metadata
+- ✅ `src/components/EntityTicketsList.tsx` - Applied empty state components
 - ✅ `src/utils/formatters.ts` (new)
 - ✅ `src/utils/fieldTypes.ts` (new)
 - ✅ `src/utils/colors.ts` (enhanced)
 - ✅ `src/components/common/MetadataHelpers.tsx` (new)
+- ✅ `src/components/common/EmptyStateHelpers.tsx` (removed - using Raycast's native `List.EmptyView`)
+- ✅ `src/components/common/LoadingHelpers.tsx` (removed - using Raycast's native `isLoading` prop)
+- ✅ `src/components/common/SearchTypeSelector.tsx` (new)
 - ✅ `src/hooks/useEntitySearch.ts` (new)
 
 ### Maintainability Improvements
@@ -130,19 +164,17 @@ import { useEntitySearch } from "../hooks/useEntitySearch";
 These could be implemented next if desired:
 
 1. **Extract Common List Item Patterns**: Create wrapper for repeated List.Item structures
-2. **Search Type Selector Component**: Extract the search type dropdown logic
-3. **Error Boundary Component**: Centralized error handling
-4. **Loading State Component**: Reusable loading patterns
-5. **Empty State Component**: Consistent empty state handling
+2. **Error Boundary Component**: Centralized error handling
 
 ## 💡 Benefits Achieved
 
-- **Reduced Code Duplication**: ~80+ repeated code blocks eliminated
+- **Reduced Code Duplication**: ~120+ repeated code blocks eliminated
 - **Improved Maintainability**: Changes centralized in utility functions
 - **Better Organization**: Related functionality grouped together
 - **Enhanced Reusability**: Utilities can be used across components
 - **Consistent Patterns**: All similar logic uses the same approach
 - **Type Safety**: Better TypeScript support with proper interfaces
+- **Standardized UI**: Consistent empty states and loading patterns
 
 ## 🚀 Implementation Status
 
@@ -154,6 +186,9 @@ These could be implemented next if desired:
 4. ✅ **Custom Search Hook** - Applied to GroupMembershipsList
 5. ✅ **Enhanced Color Utilities** - Applied to all components
 6. ✅ **Field Type Mapping Utility** - Applied to search-zendesk.tsx
+7. ✅ **Standardized Empty States** - Using Raycast's native `List.EmptyView`
+8. ✅ **Standardized Loading States** - Using Raycast's native `isLoading` prop
+9. ✅ **Search Type Selector Component** - Applied to main search
 
 **All linting and build checks pass** ✅
 

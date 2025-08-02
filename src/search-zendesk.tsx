@@ -3,6 +3,7 @@ import { getUserRoleColor, getActiveStatusColor, getVerificationStatusColor, get
 import { getFieldTypeInfo } from "./utils/fieldTypes";
 import { formatInstanceColor } from "./utils/formatters";
 import { TimestampMetadata, InstanceMetadata } from "./components/common/MetadataHelpers";
+import { SearchTypeSelector, SearchType } from "./components/common/SearchTypeSelector";
 
 import { useState, useEffect } from "react";
 import { getZendeskInstances, ZendeskInstance } from "./utils/preferences";
@@ -70,19 +71,7 @@ export default function SearchZendesk() {
     | ZendeskView[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchType, setSearchType] = useState<
-    | "users"
-    | "organizations"
-    | "triggers"
-    | "dynamic_content"
-    | "macros"
-    | "ticket_fields"
-    | "support_addresses"
-    | "ticket_forms"
-    | "groups"
-    | "tickets"
-    | "views"
-  >("tickets");
+  const [searchType, setSearchType] = useState<SearchType>("tickets");
 
   const [allDynamicContent, setAllDynamicContent] = useState<ZendeskDynamicContent[]>([]);
   const [dynamicContentLoaded, setDynamicContentLoaded] = useState(false);
@@ -303,60 +292,15 @@ export default function SearchZendesk() {
                             : "Search Zendesk triggers by name"
       }
       throttle
-      searchBarAccessory={
-        <List.Dropdown
-          onChange={(newValue) =>
-            setSearchType(
-              newValue as
-                | "users"
-                | "organizations"
-                | "triggers"
-                | "dynamic_content"
-                | "macros"
-                | "ticket_fields"
-                | "support_addresses"
-                | "ticket_forms"
-                | "groups"
-                | "tickets"
-                | "views",
-            )
-          }
-          tooltip="Select Search Type"
-          value={searchType}
-        >
-          <List.Dropdown.Section title="Ticketing">
-            <List.Dropdown.Item title="Tickets" value="tickets" />
-            <List.Dropdown.Item title="Users" value="users" />
-            <List.Dropdown.Item title="Organizations" value="organizations" />
-            <List.Dropdown.Item title="Views" value="views" />
-          </List.Dropdown.Section>
-          <List.Dropdown.Section title="Admin">
-            <List.Dropdown.Item title="Groups" value="groups" />
-            <List.Dropdown.Item title="Triggers" value="triggers" />
-            <List.Dropdown.Item title="Dynamic Content" value="dynamic_content" />
-            <List.Dropdown.Item title="Macros" value="macros" />
-            <List.Dropdown.Item title="Ticket Fields" value="ticket_fields" />
-            <List.Dropdown.Item title="Support Addresses" value="support_addresses" />
-            <List.Dropdown.Item title="Ticket Forms" value="ticket_forms" />
-          </List.Dropdown.Section>
-        </List.Dropdown>
-      }
+      searchBarAccessory={<SearchTypeSelector value={searchType} onChange={setSearchType} />}
     >
       {(results || []).length === 0 && !isLoading && searchText.length > 0 && (
         <List.EmptyView title="No Results Found" description="Try a different search query." />
       )}
       {(results || []).length === 0 && !isLoading && searchText.length === 0 && (
         <List.EmptyView
-          title={
-            searchType === "triggers"
-              ? "No Triggers Found"
-              : `Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : searchType === "tickets" ? "Tickets" : "Triggers"}`
-          }
-          description={
-            searchType === "triggers"
-              ? "No triggers were returned from Zendesk."
-              : `Enter a name, email, or other keyword to find Zendesk ${searchType}.`
-          }
+          title={`Start Typing to Search ${searchType === "users" ? "Users" : searchType === "organizations" ? "Organizations" : searchType === "dynamic_content" ? "Dynamic Content" : searchType === "macros" ? "Macros" : searchType === "ticket_fields" ? "Ticket Fields" : searchType === "support_addresses" ? "Support Addresses" : searchType === "ticket_forms" ? "Ticket Forms" : searchType === "groups" ? "Groups" : searchType === "tickets" ? "Tickets" : "Triggers"}`}
+          description={`Enter a name, email, or other keyword to find Zendesk ${searchType}.`}
         />
       )}
       {searchType === "triggers"
@@ -1060,6 +1004,7 @@ export default function SearchZendesk() {
               const ticket = item as ZendeskTicket;
               return (
                 <TicketListItem
+                  key={ticket.id}
                   ticket={ticket}
                   instance={currentInstance}
                   onInstanceChange={setCurrentInstance}
