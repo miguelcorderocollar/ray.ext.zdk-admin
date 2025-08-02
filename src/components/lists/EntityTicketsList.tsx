@@ -1,4 +1,4 @@
-import { List, showToast, Toast } from "@raycast/api";
+import { Icon, List, showToast, Toast } from "@raycast/api";
 import { useState, useEffect } from "react";
 import { ZendeskInstance } from "../../utils/preferences";
 import { searchZendeskTickets, ZendeskTicket } from "../../api/zendesk";
@@ -98,12 +98,12 @@ export default function EntityTicketsList({ entityType, entityId, entityEmail, i
           onChange={(newValue) => setSortOrder(newValue as SortOrder)}
         >
           <List.Dropdown.Section title="Sort Order">
-            <List.Dropdown.Item title="Updated At (Newest First)" value="updated_at_desc" />
-            <List.Dropdown.Item title="Updated At (Oldest First)" value="updated_at_asc" />
-            <List.Dropdown.Item title="Created At (Newest First)" value="created_at_desc" />
-            <List.Dropdown.Item title="Created At (Oldest First)" value="created_at_asc" />
-            <List.Dropdown.Item title="Status" value="status" />
-            <List.Dropdown.Item title="Priority" value="priority" />
+            <List.Dropdown.Item title="Updated At (Newest First)" value="updated_at_desc" icon={Icon.ArrowDown} />
+            <List.Dropdown.Item title="Updated At (Oldest First)" value="updated_at_asc" icon={Icon.ArrowUp} />
+            <List.Dropdown.Item title="Created At (Newest First)" value="created_at_desc" icon={Icon.ArrowDown} />
+            <List.Dropdown.Item title="Created At (Oldest First)" value="created_at_asc" icon={Icon.ArrowUp} />
+            <List.Dropdown.Item title="Status" value="status" icon={Icon.Circle} />
+            <List.Dropdown.Item title="Priority" value="priority" icon={Icon.Star} />
           </List.Dropdown.Section>
         </List.Dropdown>
       }

@@ -1,4 +1,4 @@
-import { List } from "@raycast/api";
+import { Icon, List } from "@raycast/api";
 
 export type SearchType =
   | "users"
@@ -45,22 +45,18 @@ export function SearchTypeSelector({ value, onChange }: SearchTypeSelectorProps)
       placeholder="Select search type"
       tooltip="Select Search Type"
     >
-      <List.Dropdown.Section title="Ticketing">
-        <List.Dropdown.Item title="Tickets" value="tickets" />
-        <List.Dropdown.Item title="Users" value="users" />
-        <List.Dropdown.Item title="Organizations" value="organizations" />
-        <List.Dropdown.Item title="Views" value="views" />
-        <List.Dropdown.Item title="Brands" value="brands" />
-      </List.Dropdown.Section>
-      <List.Dropdown.Section title="Admin">
-        <List.Dropdown.Item title="Groups" value="groups" />
-        <List.Dropdown.Item title="Triggers" value="triggers" />
-        <List.Dropdown.Item title="Dynamic Content" value="dynamic_content" />
-        <List.Dropdown.Item title="Macros" value="macros" />
-        <List.Dropdown.Item title="Ticket Fields" value="ticket_fields" />
-        <List.Dropdown.Item title="Support Addresses" value="support_addresses" />
-        <List.Dropdown.Item title="Ticket Forms" value="ticket_forms" />
-      </List.Dropdown.Section>
+      <List.Dropdown.Item title="Tickets" value="tickets" icon={Icon.Ticket} />
+      <List.Dropdown.Item title="Users" value="users" icon={Icon.Person} />
+      <List.Dropdown.Item title="Organizations" value="organizations" icon={Icon.Building} />
+      <List.Dropdown.Item title="Groups" value="groups" icon={Icon.TwoPeople} />
+      <List.Dropdown.Item title="Views" value="views" icon={Icon.Eye} />
+      <List.Dropdown.Item title="Brands" value="brands" icon={Icon.Tag} />
+      <List.Dropdown.Item title="Triggers" value="triggers" icon={Icon.Bolt} />
+      <List.Dropdown.Item title="Macros" value="macros" icon={Icon.Code} />
+      <List.Dropdown.Item title="Ticket Fields" value="ticket_fields" icon={Icon.List} />
+      <List.Dropdown.Item title="Ticket Forms" value="ticket_forms" icon={Icon.Document} />
+      <List.Dropdown.Item title="Dynamic Content" value="dynamic_content" icon={Icon.Text} />
+      <List.Dropdown.Item title="Support Addresses" value="support_addresses" icon={Icon.Envelope} />
     </List.Dropdown>
   );
 }
