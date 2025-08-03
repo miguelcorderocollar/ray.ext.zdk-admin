@@ -16,6 +16,7 @@ A Raycast extension for comprehensive Zendesk administration. Search, view, and 
 
 - **More Create/Edit/Delete Actions**: For all entities (Users, Organizations, Tickets, Forms, etc.)
 - **Additional Entities**: Custom objects, Help Center, Apps, Webhooks, SLAs, etc.
+- **Smarter search**: More intuitive and accurate results for all entities.
 - **Advanced Actions**: Assign users to groups, manage form fields, bulk ticket operations
 - **AI Extension**: Smart search, automated actions, natural language interface
 
