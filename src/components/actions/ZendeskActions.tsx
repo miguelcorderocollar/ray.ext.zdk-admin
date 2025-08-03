@@ -182,16 +182,10 @@ export function ZendeskActions({
     } else if (searchType === "views") {
       const view = item as ZendeskView;
       const agentViewUrl = urls.getAgentView(view.id);
-      const adminViewUrl = urls.getAdminViewEdit(view.id);
       const viewsListUrl = urls.getViewsList();
       return (
         <>
           {createEntityOpenAndCopyActions(agentViewUrl, "Open Agent View", "Copy Agent View Link")}
-          {createOpenActionWithShortcut(adminViewUrl, "Open Admin Edit View", Keyboard.Shortcut.Common.Edit)}
-          {createOpenActionWithShortcut(viewsListUrl, "Open Admin Views Page", {
-            macOS: { modifiers: ["cmd"], key: "b" },
-            windows: { modifiers: ["ctrl"], key: "b" },
-          })}
         </>
       );
     } else if (searchType === "brands") {
