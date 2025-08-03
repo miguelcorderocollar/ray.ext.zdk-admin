@@ -135,7 +135,7 @@ export function ZendeskActions({
       );
     } else if (searchType === "dynamic_content") {
       const dynamicContent = item as ZendeskDynamicContent;
-      const defaultVariant = dynamicContent.variants?.find((v) => v.id === dynamicContent.default_locale_id);
+      const defaultVariant = dynamicContent.variants?.find((v) => v.default === true);
       return (
         <>
           <Action.OpenInBrowser
@@ -152,7 +152,10 @@ export function ZendeskActions({
             <Action.CopyToClipboard
               title="Copy Content to Clipboard"
               content={defaultVariant.content}
-              shortcut={Keyboard.Shortcut.Common.Copy}
+              shortcut={{
+                macOS: { modifiers: ["cmd", "shift"], key: "v" },
+                windows: { modifiers: ["ctrl", "shift"], key: "v" },
+              }}
             />
           )}
           <Action.CopyToClipboard
