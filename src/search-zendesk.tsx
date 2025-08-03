@@ -48,6 +48,7 @@ import { AutomationListItem } from "./components/lists/AutomationListItem";
 import { ViewListItem } from "./components/lists/ViewListItem";
 import { TicketFormListItem } from "./components/lists/TicketFormListItem";
 import { GroupListItem } from "./components/lists/GroupListItem";
+import { MacroListItem } from "./components/lists/MacroListItem";
 import { ZendeskActions } from "./components/actions/ZendeskActions";
 
 export default function SearchZendesk() {
@@ -1032,70 +1033,14 @@ export default function SearchZendesk() {
                 );
               } else if (searchType === "macros") {
                 const macro = item as ZendeskMacro;
-                const nameParts = macro.title?.split("::");
-                const title = nameParts?.length > 1 ? nameParts[nameParts.length - 1] : macro.title;
-                const tags = nameParts?.length > 1 ? nameParts.slice(0, nameParts.length - 1) : [];
-
                 return (
-                  <List.Item
+                  <MacroListItem
                     key={macro.id}
-                    title={title}
-                    accessories={[
-                      ...(tags.length > 2
-                        ? [...tags.slice(0, 2).map((tag) => ({ text: tag })), { text: "..." }]
-                        : tags.map((tag) => ({ text: tag }))),
-                      ...(!macro.active
-                        ? [
-                            {
-                              icon: {
-                                source: Icon.CircleDisabled,
-                              },
-                              tooltip: "Inactive",
-                            },
-                          ]
-                        : []),
-                    ]}
-                    detail={
-                      <List.Item.Detail
-                        metadata={
-                          <List.Item.Detail.Metadata>
-                            {currentInstance && (
-                              <>
-                                <List.Item.Detail.Metadata.TagList title="Instance">
-                                  <List.Item.Detail.Metadata.TagList.Item
-                                    text={currentInstance.subdomain}
-                                    color={currentInstance.color || Color.Blue}
-                                  />
-                                </List.Item.Detail.Metadata.TagList>
-                                <List.Item.Detail.Metadata.Separator />
-                              </>
-                            )}
-                            <List.Item.Detail.Metadata.Label title="Name" text={macro.title} />
-                            <List.Item.Detail.Metadata.Label title="ID" text={macro.id.toString()} />
-                            <List.Item.Detail.Metadata.TagList title="Active">
-                              <List.Item.Detail.Metadata.TagList.Item
-                                text={macro.active ? "Active" : "Inactive"}
-                                color={getActiveStatusColor(macro.active)}
-                              />
-                            </List.Item.Detail.Metadata.TagList>
-                            {macro.description && (
-                              <List.Item.Detail.Metadata.Label title="Description" text={macro.description} />
-                            )}
-                            <TimestampMetadata created_at={macro.created_at} updated_at={macro.updated_at} />
-                          </List.Item.Detail.Metadata>
-                        }
-                      />
-                    }
-                    actions={
-                      <ZendeskActions
-                        item={macro}
-                        searchType="macros"
-                        instance={currentInstance}
-                        onInstanceChange={setCurrentInstance}
-                        showDetails={showDetails}
-                        onShowDetailsChange={setShowDetails}
-                      />
-                    }
+                    macro={macro}
+                    instance={currentInstance}
+                    onInstanceChange={setCurrentInstance}
+                    showDetails={showDetails}
+                    onShowDetailsChange={setShowDetails}
                   />
                 );
               } else if (searchType === "ticket_fields") {
