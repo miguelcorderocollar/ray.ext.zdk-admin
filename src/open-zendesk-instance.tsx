@@ -14,6 +14,16 @@ const productTitles: Record<ZendeskProduct, string> = {
   talk: "Talk",
 };
 
+const productIcons: Record<ZendeskProduct, Icon> = {
+  support: Icon.Message,
+  guide: Icon.Book,
+  admin: Icon.Gear,
+  explore: Icon.BarChart,
+  sell: Icon.Cart,
+  chat: Icon.SpeechBubble,
+  talk: Icon.Phone,
+};
+
 export default function OpenZendeskInstance() {
   const instances = getZendeskInstances();
   const [product, setProduct] = useState<ZendeskProduct>("support");
@@ -71,12 +81,14 @@ export default function OpenZendeskInstance() {
                     6: "t",
                   };
                   const key = productKeyMap[index] || "s";
+                  const product = value as ZendeskProduct;
 
                   return (
                     <Action.OpenInBrowser
                       key={value}
                       title={`Open ${title}`}
-                      url={getProductUrl(instance.subdomain, value as ZendeskProduct)}
+                      icon={productIcons[product]}
+                      url={getProductUrl(instance.subdomain, product)}
                       shortcut={{
                         macOS: { modifiers: ["cmd"], key },
                         windows: { modifiers: ["ctrl"], key },
