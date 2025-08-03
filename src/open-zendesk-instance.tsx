@@ -50,17 +50,6 @@ export default function OpenZendeskInstance() {
 
   return (
     <List
-      searchBarAccessory={
-        <List.Dropdown
-          tooltip="Select Zendesk Product"
-          value={product}
-          onChange={(newValue) => setProduct(newValue as ZendeskProduct)}
-        >
-          {Object.entries(productTitles).map(([value, title]) => (
-            <List.Dropdown.Item key={value} title={title} value={value} />
-          ))}
-        </List.Dropdown>
-      }
     >
       {instances.map((instance) => (
         <List.Item
