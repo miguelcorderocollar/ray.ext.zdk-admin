@@ -218,23 +218,11 @@ export default function SearchZendesk() {
       if (searchType === "dynamic_content") {
         if (!dynamicContentLoaded) {
           setAllDynamicContent([]);
+          let allDynamicContentItems: ZendeskDynamicContent[] = [];
           await searchZendeskDynamicContent(debouncedSearchText, currentInstance, (page) => {
-            setAllDynamicContent((prev) => [...prev, ...page]);
-            setResults(
-              (prev) =>
-                [...prev, ...page] as
-                  | ZendeskUser[]
-                  | ZendeskOrganization[]
-                  | ZendeskTrigger[]
-                  | ZendeskDynamicContent[]
-                  | ZendeskMacro[]
-                  | ZendeskTicketField[]
-                  | ZendeskSupportAddress[]
-                  | ZendeskTicketForm[]
-                  | ZendeskGroup[]
-                  | ZendeskTicket[]
-                  | ZendeskView[],
-            );
+            allDynamicContentItems = [...allDynamicContentItems, ...page];
+            setAllDynamicContent(allDynamicContentItems);
+            setResults(allDynamicContentItems);
           });
           setDynamicContentLoaded(true);
           setIsLoading(false);
@@ -361,27 +349,11 @@ export default function SearchZendesk() {
         } else if (searchType === "brands") {
           if (!brandsLoaded) {
             setAllBrands([]);
+            let allBrandsItems: ZendeskBrand[] = [];
             await searchZendeskBrands(currentInstance, (page) => {
-              setAllBrands((prev) => [...prev, ...page]);
-              setResults(
-                (prev) =>
-                  [...prev, ...page] as
-                    | ZendeskUser[]
-                    | ZendeskOrganization[]
-                    | ZendeskTrigger[]
-                    | ZendeskDynamicContent[]
-                    | ZendeskMacro[]
-                    | ZendeskTicketField[]
-                    | ZendeskSupportAddress[]
-                    | ZendeskTicketForm[]
-                    | ZendeskGroup[]
-                    | ZendeskTicket[]
-                    | ZendeskView[]
-                    | ZendeskBrand[]
-                    | ZendeskAutomation[]
-                    | ZendeskCustomRole[]
-                    | ZendeskTriggerCategory[],
-              );
+              allBrandsItems = [...allBrandsItems, ...page];
+              setAllBrands(allBrandsItems);
+              setResults(allBrandsItems);
             });
             setBrandsLoaded(true);
             setIsLoading(false);
