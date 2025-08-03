@@ -16,7 +16,7 @@ type SortOrder = "created_at_desc" | "created_at_asc" | "updated_at_desc" | "upd
 
 export default function EntityTicketsList({ entityType, entityId, entityEmail, instance }: EntityTicketsListProps) {
   const [searchText, setSearchText] = useState("");
-  const debouncedSearchText = useDebounce(searchText, 500);
+  const debouncedSearchText = useDebounce(searchText, 350);
   const [tickets, setTickets] = useState<ZendeskTicket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState<SortOrder>("updated_at_desc");

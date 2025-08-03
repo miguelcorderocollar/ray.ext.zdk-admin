@@ -65,7 +65,7 @@ export default function SearchZendesk() {
   };
   const [currentInstance, setCurrentInstance] = useState<ZendeskInstance | undefined>(allInstances[0]);
   const [searchText, setSearchText] = useState("");
-  const debouncedSearchText = useDebounce(searchText, 500);
+  const debouncedSearchText = useDebounce(searchText, 350);
   const [results, setResults] = useState<
     | ZendeskUser[]
     | ZendeskOrganization[]

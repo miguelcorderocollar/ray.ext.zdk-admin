@@ -1,5 +1,3 @@
 - fix clean search input issue when changing 
-- remove console log
 - test everything
-- fix dynamic content issue, no caching...
 - publish!
