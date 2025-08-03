@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "zendesk-admin",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "title": "Zendesk — Admin",
   "description": "Perform Zendesk Admin functions and access quickly any entity in Zendesk from Raycast.",
   "icon": "icon.png",
