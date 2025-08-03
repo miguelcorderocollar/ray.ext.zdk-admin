@@ -22,7 +22,7 @@ import AddTicketFieldOptionForm from "../forms/AddTicketFieldOptionForm";
 import TicketFieldOptionsList from "../lists/TicketFieldOptionsList";
 import CreateUserForm from "../forms/CreateUserForm";
 import EntityTicketsList from "../lists/EntityTicketsList";
-import GroupMembershipsList from "../lists/GroupMembershipsList";
+import UserMembershipList from "../lists/UserMembershipList";
 import UserGroupMembershipsList from "../lists/UserGroupMembershipsList";
 
 interface ZendeskActionsProps {
@@ -436,7 +436,9 @@ export function ZendeskActions({
           <Action.Push
             title="View Group Memberships"
             icon={Icon.Person}
-            target={<GroupMembershipsList groupId={group.id} groupName={group.name} instance={instance} />}
+            target={
+              <UserMembershipList entityType="group" entityId={group.id} entityName={group.name} instance={instance} />
+            }
             shortcut={{
               macOS: { modifiers: ["cmd"], key: "m" },
               windows: { modifiers: ["ctrl"], key: "m" },

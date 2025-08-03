@@ -3,7 +3,7 @@ import { ZendeskCustomRole, ZendeskInstance } from "../../api/zendesk";
 import { getZendeskInstances } from "../../utils/preferences";
 import { getActiveStatusColor, getRoleAccessLevelColor, getRoleAccessLevelText } from "../../utils/colors";
 import { InstanceMetadata, TimestampMetadata } from "../common/MetadataHelpers";
-import EntityTicketsList from "./EntityTicketsList";
+import UserMembershipList from "./UserMembershipList";
 
 interface CustomRoleListItemProps {
   customRole: ZendeskCustomRole;
@@ -195,7 +195,14 @@ export function CustomRoleListItem({
             <Action.Push
               title="View Role Members"
               icon={Icon.Person}
-              target={<EntityTicketsList entityType="role" entityId={customRole.id.toString()} instance={instance} />}
+              target={
+                <UserMembershipList
+                  entityType="role"
+                  entityId={customRole.id}
+                  entityName={customRole.name || "Unknown Role"}
+                  instance={instance}
+                />
+              }
               shortcut={{
                 macOS: { modifiers: ["cmd"], key: "m" },
                 windows: { modifiers: ["ctrl"], key: "m" },
