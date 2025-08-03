@@ -1,0 +1,582 @@
+[
+  {
+    "id": 1001,
+    "subject": "Extension crashes when searching for 'zendesk'",
+    "description": "When I search for 'zendesk' in the extension, it crashes immediately. This happens consistently on macOS 14.0.",
+    "status": "open",
+    "organization_id": 1,
+    "brand_id": 1,
+    "group_id": 1,
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T14:20:00Z",
+    "external_id": "EXT-2024-001",
+    "recipient": "support@raycast.com",
+    "tags": ["crash", "search", "macos"],
+    "ticket_form_id": 1,
+    "priority": "high",
+    "type": "incident",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "user@example.com", "name": "John Developer" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 14.0" },
+      { "id": 2, "value": "Extension v1.2.3" }
+    ]
+  },
+  {
+    "id": 1002,
+    "subject": "Cannot authenticate with Zendesk API",
+    "description": "Getting 401 unauthorized error when trying to connect to our Zendesk instance. API key seems correct.",
+    "status": "pending",
+    "organization_id": 1,
+    "brand_id": 1,
+    "group_id": 2,
+    "created_at": "2024-01-14T09:15:00Z",
+    "updated_at": "2024-01-15T11:45:00Z",
+    "external_id": "EXT-2024-002",
+    "recipient": "support@raycast.com",
+    "tags": ["authentication", "api", "401"],
+    "ticket_form_id": 1,
+    "priority": "urgent",
+    "type": "problem",
+    "via": {
+      "channel": "email",
+      "source": {
+        "from": { "address": "admin@company.com", "name": "Sarah Admin" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "Windows 11" },
+      { "id": 2, "value": "Extension v1.1.0" }
+    ]
+  },
+  {
+    "id": 1003,
+    "subject": "Search results not showing tickets properly",
+    "description": "When searching for tickets, the results show but the subject lines are truncated and I can't see the full ticket details.",
+    "status": "open",
+    "organization_id": 2,
+    "brand_id": 1,
+    "group_id": 1,
+    "created_at": "2024-01-13T16:20:00Z",
+    "updated_at": "2024-01-13T16:20:00Z",
+    "external_id": "EXT-2024-003",
+    "recipient": "support@raycast.com",
+    "tags": ["ui", "search", "display"],
+    "ticket_form_id": 1,
+    "priority": "normal",
+    "type": "question",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "user2@example.com", "name": "Mike User" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 13.6" },
+      { "id": 2, "value": "Extension v1.2.1" }
+    ]
+  },
+  {
+    "id": 1004,
+    "subject": "Feature request: Add bulk ticket operations",
+    "description": "It would be great to have the ability to perform bulk operations on tickets like bulk status updates, bulk assignment, etc.",
+    "status": "solved",
+    "organization_id": 1,
+    "brand_id": 1,
+    "group_id": 3,
+    "created_at": "2024-01-12T11:00:00Z",
+    "updated_at": "2024-01-15T10:30:00Z",
+    "external_id": "EXT-2024-004",
+    "recipient": "support@raycast.com",
+    "tags": ["feature-request", "bulk-operations"],
+    "ticket_form_id": 2,
+    "priority": "low",
+    "type": "task",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "poweruser@example.com", "name": "Alex PowerUser" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 14.1" },
+      { "id": 2, "value": "Extension v1.2.3" }
+    ]
+  },
+  {
+    "id": 1005,
+    "subject": "Extension not loading on startup",
+    "description": "The Zendesk extension doesn't load automatically when Raycast starts. I have to manually reload it each time.",
+    "status": "open",
+    "organization_id": 3,
+    "brand_id": 1,
+    "group_id": 1,
+    "created_at": "2024-01-11T14:30:00Z",
+    "updated_at": "2024-01-14T09:15:00Z",
+    "external_id": "EXT-2024-005",
+    "recipient": "support@raycast.com",
+    "tags": ["startup", "loading", "auto-load"],
+    "ticket_form_id": 1,
+    "priority": "high",
+    "type": "incident",
+    "via": {
+      "channel": "email",
+      "source": {
+        "from": { "address": "dev@startup.com", "name": "Lisa Developer" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 13.5" },
+      { "id": 2, "value": "Extension v1.1.5" }
+    ]
+  },
+  {
+    "id": 1006,
+    "subject": "Cannot create new tickets from extension",
+    "description": "When I try to create a new ticket from the extension, it shows an error about missing required fields, but all fields are filled.",
+    "status": "pending",
+    "organization_id": 1,
+    "brand_id": 1,
+    "group_id": 2,
+    "created_at": "2024-01-10T10:45:00Z",
+    "updated_at": "2024-01-13T15:20:00Z",
+    "external_id": "EXT-2024-006",
+    "recipient": "support@raycast.com",
+    "tags": ["create", "validation", "required-fields"],
+    "ticket_form_id": 1,
+    "priority": "normal",
+    "type": "problem",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "agent@company.com", "name": "Tom Agent" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 14.0" },
+      { "id": 2, "value": "Extension v1.2.2" }
+    ]
+  },
+  {
+    "id": 1007,
+    "subject": "Search performance is very slow",
+    "description": "Searching for tickets takes 10-15 seconds, which is way too slow for daily use. This happens with any search term.",
+    "status": "open",
+    "organization_id": 2,
+    "brand_id": 1,
+    "group_id": 1,
+    "created_at": "2024-01-09T13:20:00Z",
+    "updated_at": "2024-01-12T16:45:00Z",
+    "external_id": "EXT-2024-007",
+    "recipient": "support@raycast.com",
+    "tags": ["performance", "slow", "search"],
+    "ticket_form_id": 1,
+    "priority": "high",
+    "type": "incident",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "manager@company.com", "name": "Rachel Manager" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 13.6" },
+      { "id": 2, "value": "Extension v1.2.0" }
+    ]
+  },
+  {
+    "id": 1008,
+    "subject": "Extension icon not showing in Raycast",
+    "description": "The Zendesk extension icon appears as a generic icon instead of the Zendesk logo in the Raycast interface.",
+    "status": "solved",
+    "organization_id": 1,
+    "brand_id": 1,
+    "group_id": 3,
+    "created_at": "2024-01-08T09:30:00Z",
+    "updated_at": "2024-01-11T14:20:00Z",
+    "external_id": "EXT-2024-008",
+    "recipient": "support@raycast.com",
+    "tags": ["ui", "icon", "display"],
+    "ticket_form_id": 1,
+    "priority": "low",
+    "type": "question",
+    "via": {
+      "channel": "email",
+      "source": {
+        "from": { "address": "designer@company.com", "name": "Emma Designer" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 14.1" },
+      { "id": 2, "value": "Extension v1.2.1" }
+    ]
+  },
+  {
+    "id": 1009,
+    "subject": "Cannot assign tickets to team members",
+    "description": "The assignee dropdown is empty and I can't assign tickets to any team members. Shows 'No users found' error.",
+    "status": "open",
+    "organization_id": 3,
+    "brand_id": 1,
+    "group_id": 2,
+    "created_at": "2024-01-07T11:15:00Z",
+    "updated_at": "2024-01-10T13:45:00Z",
+    "external_id": "EXT-2024-009",
+    "recipient": "support@raycast.com",
+    "tags": ["assignment", "users", "dropdown"],
+    "ticket_form_id": 1,
+    "priority": "high",
+    "type": "problem",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "lead@team.com", "name": "David Lead" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 13.5" },
+      { "id": 2, "value": "Extension v1.1.8" }
+    ]
+  },
+  {
+    "id": 1010,
+    "subject": "Feature request: Dark mode support",
+    "description": "The extension doesn't respect the system dark mode setting. It always shows in light mode even when Raycast is in dark mode.",
+    "status": "solved",
+    "organization_id": 1,
+    "brand_id": 1,
+    "group_id": 3,
+    "created_at": "2024-01-06T15:45:00Z",
+    "updated_at": "2024-01-09T10:30:00Z",
+    "external_id": "EXT-2024-010",
+    "recipient": "support@raycast.com",
+    "tags": ["feature-request", "dark-mode", "ui"],
+    "ticket_form_id": 2,
+    "priority": "normal",
+    "type": "task",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "user@nightowl.com", "name": "Noah NightOwl" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 14.0" },
+      { "id": 2, "value": "Extension v1.2.3" }
+    ]
+  },
+  {
+    "id": 1011,
+    "subject": "Extension crashes when switching between instances",
+    "description": "When I switch between different Zendesk instances, the extension crashes and I have to restart Raycast to use it again.",
+    "status": "open",
+    "organization_id": 2,
+    "brand_id": 1,
+    "group_id": 1,
+    "created_at": "2024-01-05T12:30:00Z",
+    "updated_at": "2024-01-08T16:15:00Z",
+    "external_id": "EXT-2024-011",
+    "recipient": "support@raycast.com",
+    "tags": ["crash", "instance-switching", "stability"],
+    "ticket_form_id": 1,
+    "priority": "urgent",
+    "type": "incident",
+    "via": {
+      "channel": "email",
+      "source": {
+        "from": { "address": "admin@multitenant.com", "name": "Sophie Admin" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 13.6" },
+      { "id": 2, "value": "Extension v1.2.0" }
+    ]
+  },
+  {
+    "id": 1012,
+    "subject": "Cannot filter tickets by priority",
+    "description": "The priority filter in the search doesn't work. When I select 'High' priority, it still shows all tickets regardless of priority.",
+    "status": "pending",
+    "organization_id": 1,
+    "brand_id": 1,
+    "group_id": 2,
+    "created_at": "2024-01-04T10:20:00Z",
+    "updated_at": "2024-01-07T14:30:00Z",
+    "external_id": "EXT-2024-012",
+    "recipient": "support@raycast.com",
+    "tags": ["filter", "priority", "search"],
+    "ticket_form_id": 1,
+    "priority": "normal",
+    "type": "problem",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "analyst@company.com", "name": "Chris Analyst" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 14.1" },
+      { "id": 2, "value": "Extension v1.2.2" }
+    ]
+  },
+  {
+    "id": 1013,
+    "subject": "Extension not syncing with Zendesk real-time",
+    "description": "Changes made in Zendesk web interface don't appear in the extension until I manually refresh. Need real-time sync.",
+    "status": "open",
+    "organization_id": 3,
+    "brand_id": 1,
+    "group_id": 1,
+    "created_at": "2024-01-03T14:15:00Z",
+    "updated_at": "2024-01-06T11:45:00Z",
+    "external_id": "EXT-2024-013",
+    "recipient": "support@raycast.com",
+    "tags": ["sync", "real-time", "refresh"],
+    "ticket_form_id": 1,
+    "priority": "high",
+    "type": "incident",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "coordinator@team.com", "name": "Maria Coordinator" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 13.5" },
+      { "id": 2, "value": "Extension v1.1.9" }
+    ]
+  },
+  {
+    "id": 1014,
+    "subject": "Feature request: Keyboard shortcuts for common actions",
+    "description": "Would love to have keyboard shortcuts for common actions like 'r' for reply, 'a' for assign, 'c' for close, etc.",
+    "status": "solved",
+    "organization_id": 1,
+    "brand_id": 1,
+    "group_id": 3,
+    "created_at": "2024-01-02T09:45:00Z",
+    "updated_at": "2024-01-05T15:20:00Z",
+    "external_id": "EXT-2024-014",
+    "recipient": "support@raycast.com",
+    "tags": ["feature-request", "keyboard-shortcuts", "productivity"],
+    "ticket_form_id": 2,
+    "priority": "low",
+    "type": "task",
+    "via": {
+      "channel": "email",
+      "source": {
+        "from": { "address": "poweruser@keyboard.com", "name": "Kevin PowerUser" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 14.0" },
+      { "id": 2, "value": "Extension v1.2.3" }
+    ]
+  },
+  {
+    "id": 1015,
+    "subject": "Cannot export ticket data to CSV",
+    "description": "The export functionality doesn't work. When I try to export search results to CSV, it shows an error about file permissions.",
+    "status": "open",
+    "organization_id": 2,
+    "brand_id": 1,
+    "group_id": 2,
+    "created_at": "2024-01-01T11:30:00Z",
+    "updated_at": "2024-01-04T13:15:00Z",
+    "external_id": "EXT-2024-015",
+    "recipient": "support@raycast.com",
+    "tags": ["export", "csv", "permissions"],
+    "ticket_form_id": 1,
+    "priority": "normal",
+    "type": "problem",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "reporter@company.com", "name": "Anna Reporter" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 13.6" },
+      { "id": 2, "value": "Extension v1.2.1" }
+    ]
+  },
+  {
+    "id": 1016,
+    "subject": "Extension shows wrong timezone for tickets",
+    "description": "All ticket timestamps are showing in UTC instead of my local timezone (PST). This makes it confusing to track when tickets were created.",
+    "status": "pending",
+    "organization_id": 1,
+    "brand_id": 1,
+    "group_id": 2,
+    "created_at": "2023-12-31T16:45:00Z",
+    "updated_at": "2024-01-03T10:20:00Z",
+    "external_id": "EXT-2024-016",
+    "recipient": "support@raycast.com",
+    "tags": ["timezone", "timestamp", "local-time"],
+    "ticket_form_id": 1,
+    "priority": "normal",
+    "type": "problem",
+    "via": {
+      "channel": "email",
+      "source": {
+        "from": { "address": "pacific@timezone.com", "name": "Pat Pacific" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 14.1" },
+      { "id": 2, "value": "Extension v1.2.2" }
+    ]
+  },
+  {
+    "id": 1017,
+    "subject": "Extension not working with SSO authentication",
+    "description": "Our Zendesk instance uses SSO authentication, but the extension doesn't support it. It only works with API tokens.",
+    "status": "open",
+    "organization_id": 3,
+    "brand_id": 1,
+    "group_id": 1,
+    "created_at": "2023-12-30T13:20:00Z",
+    "updated_at": "2024-01-02T14:30:00Z",
+    "external_id": "EXT-2024-017",
+    "recipient": "support@raycast.com",
+    "tags": ["sso", "authentication", "enterprise"],
+    "ticket_form_id": 1,
+    "priority": "high",
+    "type": "incident",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "enterprise@company.com", "name": "Eric Enterprise" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 13.5" },
+      { "id": 2, "value": "Extension v1.1.7" }
+    ]
+  },
+  {
+    "id": 1018,
+    "subject": "Feature request: Add support for custom fields",
+    "description": "Our Zendesk instance has many custom fields that are important for our workflow. The extension should support displaying and editing these fields.",
+    "status": "solved",
+    "organization_id": 1,
+    "brand_id": 1,
+    "group_id": 3,
+    "created_at": "2023-12-29T10:15:00Z",
+    "updated_at": "2024-01-01T16:45:00Z",
+    "external_id": "EXT-2024-018",
+    "recipient": "support@raycast.com",
+    "tags": ["feature-request", "custom-fields", "workflow"],
+    "ticket_form_id": 2,
+    "priority": "normal",
+    "type": "task",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "workflow@company.com", "name": "Wendy Workflow" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 14.0" },
+      { "id": 2, "value": "Extension v1.2.3" }
+    ]
+  },
+  {
+    "id": 1019,
+    "subject": "Extension crashes when searching with special characters",
+    "description": "When I search for tickets with special characters like '&', '(', or ')' in the search query, the extension crashes immediately.",
+    "status": "open",
+    "organization_id": 2,
+    "brand_id": 1,
+    "group_id": 1,
+    "created_at": "2023-12-28T15:30:00Z",
+    "updated_at": "2023-12-31T11:20:00Z",
+    "external_id": "EXT-2024-019",
+    "recipient": "support@raycast.com",
+    "tags": ["crash", "special-characters", "search"],
+    "ticket_form_id": 1,
+    "priority": "high",
+    "type": "incident",
+    "via": {
+      "channel": "email",
+      "source": {
+        "from": { "address": "special@chars.com", "name": "Sam Special" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 13.6" },
+      { "id": 2, "value": "Extension v1.2.0" }
+    ]
+  },
+  {
+    "id": 1020,
+    "subject": "Extension not respecting Zendesk user permissions",
+    "description": "The extension shows tickets and allows actions that the current user doesn't have permission to see or modify in Zendesk web interface.",
+    "status": "pending",
+    "organization_id": 1,
+    "brand_id": 1,
+    "group_id": 2,
+    "created_at": "2023-12-27T12:45:00Z",
+    "updated_at": "2023-12-30T14:15:00Z",
+    "external_id": "EXT-2024-020",
+    "recipient": "support@raycast.com",
+    "tags": ["permissions", "security", "access-control"],
+    "ticket_form_id": 1,
+    "priority": "urgent",
+    "type": "problem",
+    "via": {
+      "channel": "web",
+      "source": {
+        "from": { "address": "security@company.com", "name": "Steve Security" },
+        "to": { "address": "support@raycast.com", "name": "Raycast Support" }
+      },
+      "rel": "customer"
+    },
+    "custom_fields": [
+      { "id": 1, "value": "macOS 14.1" },
+      { "id": 2, "value": "Extension v1.2.2" }
+    ]
+  }
+]

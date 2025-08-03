@@ -39,8 +39,40 @@ A Raycast extension for comprehensive Zendesk administration. Search, view, and 
 ### Optional Fields:
 - **Colors**: `#007bff, #28a745, #dc3545`
 - **Production Flags**: `true, false, true`
+- **Enable Mock Data**: `true` (for testing and screenshots without real API calls)
 
 **Important**: All comma-separated lists must have the same number of items. The extension will validate this and show an error if there's a mismatch.
+
+## Mock Data for Testing
+
+The extension includes comprehensive mock data for testing and creating screenshots without exposing real company data. To enable mock data:
+
+1. Go to Raycast preferences for this extension
+2. Check the "Enable Mock Data" checkbox
+3. All API calls will be replaced with realistic mock data
+
+**Mock data includes:**
+- 6 Zendesk instances (QA, Staging, Dev, Production, Support, Enterprise)
+- 20+ users with realistic profiles
+- 15+ tickets with various statuses and priorities
+- 10+ ticket fields with different types
+- 5+ organizations with domain names
+- 5+ triggers with categories
+- 5+ automations
+- 5+ dynamic content items with variants
+- 8+ macros
+- 5+ support addresses
+- 7+ ticket forms
+- 7+ groups
+- 10+ views
+- 3+ brands with logos
+- 5+ custom roles with configurations
+
+This feature is perfect for:
+- Creating demo videos and screenshots
+- Testing the extension without real data
+- Development and debugging
+- Training and documentation
 
 ## Usage
 

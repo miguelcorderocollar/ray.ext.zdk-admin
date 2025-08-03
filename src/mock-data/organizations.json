@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "name": "Raycast Inc.",
+    "created_at": "2023-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T14:45:00Z",
+    "domain_names": ["raycast.com", "raycast.app"],
+    "details": "Main company organization for Raycast",
+    "notes": "Primary organization for all Raycast employees",
+    "shared_tickets": true,
+    "shared_comments": true,
+    "external_id": "raycast_main",
+    "group_id": 1,
+    "organization_fields": {
+      "customer_type": "enterprise",
+      "industry": "software"
+    },
+    "tags": ["enterprise", "software", "productivity"]
+  },
+  {
+    "id": 2,
+    "name": "Acme Corporation",
+    "created_at": "2023-02-20T09:15:00Z",
+    "updated_at": "2024-01-10T11:20:00Z",
+    "domain_names": ["acme.com"],
+    "details": "Enterprise customer organization",
+    "notes": "Large enterprise customer with 500+ users",
+    "shared_tickets": true,
+    "shared_comments": false,
+    "external_id": "acme_corp",
+    "group_id": 2,
+    "organization_fields": {
+      "customer_type": "enterprise",
+      "industry": "manufacturing"
+    },
+    "tags": ["enterprise", "manufacturing", "premium"]
+  },
+  {
+    "id": 3,
+    "name": "StartupXYZ",
+    "created_at": "2023-03-10T16:45:00Z",
+    "updated_at": "2024-01-12T13:30:00Z",
+    "domain_names": ["startupxyz.com"],
+    "details": "Small startup organization",
+    "notes": "Growing startup with 50 users",
+    "shared_tickets": false,
+    "shared_comments": false,
+    "external_id": "startup_xyz",
+    "group_id": 3,
+    "organization_fields": {
+      "customer_type": "startup",
+      "industry": "technology"
+    },
+    "tags": ["startup", "technology", "growth"]
+  },
+  {
+    "id": 4,
+    "name": "Global Solutions Ltd",
+    "created_at": "2023-04-05T12:00:00Z",
+    "updated_at": "2024-01-08T15:20:00Z",
+    "domain_names": ["globalsolutions.com", "gs-ltd.com"],
+    "details": "International consulting firm",
+    "notes": "Multi-national organization with offices in 5 countries",
+    "shared_tickets": true,
+    "shared_comments": true,
+    "external_id": "global_solutions",
+    "group_id": 4,
+    "organization_fields": {
+      "customer_type": "enterprise",
+      "industry": "consulting"
+    },
+    "tags": ["enterprise", "consulting", "international"]
+  },
+  {
+    "id": 5,
+    "name": "Tech Innovators",
+    "created_at": "2023-05-12T08:30:00Z",
+    "updated_at": "2024-01-14T10:15:00Z",
+    "domain_names": ["techinnovators.io"],
+    "details": "Innovative technology company",
+    "notes": "Focus on AI and machine learning solutions",
+    "shared_tickets": false,
+    "shared_comments": true,
+    "external_id": "tech_innovators",
+    "group_id": 5,
+    "organization_fields": {
+      "customer_type": "mid-market",
+      "industry": "artificial-intelligence"
+    },
+    "tags": ["mid-market", "ai", "innovation"]
+  }
+]

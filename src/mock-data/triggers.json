@@ -1,0 +1,114 @@
+[
+  {
+    "url": "https://raycast-extensions-qa.zendesk.com/api/v2/triggers/1.json",
+    "id": 1,
+    "title": "Ticket Created - High Priority",
+    "active": true,
+    "updated_at": "2024-01-15T10:30:00Z",
+    "created_at": "2023-01-15T10:30:00Z",
+    "default": false,
+    "actions": [
+      { "field": "priority", "value": "high" },
+      { "field": "assignee_id", "value": "123" }
+    ],
+    "conditions": {
+      "all": [{ "field": "ticket_type_id", "operator": "is", "value": "incident" }],
+      "any": [{ "field": "subject", "operator": "contains", "value": "urgent" }]
+    },
+    "description": "Automatically sets high priority for urgent incident tickets",
+    "position": 1,
+    "raw_title": "Ticket Created - High Priority",
+    "category_id": "incident_management"
+  },
+  {
+    "url": "https://raycast-extensions-qa.zendesk.com/api/v2/triggers/2.json",
+    "id": 2,
+    "title": "Customer Satisfaction Survey",
+    "active": true,
+    "updated_at": "2024-01-10T14:20:00Z",
+    "created_at": "2023-02-20T09:15:00Z",
+    "default": false,
+    "actions": [
+      { "field": "status", "value": "solved" },
+      { "field": "notification_sent", "value": "true" }
+    ],
+    "conditions": {
+      "all": [
+        { "field": "status", "operator": "is", "value": "solved" },
+        { "field": "ticket_type_id", "operator": "is", "value": "support" }
+      ],
+      "any": []
+    },
+    "description": "Sends satisfaction survey when support tickets are solved",
+    "position": 2,
+    "raw_title": "Customer Satisfaction Survey",
+    "category_id": "customer_satisfaction"
+  },
+  {
+    "url": "https://raycast-extensions-qa.zendesk.com/api/v2/triggers/3.json",
+    "id": 3,
+    "title": "Escalate to Manager",
+    "active": true,
+    "updated_at": "2024-01-12T16:45:00Z",
+    "created_at": "2023-03-10T16:45:00Z",
+    "default": false,
+    "actions": [
+      { "field": "assignee_id", "value": "456" },
+      { "field": "priority", "value": "urgent" }
+    ],
+    "conditions": {
+      "all": [{ "field": "status", "operator": "is", "value": "open" }],
+      "any": [{ "field": "ticket_age", "operator": "greater_than", "value": "24" }]
+    },
+    "description": "Escalates tickets that have been open for more than 24 hours",
+    "position": 3,
+    "raw_title": "Escalate to Manager",
+    "category_id": "escalation"
+  },
+  {
+    "url": "https://raycast-extensions-qa.zendesk.com/api/v2/triggers/4.json",
+    "id": 4,
+    "title": "Welcome New Customer",
+    "active": true,
+    "updated_at": "2024-01-08T11:30:00Z",
+    "created_at": "2023-04-05T12:00:00Z",
+    "default": false,
+    "actions": [
+      { "field": "notification_sent", "value": "welcome_email" },
+      { "field": "tags", "value": ["new_customer", "welcome_sent"] }
+    ],
+    "conditions": {
+      "all": [{ "field": "requester_id", "operator": "is", "value": "new" }],
+      "any": []
+    },
+    "description": "Sends welcome email to new customers",
+    "position": 4,
+    "raw_title": "Welcome New Customer",
+    "category_id": "onboarding"
+  },
+  {
+    "url": "https://raycast-extensions-qa.zendesk.com/api/v2/triggers/5.json",
+    "id": 5,
+    "title": "Bug Report Auto-Assignment",
+    "active": true,
+    "updated_at": "2024-01-14T13:15:00Z",
+    "created_at": "2023-05-12T08:30:00Z",
+    "default": false,
+    "actions": [
+      { "field": "assignee_id", "value": "789" },
+      { "field": "group_id", "value": "3" },
+      { "field": "tags", "value": ["bug", "auto_assigned"] }
+    ],
+    "conditions": {
+      "all": [{ "field": "ticket_type_id", "operator": "is", "value": "bug" }],
+      "any": [
+        { "field": "subject", "operator": "contains", "value": "bug" },
+        { "field": "subject", "operator": "contains", "value": "error" }
+      ]
+    },
+    "description": "Automatically assigns bug reports to the development team",
+    "position": 5,
+    "raw_title": "Bug Report Auto-Assignment",
+    "category_id": "bug_management"
+  }
+]

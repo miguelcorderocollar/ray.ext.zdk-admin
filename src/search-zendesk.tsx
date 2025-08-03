@@ -2,40 +2,31 @@ import { List, showToast, Toast } from "@raycast/api";
 import { SearchTypeSelector, SearchType } from "./components/common/SearchTypeSelector";
 
 import { useState, useEffect } from "react";
-import { getZendeskInstances, ZendeskInstance } from "./utils/preferences";
+import { getZendeskInstances, ZendeskInstance, isMockDataEnabled } from "./utils/preferences";
 import { useDebounce } from "./hooks/useDebounce";
+
+// Import types
 import {
-  searchZendeskUsers,
   ZendeskUser,
-  searchZendeskOrganizations,
   ZendeskOrganization,
-  searchZendeskTriggers,
   ZendeskTrigger,
-  searchZendeskTriggerCategories,
   ZendeskTriggerCategory,
-  searchZendeskDynamicContent,
   ZendeskDynamicContent,
-  searchZendeskMacros,
   ZendeskMacro,
-  searchZendeskTicketFields,
   ZendeskTicketField,
-  searchZendeskSupportAddresses,
   ZendeskSupportAddress,
-  searchZendeskTicketForms,
   ZendeskTicketForm,
-  searchZendeskGroups,
   ZendeskGroup,
-  searchZendeskTickets,
   ZendeskTicket,
-  searchZendeskViews,
   ZendeskView,
-  searchZendeskBrands,
   ZendeskBrand,
-  searchZendeskAutomations,
   ZendeskAutomation,
-  searchZendeskCustomRoles,
   ZendeskCustomRole,
 } from "./api/zendesk";
+
+// Import API functions - will be dynamically selected based on mock data preference
+import * as realZendeskAPI from "./api/zendesk";
+import * as mockZendeskAPI from "./api/mock-zendesk";
 
 import { TicketListItem } from "./components/lists/TicketListItem";
 import { BrandListItem } from "./components/lists/BrandListItem";
@@ -52,6 +43,11 @@ import { UserListItem } from "./components/lists/UserListItem";
 import { TriggerListItem } from "./components/lists/TriggerListItem";
 import { SupportAddressListItem } from "./components/lists/SupportAddressListItem";
 import { groupDynamicContentResults, GroupedDynamicContentResult } from "./utils/dynamicContentGrouping";
+
+// Helper function to get the appropriate API functions based on mock data preference
+function getZendeskAPI() {
+  return isMockDataEnabled() ? mockZendeskAPI : realZendeskAPI;
+}
 
 export default function SearchZendesk() {
   const allInstances = getZendeskInstances();
@@ -228,7 +224,7 @@ export default function SearchZendesk() {
         if (!dynamicContentLoaded) {
           setAllDynamicContent([]);
           let allDynamicContentItems: ZendeskDynamicContent[] = [];
-          await searchZendeskDynamicContent(debouncedSearchText, currentInstance, (page) => {
+          await getZendeskAPI().searchZendeskDynamicContent(debouncedSearchText, currentInstance, (page) => {
             allDynamicContentItems = [...allDynamicContentItems, ...page];
             setAllDynamicContent(allDynamicContentItems);
             setResults(allDynamicContentItems);
@@ -248,7 +244,7 @@ export default function SearchZendesk() {
           // Load brands if not already loaded
           if (!brandsLoaded) {
             setAllBrands([]);
-            await searchZendeskBrands(currentInstance, (page) => {
+            await getZendeskAPI().searchZendeskBrands(currentInstance, (page) => {
               setAllBrands((prev) => [...prev, ...page]);
             });
             setBrandsLoaded(true);
@@ -256,7 +252,7 @@ export default function SearchZendesk() {
 
           setAllSupportAddresses([]);
           let allAddresses: ZendeskSupportAddress[] = [];
-          await searchZendeskSupportAddresses(currentInstance, (page) => {
+          await getZendeskAPI().searchZendeskSupportAddresses(currentInstance, (page) => {
             allAddresses = [...allAddresses, ...page];
             setAllSupportAddresses(allAddresses);
           });
@@ -274,7 +270,7 @@ export default function SearchZendesk() {
       } else if (searchType === "groups") {
         if (!groupsLoaded) {
           setAllGroups([]);
-          const fetchedGroups = await searchZendeskGroups(currentInstance);
+          const fetchedGroups = await getZendeskAPI().searchZendeskGroups(currentInstance);
           setAllGroups(fetchedGroups);
           setResults(fetchedGroups);
           setGroupsLoaded(true);
@@ -288,7 +284,10 @@ export default function SearchZendesk() {
       } else if (searchType === "automations") {
         if (!automationsLoaded) {
           setAllAutomations([]);
-          const fetchedAutomations = await searchZendeskAutomations(debouncedSearchText, currentInstance);
+          const fetchedAutomations = await getZendeskAPI().searchZendeskAutomations(
+            debouncedSearchText,
+            currentInstance,
+          );
           setAllAutomations(fetchedAutomations);
           setResults(fetchedAutomations);
           setAutomationsLoaded(true);
@@ -302,7 +301,10 @@ export default function SearchZendesk() {
       } else if (searchType === "custom_roles") {
         if (!customRolesLoaded) {
           setAllCustomRoles([]);
-          const fetchedCustomRoles = await searchZendeskCustomRoles(debouncedSearchText, currentInstance);
+          const fetchedCustomRoles = await getZendeskAPI().searchZendeskCustomRoles(
+            debouncedSearchText,
+            currentInstance,
+          );
           setAllCustomRoles(fetchedCustomRoles);
           setResults(fetchedCustomRoles);
           setCustomRolesLoaded(true);
@@ -330,34 +332,34 @@ export default function SearchZendesk() {
           | ZendeskAutomation[]
           | ZendeskCustomRole[] = [];
         if (searchType === "users") {
-          searchResults = await searchZendeskUsers(debouncedSearchText, currentInstance);
+          searchResults = await getZendeskAPI().searchZendeskUsers(debouncedSearchText, currentInstance);
         } else if (searchType === "organizations") {
-          searchResults = await searchZendeskOrganizations(debouncedSearchText, currentInstance);
+          searchResults = await getZendeskAPI().searchZendeskOrganizations(debouncedSearchText, currentInstance);
         } else if (searchType === "macros") {
-          searchResults = await searchZendeskMacros(debouncedSearchText, currentInstance);
+          searchResults = await getZendeskAPI().searchZendeskMacros(debouncedSearchText, currentInstance);
         } else if (searchType === "ticket_fields") {
-          searchResults = await searchZendeskTicketFields(debouncedSearchText, currentInstance);
+          searchResults = await getZendeskAPI().searchZendeskTicketFields(debouncedSearchText, currentInstance);
         } else if (searchType === "ticket_forms") {
-          searchResults = await searchZendeskTicketForms(debouncedSearchText, currentInstance);
+          searchResults = await getZendeskAPI().searchZendeskTicketForms(debouncedSearchText, currentInstance);
         } else if (searchType === "tickets") {
-          searchResults = await searchZendeskTickets(debouncedSearchText, currentInstance);
+          searchResults = await getZendeskAPI().searchZendeskTickets(debouncedSearchText, currentInstance);
         } else if (searchType === "views") {
-          searchResults = await searchZendeskViews(debouncedSearchText, currentInstance);
+          searchResults = await getZendeskAPI().searchZendeskViews(debouncedSearchText, currentInstance);
         } else if (searchType === "triggers") {
           // Load trigger categories if not already loaded
           if (!triggerCategoriesLoaded) {
             setAllTriggerCategories([]);
-            await searchZendeskTriggerCategories(currentInstance, (page) => {
+            await getZendeskAPI().searchZendeskTriggerCategories(currentInstance, (page) => {
               setAllTriggerCategories((prev) => [...prev, ...page]);
             });
             setTriggerCategoriesLoaded(true);
           }
-          searchResults = await searchZendeskTriggers(debouncedSearchText, currentInstance);
+          searchResults = await getZendeskAPI().searchZendeskTriggers(debouncedSearchText, currentInstance);
         } else if (searchType === "brands") {
           if (!brandsLoaded) {
             setAllBrands([]);
             let allBrandsItems: ZendeskBrand[] = [];
-            await searchZendeskBrands(currentInstance, (page) => {
+            await getZendeskAPI().searchZendeskBrands(currentInstance, (page) => {
               allBrandsItems = [...allBrandsItems, ...page];
               setAllBrands(allBrandsItems);
               setResults(allBrandsItems);
@@ -373,9 +375,9 @@ export default function SearchZendesk() {
             setResults(filteredResults);
           }
         } else if (searchType === "automations") {
-          searchResults = await searchZendeskAutomations(debouncedSearchText, currentInstance);
+          searchResults = await getZendeskAPI().searchZendeskAutomations(debouncedSearchText, currentInstance);
         } else if (searchType === "custom_roles") {
-          searchResults = await searchZendeskCustomRoles(debouncedSearchText, currentInstance);
+          searchResults = await getZendeskAPI().searchZendeskCustomRoles(debouncedSearchText, currentInstance);
         }
         setResults(searchResults);
         setIsLoading(false);

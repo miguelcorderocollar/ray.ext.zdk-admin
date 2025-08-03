@@ -10,3 +10,4 @@
 - User and ticket management features
 - Quick access to all Zendesk products
 - Cross-platform support (macOS and Windows)
+

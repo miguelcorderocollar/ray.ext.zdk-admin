@@ -1,0 +1,113 @@
+[
+  {
+    "id": 1,
+    "name": "Raycast",
+    "active": true,
+    "brand_url": "https://raycast.com",
+    "created_at": "2023-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z",
+    "default": true,
+    "has_help_center": true,
+    "help_center_state": "enabled",
+    "host_mapping": "raycast.com",
+    "is_deleted": false,
+    "logo": {
+      "content_type": "image/png",
+      "content_url": "https://raycast.com/logo.png",
+      "file_name": "raycast-logo.png",
+      "id": 1,
+      "mapped_content_url": "https://raycast.com/logo.png",
+      "size": 10240,
+      "thumbnails": [
+        {
+          "content_type": "image/png",
+          "content_url": "https://raycast.com/logo-thumb.png",
+          "file_name": "raycast-logo-thumb.png",
+          "id": 2,
+          "mapped_content_url": "https://raycast.com/logo-thumb.png",
+          "size": 2048,
+          "url": "https://raycast.com/logo-thumb.png"
+        }
+      ],
+      "url": "https://raycast.com/logo.png"
+    },
+    "signature_template": "Best regards,\nThe Raycast Team",
+    "subdomain": "raycast",
+    "ticket_form_ids": [1, 2, 3, 5, 6, 7],
+    "url": "https://raycast-extensions-qa.zendesk.com/api/v2/brands/1.json"
+  },
+  {
+    "id": 2,
+    "name": "Raycast Enterprise",
+    "active": true,
+    "brand_url": "https://raycast.com/enterprise",
+    "created_at": "2023-02-20T09:15:00Z",
+    "updated_at": "2024-01-10T14:20:00Z",
+    "default": false,
+    "has_help_center": true,
+    "help_center_state": "enabled",
+    "host_mapping": "enterprise.raycast.com",
+    "is_deleted": false,
+    "logo": {
+      "content_type": "image/png",
+      "content_url": "https://raycast.com/enterprise-logo.png",
+      "file_name": "raycast-enterprise-logo.png",
+      "id": 3,
+      "mapped_content_url": "https://raycast.com/enterprise-logo.png",
+      "size": 12288,
+      "thumbnails": [
+        {
+          "content_type": "image/png",
+          "content_url": "https://raycast.com/enterprise-logo-thumb.png",
+          "file_name": "raycast-enterprise-logo-thumb.png",
+          "id": 4,
+          "mapped_content_url": "https://raycast.com/enterprise-logo-thumb.png",
+          "size": 2560,
+          "url": "https://raycast.com/enterprise-logo-thumb.png"
+        }
+      ],
+      "url": "https://raycast.com/enterprise-logo.png"
+    },
+    "signature_template": "Best regards,\nThe Raycast Enterprise Team",
+    "subdomain": "raycast-enterprise",
+    "ticket_form_ids": [4],
+    "url": "https://raycast-extensions-qa.zendesk.com/api/v2/brands/2.json"
+  },
+  {
+    "id": 3,
+    "name": "Raycast Extensions",
+    "active": true,
+    "brand_url": "https://extensions.raycast.com",
+    "created_at": "2023-03-10T16:45:00Z",
+    "updated_at": "2024-01-12T16:45:00Z",
+    "default": false,
+    "has_help_center": true,
+    "help_center_state": "enabled",
+    "host_mapping": "extensions.raycast.com",
+    "is_deleted": false,
+    "logo": {
+      "content_type": "image/png",
+      "content_url": "https://extensions.raycast.com/logo.png",
+      "file_name": "raycast-extensions-logo.png",
+      "id": 5,
+      "mapped_content_url": "https://extensions.raycast.com/logo.png",
+      "size": 8192,
+      "thumbnails": [
+        {
+          "content_type": "image/png",
+          "content_url": "https://extensions.raycast.com/logo-thumb.png",
+          "file_name": "raycast-extensions-logo-thumb.png",
+          "id": 6,
+          "mapped_content_url": "https://extensions.raycast.com/logo-thumb.png",
+          "size": 1536,
+          "url": "https://extensions.raycast.com/logo-thumb.png"
+        }
+      ],
+      "url": "https://extensions.raycast.com/logo.png"
+    },
+    "signature_template": "Best regards,\nThe Raycast Extensions Team",
+    "subdomain": "raycast-extensions",
+    "ticket_form_ids": [1, 2, 3, 5, 6, 7],
+    "url": "https://raycast-extensions-qa.zendesk.com/api/v2/brands/3.json"
+  }
+]

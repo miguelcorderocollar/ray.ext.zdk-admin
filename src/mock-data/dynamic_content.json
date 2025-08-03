@@ -1,0 +1,137 @@
+[
+  {
+    "id": 1,
+    "name": "Welcome Message",
+    "placeholder": "{{dc.welcome_message}}",
+    "created_at": "2023-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z",
+    "variants": [
+      {
+        "id": 1,
+        "locale_id": 1,
+        "active": true,
+        "default": true,
+        "content": "Welcome to our support portal! We're here to help you with any questions or issues you may have.",
+        "created_at": "2023-01-15T10:30:00Z",
+        "updated_at": "2024-01-15T10:30:00Z"
+      },
+      {
+        "id": 2,
+        "locale_id": 2,
+        "active": true,
+        "default": false,
+        "content": "¡Bienvenido a nuestro portal de soporte! Estamos aquí para ayudarte con cualquier pregunta o problema que puedas tener.",
+        "created_at": "2023-01-15T10:30:00Z",
+        "updated_at": "2024-01-15T10:30:00Z"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Support Hours",
+    "placeholder": "{{dc.support_hours}}",
+    "created_at": "2023-02-20T09:15:00Z",
+    "updated_at": "2024-01-10T14:20:00Z",
+    "variants": [
+      {
+        "id": 3,
+        "locale_id": 1,
+        "active": true,
+        "default": true,
+        "content": "Our support team is available Monday through Friday, 9 AM to 6 PM EST.",
+        "created_at": "2023-02-20T09:15:00Z",
+        "updated_at": "2024-01-10T14:20:00Z"
+      },
+      {
+        "id": 4,
+        "locale_id": 2,
+        "active": true,
+        "default": false,
+        "content": "Nuestro equipo de soporte está disponible de lunes a viernes, de 9 AM a 6 PM EST.",
+        "created_at": "2023-02-20T09:15:00Z",
+        "updated_at": "2024-01-10T14:20:00Z"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Ticket Resolution Time",
+    "placeholder": "{{dc.resolution_time}}",
+    "created_at": "2023-03-10T16:45:00Z",
+    "updated_at": "2024-01-12T16:45:00Z",
+    "variants": [
+      {
+        "id": 5,
+        "locale_id": 1,
+        "active": true,
+        "default": true,
+        "content": "We typically respond to tickets within 24 hours during business days.",
+        "created_at": "2023-03-10T16:45:00Z",
+        "updated_at": "2024-01-12T16:45:00Z"
+      },
+      {
+        "id": 6,
+        "locale_id": 2,
+        "active": true,
+        "default": false,
+        "content": "Normalmente respondemos a los tickets dentro de 24 horas durante los días laborables.",
+        "created_at": "2023-03-10T16:45:00Z",
+        "updated_at": "2024-01-12T16:45:00Z"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Contact Information",
+    "placeholder": "{{dc.contact_info}}",
+    "created_at": "2023-04-05T12:00:00Z",
+    "updated_at": "2024-01-08T11:30:00Z",
+    "variants": [
+      {
+        "id": 7,
+        "locale_id": 1,
+        "active": true,
+        "default": true,
+        "content": "You can reach us at support@raycast.com or call us at +1-555-0123.",
+        "created_at": "2023-04-05T12:00:00Z",
+        "updated_at": "2024-01-08T11:30:00Z"
+      },
+      {
+        "id": 8,
+        "locale_id": 2,
+        "active": true,
+        "default": false,
+        "content": "Puedes contactarnos en support@raycast.com o llamarnos al +1-555-0123.",
+        "created_at": "2023-04-05T12:00:00Z",
+        "updated_at": "2024-01-08T11:30:00Z"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "FAQ Link",
+    "placeholder": "{{dc.faq_link}}",
+    "created_at": "2023-05-12T08:30:00Z",
+    "updated_at": "2024-01-14T13:15:00Z",
+    "variants": [
+      {
+        "id": 9,
+        "locale_id": 1,
+        "active": true,
+        "default": true,
+        "content": "Check out our FAQ section for quick answers to common questions: https://help.raycast.com/faq",
+        "created_at": "2023-05-12T08:30:00Z",
+        "updated_at": "2024-01-14T13:15:00Z"
+      },
+      {
+        "id": 10,
+        "locale_id": 2,
+        "active": true,
+        "default": false,
+        "content": "Consulta nuestra sección de FAQ para respuestas rápidas a preguntas comunes: https://help.raycast.com/faq",
+        "created_at": "2023-05-12T08:30:00Z",
+        "updated_at": "2024-01-14T13:15:00Z"
+      }
+    ]
+  }
+]
