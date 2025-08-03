@@ -1,5 +1,5 @@
 import { List, showToast, Toast, Color, Icon } from "@raycast/api";
-import { getActiveStatusColor, getVerificationStatusColor } from "./utils/colors";
+import { getVerificationStatusColor } from "./utils/colors";
 import { formatInstanceColor } from "./utils/formatters";
 import { TimestampMetadata } from "./components/common/MetadataHelpers";
 import { SearchTypeSelector, SearchType } from "./components/common/SearchTypeSelector";
@@ -52,6 +52,7 @@ import { TicketFieldListItem } from "./components/lists/TicketFieldListItem";
 import { DynamicContentListItem } from "./components/lists/DynamicContentListItem";
 import { OrganizationListItem } from "./components/lists/OrganizationListItem";
 import { UserListItem } from "./components/lists/UserListItem";
+import { TriggerListItem } from "./components/lists/TriggerListItem";
 import { ZendeskActions } from "./components/actions/ZendeskActions";
 import { groupDynamicContentResults, GroupedDynamicContentResult } from "./utils/dynamicContentGrouping";
 
@@ -465,75 +466,14 @@ export default function SearchZendesk() {
             return sortedCategories.map((categoryName) => (
               <List.Section key={categoryName} title={categoryName}>
                 {groupedTriggers[categoryName].map((trigger) => (
-                  <List.Item
+                  <TriggerListItem
                     key={trigger.id}
-                    title={trigger.title}
-                    icon={undefined}
-                    accessories={
-                      !trigger.active
-                        ? [
-                            {
-                              icon: {
-                                source: Icon.CircleDisabled,
-                              },
-                              tooltip: "Inactive",
-                            },
-                          ]
-                        : []
-                    }
-                    detail={
-                      <List.Item.Detail
-                        metadata={
-                          <List.Item.Detail.Metadata>
-                            {currentInstance && (
-                              <>
-                                <List.Item.Detail.Metadata.TagList title="Instance">
-                                  <List.Item.Detail.Metadata.TagList.Item
-                                    text={currentInstance.subdomain}
-                                    color={formatInstanceColor(currentInstance.color)}
-                                  />
-                                </List.Item.Detail.Metadata.TagList>
-                                <List.Item.Detail.Metadata.Separator />
-                              </>
-                            )}
-                            <List.Item.Detail.Metadata.Label title="Title" text={trigger.title} />
-                            {trigger.description && (
-                              <List.Item.Detail.Metadata.Label title="Description" text={trigger.description} />
-                            )}
-                            <List.Item.Detail.Metadata.Label title="ID" text={trigger.id.toString()} />
-                            <List.Item.Detail.Metadata.Label
-                              title="Category"
-                              text={getCategoryName(trigger.category_id)}
-                            />
-                            <List.Item.Detail.Metadata.TagList title="Active">
-                              <List.Item.Detail.Metadata.TagList.Item
-                                text={trigger.active ? "Active" : "Inactive"}
-                                color={getActiveStatusColor(trigger.active)}
-                              />
-                            </List.Item.Detail.Metadata.TagList>
-                            {trigger.created_at && trigger.updated_at && (
-                              <TimestampMetadata created_at={trigger.created_at} updated_at={trigger.updated_at} />
-                            )}
-                            <List.Item.Detail.Metadata.Separator />
-                            <List.Item.Detail.Metadata.Link
-                              title="Open in Zendesk"
-                              text="View Trigger"
-                              target={`https://${currentInstance?.subdomain}.zendesk.com/admin/objects-rules/rules/triggers/${trigger.id}`}
-                            />
-                          </List.Item.Detail.Metadata>
-                        }
-                      />
-                    }
-                    actions={
-                      <ZendeskActions
-                        item={trigger}
-                        searchType="triggers"
-                        instance={currentInstance}
-                        onInstanceChange={setCurrentInstance}
-                        showDetails={showDetails}
-                        onShowDetailsChange={setShowDetails}
-                      />
-                    }
+                    trigger={trigger}
+                    instance={currentInstance}
+                    onInstanceChange={setCurrentInstance}
+                    showDetails={showDetails}
+                    onShowDetailsChange={setShowDetails}
+                    categoryName={getCategoryName(trigger.category_id)}
                   />
                 ))}
               </List.Section>
