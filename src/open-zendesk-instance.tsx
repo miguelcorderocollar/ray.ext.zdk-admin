@@ -14,6 +14,17 @@ const productTitles: Record<ZendeskProduct, string> = {
   talk: "Talk",
 };
 
+// Map each product to an appropriate icon
+const productIcons: Record<ZendeskProduct, Icon> = {
+  support: Icon.Message,
+  guide: Icon.Book,
+  admin: Icon.Gear,
+  explore: Icon.BarChart,
+  sell: Icon.Cart,
+  chat: Icon.SpeechBubble,
+  talk: Icon.Phone,
+};
+
 export default function OpenZendeskInstance() {
   const instances = getZendeskInstances();
   const [product, setProduct] = useState<ZendeskProduct>("support");
@@ -77,6 +88,7 @@ export default function OpenZendeskInstance() {
                       key={value}
                       title={`Open ${title}`}
                       url={getProductUrl(instance.subdomain, value as ZendeskProduct)}
+                      icon={productIcons[value as ZendeskProduct]}
                       shortcut={{
                         macOS: { modifiers: ["cmd"], key },
                         windows: { modifiers: ["ctrl"], key },

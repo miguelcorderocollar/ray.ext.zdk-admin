@@ -108,11 +108,13 @@ export function ZendeskActions({
           <Action.OpenInBrowser
             title="Open in Browser"
             url={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
+            icon={Icon.Globe}
             shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy Link"
             content={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
+            icon={Icon.Link}
             shortcut={{
               macOS: { modifiers: ["cmd"], key: "l" },
               windows: { modifiers: ["ctrl"], key: "l" },
