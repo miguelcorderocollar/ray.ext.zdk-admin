@@ -1,5 +1,4 @@
 import { Action, ActionPanel, Color, Icon, List, Keyboard } from "@raycast/api";
-import { useState } from "react";
 import { getZendeskInstances } from "./utils/preferences";
 
 type ZendeskProduct = "support" | "guide" | "admin" | "explore" | "sell" | "chat" | "talk";
@@ -26,7 +25,6 @@ const productIcons: Record<ZendeskProduct, Icon> = {
 
 export default function OpenZendeskInstance() {
   const instances = getZendeskInstances();
-  const [product, setProduct] = useState<ZendeskProduct>("support");
 
   const getProductUrl = (subdomain: string, product: ZendeskProduct) => {
     switch (product) {
@@ -59,8 +57,7 @@ export default function OpenZendeskInstance() {
   }
 
   return (
-    <List
-    >
+    <List>
       {instances.map((instance) => (
         <List.Item
           key={instance.subdomain}

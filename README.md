@@ -14,8 +14,8 @@ A Raycast extension for comprehensive Zendesk administration. Search, view, and 
 
 ## Future Plans
 
-- **Delete Actions**: Delete functionality for all entities (Users, Organizations, Tickets, Forms, etc.)
-- **Additional Entities**: Custom objects, Help Center, Apps, Webhooks, SLAs
+- **More Create/Edit/Delete Actions**: For all entities (Users, Organizations, Tickets, Forms, etc.)
+- **Additional Entities**: Custom objects, Help Center, Apps, Webhooks, SLAs, etc.
 - **Advanced Actions**: Assign users to groups, manage form fields, bulk ticket operations
 - **AI Extension**: Smart search, automated actions, natural language interface
 
@@ -27,7 +27,7 @@ A Raycast extension for comprehensive Zendesk administration. Search, view, and 
 ## Setup
 
 1. Install the extension
-2. Configure Zendesk instances in Raycast preferences using comma-separated values:
+2. Configure Zendesk instances in Raycast preferences using comma-separated values, examples here:
 
 ### Required Fields:
 - **Instance Names**: `My Company, Test Instance, Production`
@@ -39,21 +39,7 @@ A Raycast extension for comprehensive Zendesk administration. Search, view, and 
 - **Colors**: `#007bff, #28a745, #dc3545`
 - **Production Flags**: `true, false, true`
 
-### Example Configuration:
-For 3 Zendesk instances, you would configure:
-
-**Instance Names**: `My Company, Test Instance, Production`
-**Subdomains**: `yourcompany, testcompany, prodcompany`
-**API Users**: `api_user@yourcompany.com/token, test@testcompany.com/token, prod@prodcompany.com/token`
-**API Keys**: `your_api_key_1, your_api_key_2, your_api_key_3`
-**Colors**: `#007bff, #28a745, #dc3545`
-**Production Flags**: `true, false, true`
-
 **Important**: All comma-separated lists must have the same number of items. The extension will validate this and show an error if there's a mismatch.
-
-## Requirements
-
-- Zendesk API access with permissions for user management, ticket access, organization management, group administration, and configuration management
 
 ## Usage
 
@@ -64,8 +50,5 @@ For 3 Zendesk instances, you would configure:
 
 ## Author
 
-gemini
-
-## License
-
-MIT
+[Miguel Cordero Collar](https://github.com/miguelcorderocollar)
+> This extension was developed with the help of [Gemini CLI](https://github.com/google-gemini/gemini-cli) and [Cursor](https://www.cursor.com/).
