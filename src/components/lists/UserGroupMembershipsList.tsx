@@ -62,7 +62,6 @@ export default function UserGroupMembershipsList({ userId, userName, instance }:
         setMemberships(enrichedMemberships);
       } catch (groupError) {
         // If group data fetch fails, still show memberships with just IDs
-        console.warn("Failed to fetch group data:", groupError);
         setMemberships(membershipData);
       }
     } catch (error: unknown) {
