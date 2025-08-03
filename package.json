@@ -6,7 +6,7 @@
   "description": "Perform Zendesk Admin functions and access quickly any entity in Zendesk from Raycast.",
   "icon": "icon.png",
   "categories": ["Productivity"],
-  "author": "gemini",
+  "author": "miguelcorderocollar",
   "license": "MIT",
   "platforms": [
     "macOS",

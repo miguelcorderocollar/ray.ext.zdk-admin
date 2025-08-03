@@ -182,12 +182,7 @@ export function ZendeskActions({
     } else if (searchType === "views") {
       const view = item as ZendeskView;
       const agentViewUrl = urls.getAgentView(view.id);
-      const viewsListUrl = urls.getViewsList();
-      return (
-        <>
-          {createEntityOpenAndCopyActions(agentViewUrl, "Open Agent View", "Copy Agent View Link")}
-        </>
-      );
+      return <>{createEntityOpenAndCopyActions(agentViewUrl, "Open Agent View", "Copy Agent View Link")}</>;
     } else if (searchType === "brands") {
       const brand = item as ZendeskBrand;
       const brandUrl = urls.getBrandDetails(brand.id);
