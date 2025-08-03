@@ -1,4 +1,5 @@
 import { ActionPanel, Action, Form, Icon, useNavigation, confirmAlert, Alert, showToast, Toast } from "@raycast/api";
+import { showFailureToast } from "@raycast/utils";
 import { ZendeskUser, updateUser } from "../../api/zendesk";
 import { ZendeskInstance } from "../../utils/preferences";
 
@@ -57,9 +58,9 @@ export default function EditUserForm({ user, instance }: EditUserFormProps) {
       });
       try {
         if (!instance) {
-          toast.style = Toast.Style.Failure;
-          toast.title = "Configuration Error";
-          toast.message = "No Zendesk instance provided for update.";
+          showFailureToast(new Error("No Zendesk instance provided for update."), {
+            title: "Configuration Error",
+          });
           return;
         }
         await updateUser(user.id, updatedValues, instance);
@@ -67,11 +68,7 @@ export default function EditUserForm({ user, instance }: EditUserFormProps) {
         toast.title = "User updated successfully!";
         pop();
       } catch (error) {
-        toast.style = Toast.Style.Failure;
-        toast.title = "Failed to update user.";
-        if (error instanceof Error) {
-          toast.message = error.message;
-        }
+        showFailureToast(error, { title: "Failed to update user" });
       }
     }
   }
