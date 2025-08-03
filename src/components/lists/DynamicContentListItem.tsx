@@ -3,6 +3,7 @@ import { ZendeskDynamicContent } from "../../api/zendesk";
 import { TimestampMetadata, InstanceMetadata } from "../common/MetadataHelpers";
 import { ZendeskActions } from "../actions/ZendeskActions";
 import { ZendeskInstance } from "../../utils/preferences";
+import { formatDynamicContent } from "../../utils/formatters";
 
 interface DynamicContentListItemProps {
   dynamicContent: ZendeskDynamicContent;
@@ -24,6 +25,11 @@ export function DynamicContentListItem({
   const tags = nameParts?.length > 1 ? nameParts.slice(0, nameParts.length - 1) : [];
   const defaultVariant = dynamicContent.variants?.find((v) => v.default === true);
 
+  // Format the content using our new utility function
+  const formattedContent = defaultVariant
+    ? formatDynamicContent(defaultVariant.content.replace(/\r\n|\r|\n/g, "\n"))
+    : "No default variant content available.";
+
   return (
     <List.Item
       key={dynamicContent.id}
@@ -35,11 +41,7 @@ export function DynamicContentListItem({
       }
       detail={
         <List.Item.Detail
-          markdown={
-            defaultVariant
-              ? `## ${title}\n\n${defaultVariant.content.replace(/\r\n|\r|\n/g, "\n")}`
-              : `## ${title}\n\nNo default variant content available.`
-          }
+          markdown={formattedContent}
           metadata={
             <List.Item.Detail.Metadata>
               {instance && <InstanceMetadata instance={instance} />}

@@ -122,7 +122,15 @@ export function OrganizationListItem({
       key={organization.id}
       title={organization.name}
       icon={undefined}
-      detail={<List.Item.Detail metadata={<List.Item.Detail.Metadata>{finalElements as any}</List.Item.Detail.Metadata>} />}
+      detail={
+        <List.Item.Detail
+          metadata={
+            <List.Item.Detail.Metadata>
+              <>{finalElements}</>
+            </List.Item.Detail.Metadata>
+          }
+        />
+      }
       actions={
         <ZendeskActions
           item={organization}

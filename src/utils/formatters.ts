@@ -114,3 +114,88 @@ export const formatSmartDate = (dateString: string): string => {
 export const formatInstanceColor = (instanceColor?: string, fallbackColor = "Blue") => {
   return instanceColor || fallbackColor;
 };
+
+/**
+ * Formats dynamic content by removing titles from markdown and detecting JSON/HTML
+ * @param content The content to format
+ * @returns Formatted content
+ */
+export function formatDynamicContent(content: string): string {
+  // First, try to detect if this is valid JSON
+  const trimmedContent = content.trim();
+
+  // Check if content looks like JSON (starts with { or [ and ends with } or ])
+  if (
+    (trimmedContent.startsWith("{") && trimmedContent.endsWith("}")) ||
+    (trimmedContent.startsWith("[") && trimmedContent.endsWith("]"))
+  ) {
+    try {
+      // Try to parse as JSON
+      const parsed = JSON.parse(trimmedContent);
+      // If successful, format as JSON code block
+      return `\`\`\`json\n${JSON.stringify(parsed, null, 2)}\n\`\`\``;
+    } catch {
+      // If JSON parsing fails, continue with markdown processing
+    }
+  }
+
+  // Check if content looks like HTML (contains HTML tags)
+  if (trimmedContent.match(/<[^>]+>.*<\/[^>]+>|<[^>]+\/>/)) {
+    try {
+      // Basic HTML formatting - add proper indentation
+      const formattedHtml = formatHtml(trimmedContent);
+      return `\`\`\`html\n${formattedHtml}\n\`\`\``;
+    } catch {
+      // If HTML formatting fails, continue with markdown processing
+    }
+  }
+
+  // Remove markdown titles (lines starting with #)
+  const lines = content.split("\n");
+  const filteredLines = lines.filter((line) => {
+    const trimmedLine = line.trim();
+    // Remove lines that are just markdown headers (starting with #)
+    return !trimmedLine.match(/^#{1,6}\s+/);
+  });
+
+  return filteredLines.join("\n").trim();
+}
+
+/**
+ * Basic HTML formatting function to add proper indentation
+ * @param html The HTML string to format
+ * @returns Formatted HTML string
+ */
+function formatHtml(html: string): string {
+  // Remove extra whitespace and normalize line breaks
+  let formatted = html.replace(/\s+/g, " ").trim();
+
+  // Add line breaks after closing tags for better readability
+  formatted = formatted.replace(/>\s*</g, ">\n<");
+
+  // Add indentation
+  const lines = formatted.split("\n");
+  let indentLevel = 0;
+  const indentSize = 2;
+
+  const formattedLines = lines.map((line) => {
+    const trimmedLine = line.trim();
+    if (!trimmedLine) return "";
+
+    // Decrease indent for closing tags
+    if (trimmedLine.startsWith("</")) {
+      indentLevel = Math.max(0, indentLevel - 1);
+    }
+
+    const indentedLine = " ".repeat(indentLevel * indentSize) + trimmedLine;
+
+    // Increase indent for opening tags (but not self-closing tags)
+    if (trimmedLine.startsWith("<") && !trimmedLine.startsWith("</") && !trimmedLine.endsWith("/>")) {
+      indentLevel++;
+    }
+
+    return indentedLine;
+  });
+
+  return formattedLines.filter((line) => line !== "").join("\n");
+}
