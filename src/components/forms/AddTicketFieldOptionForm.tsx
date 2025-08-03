@@ -18,7 +18,11 @@ export default function AddTicketFieldOptionForm({ ticketField, instance }: AddT
 
     try {
       await addTicketFieldOption(ticketField.id, values.label, values.tag, instance);
-      showToast(Toast.Style.Success, "Success", "Ticket field option added successfully.");
+      showToast({
+        style: Toast.Style.Success,
+        title: "Success",
+        message: "Ticket field option added successfully.",
+      });
       pop();
     } catch (error) {
       // Error toast is handled in the API function

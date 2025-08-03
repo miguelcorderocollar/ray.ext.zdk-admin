@@ -27,7 +27,11 @@ export default function CreateUserForm({ instance }: CreateUserFormProps) {
       setIsLoading(true);
       try {
         const newUser = await createUser(values.name, values.email, instance);
-        showToast(Toast.Style.Success, "User Created", `User ${newUser.name} created successfully.`);
+        showToast({
+          style: Toast.Style.Success,
+          title: "User Created",
+          message: `User ${newUser.name} created successfully.`,
+        });
         pop(); // Close the form on success
       } catch (error) {
         showToast(
