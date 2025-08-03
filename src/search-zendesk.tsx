@@ -52,6 +52,7 @@ import { TicketFieldListItem } from "./components/lists/TicketFieldListItem";
 import { DynamicContentListItem } from "./components/lists/DynamicContentListItem";
 import { OrganizationListItem } from "./components/lists/OrganizationListItem";
 import { ZendeskActions } from "./components/actions/ZendeskActions";
+import { groupDynamicContentResults, GroupedDynamicContentResult } from "./utils/dynamicContentGrouping";
 
 export default function SearchZendesk() {
   const allInstances = getZendeskInstances();
@@ -69,6 +70,7 @@ export default function SearchZendesk() {
     const brand = allBrands.find((brand) => brand.id === brandId);
     return brand ? brand.name : `Brand ${brandId}`;
   };
+
   const [currentInstance, setCurrentInstance] = useState<ZendeskInstance | undefined>(allInstances[0]);
   const [searchText, setSearchText] = useState("");
   const debouncedSearchText = useDebounce(searchText, 350);
@@ -89,6 +91,8 @@ export default function SearchZendesk() {
     | ZendeskCustomRole[]
     | ZendeskTriggerCategory[]
   >([]);
+  const [groupedDynamicContentResults, setGroupedDynamicContentResults] = useState<GroupedDynamicContentResult[]>([]);
+  const [hasGroupedResults, setHasGroupedResults] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [searchType, setSearchType] = useState<SearchType>("tickets");
 
@@ -142,12 +146,12 @@ export default function SearchZendesk() {
       if (!dynamicContentLoaded) {
         performSearch();
       } else {
-        const filteredResults = allDynamicContent.filter(
-          (item) =>
-            item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
-            item.variants.some((variant) => variant.content.toLowerCase().includes(debouncedSearchText.toLowerCase())),
-        );
-        setResults(filteredResults);
+        const { groupedResults, hasGroups } = groupDynamicContentResults(allDynamicContent, debouncedSearchText);
+        setGroupedDynamicContentResults(groupedResults);
+        setHasGroupedResults(hasGroups);
+        // For backward compatibility, also set flat results
+        const flatResults = groupedResults.flatMap((group) => group.items);
+        setResults(flatResults);
       }
     } else if (searchType === "support_addresses") {
       if (!supportAddressesLoaded) {
@@ -233,14 +237,12 @@ export default function SearchZendesk() {
           setDynamicContentLoaded(true);
           setIsLoading(false);
         } else {
-          const filteredResults = allDynamicContent.filter(
-            (item) =>
-              item.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
-              item.variants.some((variant) =>
-                variant.content.toLowerCase().includes(debouncedSearchText.toLowerCase()),
-              ),
-          );
-          setResults(filteredResults);
+          const { groupedResults, hasGroups } = groupDynamicContentResults(allDynamicContent, debouncedSearchText);
+          setGroupedDynamicContentResults(groupedResults);
+          setHasGroupedResults(hasGroups);
+          // For backward compatibility, also set flat results
+          const flatResults = groupedResults.flatMap((group) => group.items);
+          setResults(flatResults);
         }
       } else if (searchType === "support_addresses") {
         if (!supportAddressesLoaded) {
@@ -710,244 +712,263 @@ export default function SearchZendesk() {
                 </List.Section>
               ));
             })()
-          : (results || []).map((item) => {
-              if (searchType === "users") {
-                const user = item as ZendeskUser;
-                const hasDetailsOrNotes = user.details || user.notes;
-                const hasTimestamps = user.created_at || user.updated_at;
+          : searchType === "dynamic_content" && hasGroupedResults && groupedDynamicContentResults.length > 0
+            ? groupedDynamicContentResults.map((group) => (
+                <List.Section
+                  key={group.title}
+                  title={group.title}
+                  subtitle={`${group.items.length} item${group.items.length !== 1 ? "s" : ""}`}
+                >
+                  {group.items.map((dynamicContent) => (
+                    <DynamicContentListItem
+                      key={dynamicContent.id}
+                      dynamicContent={dynamicContent}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  ))}
+                </List.Section>
+              ))
+            : (results || []).map((item) => {
+                if (searchType === "users") {
+                  const user = item as ZendeskUser;
+                  const hasDetailsOrNotes = user.details || user.notes;
+                  const hasTimestamps = user.created_at || user.updated_at;
 
-                return (
-                  <List.Item
-                    key={user.id}
-                    title={user.name}
-                    icon={
-                      user.photo?.content_url
-                        ? { source: user.photo.content_url, mask: Image.Mask.Circle }
-                        : { source: "placeholder-user.svg", mask: Image.Mask.Circle }
-                    }
-                    accessories={[
-                      ...(user.role && (user.role === "agent" || user.role === "admin")
-                        ? [
-                            {
-                              icon: {
-                                source: Icon.Person,
-                                tintColor: getUserRoleColor(user.role),
+                  return (
+                    <List.Item
+                      key={user.id}
+                      title={user.name}
+                      icon={
+                        user.photo?.content_url
+                          ? { source: user.photo.content_url, mask: Image.Mask.Circle }
+                          : { source: "placeholder-user.svg", mask: Image.Mask.Circle }
+                      }
+                      accessories={[
+                        ...(user.role && (user.role === "agent" || user.role === "admin")
+                          ? [
+                              {
+                                icon: {
+                                  source: Icon.Person,
+                                  tintColor: getUserRoleColor(user.role),
+                                },
+                                tooltip: user.role === "agent" ? "Agent" : "Admin",
                               },
-                              tooltip: user.role === "agent" ? "Agent" : "Admin",
-                            },
-                          ]
-                        : []),
-                      ...(!showDetails && user.email ? [{ text: user.email }] : []),
-                    ]}
-                    detail={
-                      showDetails ? (
-                        <List.Item.Detail
-                          metadata={
-                            <List.Item.Detail.Metadata>
-                              {currentInstance && <InstanceMetadata instance={currentInstance} />}
-                              <List.Item.Detail.Metadata.Label title="Name" text={user.name} />
-                              <List.Item.Detail.Metadata.Label title="ID" text={user.id.toString()} />
-                              {user.email && (
-                                <List.Item.Detail.Metadata.Link
-                                  title="Email"
-                                  text={user.email}
-                                  target={`mailto:${user.email}`}
-                                />
-                              )}
-                              {user.alias && <List.Item.Detail.Metadata.Label title="Alias" text={user.alias} />}
-                              {user.phone && <List.Item.Detail.Metadata.Label title="Phone" text={user.phone} />}
-                              {user.role && (
-                                <List.Item.Detail.Metadata.TagList title="Role">
-                                  <List.Item.Detail.Metadata.TagList.Item
-                                    text={user.role}
-                                    color={getUserRoleColor(user.role)}
+                            ]
+                          : []),
+                        ...(!showDetails && user.email ? [{ text: user.email }] : []),
+                      ]}
+                      detail={
+                        showDetails ? (
+                          <List.Item.Detail
+                            metadata={
+                              <List.Item.Detail.Metadata>
+                                {currentInstance && <InstanceMetadata instance={currentInstance} />}
+                                <List.Item.Detail.Metadata.Label title="Name" text={user.name} />
+                                <List.Item.Detail.Metadata.Label title="ID" text={user.id.toString()} />
+                                {user.email && (
+                                  <List.Item.Detail.Metadata.Link
+                                    title="Email"
+                                    text={user.email}
+                                    target={`mailto:${user.email}`}
                                   />
-                                </List.Item.Detail.Metadata.TagList>
-                              )}
-                              {user.tags && user.tags.length > 0 && (
-                                <List.Item.Detail.Metadata.TagList title="Tags">
-                                  {user.tags.map((tag) => (
-                                    <List.Item.Detail.Metadata.TagList.Item key={tag} text={tag} />
-                                  ))}
-                                </List.Item.Detail.Metadata.TagList>
-                              )}
+                                )}
+                                {user.alias && <List.Item.Detail.Metadata.Label title="Alias" text={user.alias} />}
+                                {user.phone && <List.Item.Detail.Metadata.Label title="Phone" text={user.phone} />}
+                                {user.role && (
+                                  <List.Item.Detail.Metadata.TagList title="Role">
+                                    <List.Item.Detail.Metadata.TagList.Item
+                                      text={user.role}
+                                      color={getUserRoleColor(user.role)}
+                                    />
+                                  </List.Item.Detail.Metadata.TagList>
+                                )}
+                                {user.tags && user.tags.length > 0 && (
+                                  <List.Item.Detail.Metadata.TagList title="Tags">
+                                    {user.tags.map((tag) => (
+                                      <List.Item.Detail.Metadata.TagList.Item key={tag} text={tag} />
+                                    ))}
+                                  </List.Item.Detail.Metadata.TagList>
+                                )}
 
-                              {hasDetailsOrNotes && (
-                                <>
-                                  <List.Item.Detail.Metadata.Separator />
-                                  {user.details && (
-                                    <List.Item.Detail.Metadata.Label title="Details" text={user.details} />
-                                  )}
-                                  {user.notes && <List.Item.Detail.Metadata.Label title="Notes" text={user.notes} />}
-                                </>
-                              )}
+                                {hasDetailsOrNotes && (
+                                  <>
+                                    <List.Item.Detail.Metadata.Separator />
+                                    {user.details && (
+                                      <List.Item.Detail.Metadata.Label title="Details" text={user.details} />
+                                    )}
+                                    {user.notes && <List.Item.Detail.Metadata.Label title="Notes" text={user.notes} />}
+                                  </>
+                                )}
 
-                              {hasTimestamps && (
-                                <>
-                                  <List.Item.Detail.Metadata.Separator />
-                                  {user.created_at && user.updated_at && (
-                                    <TimestampMetadata created_at={user.created_at} updated_at={user.updated_at} />
-                                  )}
-                                </>
-                              )}
+                                {hasTimestamps && (
+                                  <>
+                                    <List.Item.Detail.Metadata.Separator />
+                                    {user.created_at && user.updated_at && (
+                                      <TimestampMetadata created_at={user.created_at} updated_at={user.updated_at} />
+                                    )}
+                                  </>
+                                )}
 
-                              <List.Item.Detail.Metadata.Separator />
-                              <List.Item.Detail.Metadata.Link
-                                title="Open in Zendesk"
-                                text="View User Profile"
-                                target={`https://${currentInstance?.subdomain}.zendesk.com/agent/users/${user.id}`}
-                              />
-                            </List.Item.Detail.Metadata>
-                          }
+                                <List.Item.Detail.Metadata.Separator />
+                                <List.Item.Detail.Metadata.Link
+                                  title="Open in Zendesk"
+                                  text="View User Profile"
+                                  target={`https://${currentInstance?.subdomain}.zendesk.com/agent/users/${user.id}`}
+                                />
+                              </List.Item.Detail.Metadata>
+                            }
+                          />
+                        ) : undefined
+                      }
+                      actions={
+                        <ZendeskActions
+                          item={user}
+                          searchType="users"
+                          instance={currentInstance}
+                          onInstanceChange={setCurrentInstance}
+                          showDetails={showDetails}
+                          onShowDetailsChange={setShowDetails}
                         />
-                      ) : undefined
-                    }
-                    actions={
-                      <ZendeskActions
-                        item={user}
-                        searchType="users"
-                        instance={currentInstance}
-                        onInstanceChange={setCurrentInstance}
-                        showDetails={showDetails}
-                        onShowDetailsChange={setShowDetails}
-                      />
-                    }
-                  />
-                );
-              } else if (searchType === "organizations") {
-                const organization = item as ZendeskOrganization;
-                return (
-                  <OrganizationListItem
-                    key={organization.id}
-                    organization={organization}
-                    instance={currentInstance}
-                    onInstanceChange={setCurrentInstance}
-                    showDetails={showDetails}
-                    onShowDetailsChange={setShowDetails}
-                  />
-                );
-              } else if (searchType === "dynamic_content") {
-                const dynamicContent = item as ZendeskDynamicContent;
-                return (
-                  <DynamicContentListItem
-                    key={dynamicContent.id}
-                    dynamicContent={dynamicContent}
-                    instance={currentInstance}
-                    onInstanceChange={setCurrentInstance}
-                    showDetails={showDetails}
-                    onShowDetailsChange={setShowDetails}
-                  />
-                );
-              } else if (searchType === "macros") {
-                const macro = item as ZendeskMacro;
-                return (
-                  <MacroListItem
-                    key={macro.id}
-                    macro={macro}
-                    instance={currentInstance}
-                    onInstanceChange={setCurrentInstance}
-                    showDetails={showDetails}
-                    onShowDetailsChange={setShowDetails}
-                  />
-                );
-              } else if (searchType === "ticket_fields") {
-                const ticketField = item as ZendeskTicketField;
-                return (
-                  <TicketFieldListItem
-                    key={ticketField.id}
-                    ticketField={ticketField}
-                    instance={currentInstance}
-                    onInstanceChange={setCurrentInstance}
-                    showDetails={showDetails}
-                    onShowDetailsChange={setShowDetails}
-                  />
-                );
-              } else if (searchType === "ticket_forms") {
-                const ticketForm = item as ZendeskTicketForm;
-                return (
-                  <TicketFormListItem
-                    key={ticketForm.id}
-                    ticketForm={ticketForm}
-                    instance={currentInstance}
-                    onInstanceChange={setCurrentInstance}
-                    showDetails={showDetails}
-                    onShowDetailsChange={setShowDetails}
-                  />
-                );
-              } else if (searchType === "groups") {
-                const group = item as ZendeskGroup;
-                return (
-                  <GroupListItem
-                    key={group.id}
-                    group={group}
-                    instance={currentInstance}
-                    onInstanceChange={setCurrentInstance}
-                    showDetails={showDetails}
-                    onShowDetailsChange={setShowDetails}
-                  />
-                );
-              } else if (searchType === "tickets") {
-                const ticket = item as ZendeskTicket;
-                return (
-                  <TicketListItem
-                    key={ticket.id}
-                    ticket={ticket}
-                    instance={currentInstance}
-                    onInstanceChange={setCurrentInstance}
-                    showDetails={showDetails}
-                    onShowDetailsChange={setShowDetails}
-                  />
-                );
-              } else if (searchType === "views") {
-                const view = item as ZendeskView;
-                return (
-                  <ViewListItem
-                    key={view.id}
-                    view={view}
-                    instance={currentInstance}
-                    onInstanceChange={setCurrentInstance}
-                    showDetails={showDetails}
-                    onShowDetailsChange={setShowDetails}
-                  />
-                );
-              } else if (searchType === "brands") {
-                const brand = item as ZendeskBrand;
-                return (
-                  <BrandListItem
-                    key={brand.id}
-                    brand={brand}
-                    instance={currentInstance}
-                    onInstanceChange={setCurrentInstance}
-                    showDetails={showDetails}
-                    onShowDetailsChange={setShowDetails}
-                  />
-                );
-              } else if (searchType === "automations") {
-                const automation = item as ZendeskAutomation;
-                return (
-                  <AutomationListItem
-                    key={automation.id}
-                    automation={automation}
-                    instance={currentInstance}
-                    onInstanceChange={setCurrentInstance}
-                    showDetails={showDetails}
-                    onShowDetailsChange={setShowDetails}
-                  />
-                );
-              } else if (searchType === "custom_roles") {
-                const customRole = item as ZendeskCustomRole;
-                return (
-                  <CustomRoleListItem
-                    key={customRole.id}
-                    customRole={customRole}
-                    instance={currentInstance}
-                    onInstanceChange={setCurrentInstance}
-                    showDetails={showDetails}
-                    onShowDetailsChange={setShowDetails}
-                  />
-                );
-              }
-            })}
+                      }
+                    />
+                  );
+                } else if (searchType === "organizations") {
+                  const organization = item as ZendeskOrganization;
+                  return (
+                    <OrganizationListItem
+                      key={organization.id}
+                      organization={organization}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  );
+                } else if (searchType === "dynamic_content") {
+                  const dynamicContent = item as ZendeskDynamicContent;
+                  return (
+                    <DynamicContentListItem
+                      key={dynamicContent.id}
+                      dynamicContent={dynamicContent}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  );
+                } else if (searchType === "macros") {
+                  const macro = item as ZendeskMacro;
+                  return (
+                    <MacroListItem
+                      key={macro.id}
+                      macro={macro}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  );
+                } else if (searchType === "ticket_fields") {
+                  const ticketField = item as ZendeskTicketField;
+                  return (
+                    <TicketFieldListItem
+                      key={ticketField.id}
+                      ticketField={ticketField}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  );
+                } else if (searchType === "ticket_forms") {
+                  const ticketForm = item as ZendeskTicketForm;
+                  return (
+                    <TicketFormListItem
+                      key={ticketForm.id}
+                      ticketForm={ticketForm}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  );
+                } else if (searchType === "groups") {
+                  const group = item as ZendeskGroup;
+                  return (
+                    <GroupListItem
+                      key={group.id}
+                      group={group}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  );
+                } else if (searchType === "tickets") {
+                  const ticket = item as ZendeskTicket;
+                  return (
+                    <TicketListItem
+                      key={ticket.id}
+                      ticket={ticket}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  );
+                } else if (searchType === "views") {
+                  const view = item as ZendeskView;
+                  return (
+                    <ViewListItem
+                      key={view.id}
+                      view={view}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  );
+                } else if (searchType === "brands") {
+                  const brand = item as ZendeskBrand;
+                  return (
+                    <BrandListItem
+                      key={brand.id}
+                      brand={brand}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  );
+                } else if (searchType === "automations") {
+                  const automation = item as ZendeskAutomation;
+                  return (
+                    <AutomationListItem
+                      key={automation.id}
+                      automation={automation}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  );
+                } else if (searchType === "custom_roles") {
+                  const customRole = item as ZendeskCustomRole;
+                  return (
+                    <CustomRoleListItem
+                      key={customRole.id}
+                      customRole={customRole}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
+                    />
+                  );
+                }
+              })}
     </List>
   );
 }
