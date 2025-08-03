@@ -1,7 +1,7 @@
-import { List, showToast, Toast, Image, Color, Icon } from "@raycast/api";
-import { getUserRoleColor, getActiveStatusColor, getVerificationStatusColor } from "./utils/colors";
+import { List, showToast, Toast, Color, Icon } from "@raycast/api";
+import { getActiveStatusColor, getVerificationStatusColor } from "./utils/colors";
 import { formatInstanceColor } from "./utils/formatters";
-import { TimestampMetadata, InstanceMetadata } from "./components/common/MetadataHelpers";
+import { TimestampMetadata } from "./components/common/MetadataHelpers";
 import { SearchTypeSelector, SearchType } from "./components/common/SearchTypeSelector";
 
 import { useState, useEffect } from "react";
@@ -51,6 +51,7 @@ import { MacroListItem } from "./components/lists/MacroListItem";
 import { TicketFieldListItem } from "./components/lists/TicketFieldListItem";
 import { DynamicContentListItem } from "./components/lists/DynamicContentListItem";
 import { OrganizationListItem } from "./components/lists/OrganizationListItem";
+import { UserListItem } from "./components/lists/UserListItem";
 import { ZendeskActions } from "./components/actions/ZendeskActions";
 import { groupDynamicContentResults, GroupedDynamicContentResult } from "./utils/dynamicContentGrouping";
 
@@ -734,105 +735,14 @@ export default function SearchZendesk() {
             : (results || []).map((item) => {
                 if (searchType === "users") {
                   const user = item as ZendeskUser;
-                  const hasDetailsOrNotes = user.details || user.notes;
-                  const hasTimestamps = user.created_at || user.updated_at;
-
                   return (
-                    <List.Item
+                    <UserListItem
                       key={user.id}
-                      title={user.name}
-                      icon={
-                        user.photo?.content_url
-                          ? { source: user.photo.content_url, mask: Image.Mask.Circle }
-                          : { source: "placeholder-user.svg", mask: Image.Mask.Circle }
-                      }
-                      accessories={[
-                        ...(user.role && (user.role === "agent" || user.role === "admin")
-                          ? [
-                              {
-                                icon: {
-                                  source: Icon.Person,
-                                  tintColor: getUserRoleColor(user.role),
-                                },
-                                tooltip: user.role === "agent" ? "Agent" : "Admin",
-                              },
-                            ]
-                          : []),
-                        ...(!showDetails && user.email ? [{ text: user.email }] : []),
-                      ]}
-                      detail={
-                        showDetails ? (
-                          <List.Item.Detail
-                            metadata={
-                              <List.Item.Detail.Metadata>
-                                {currentInstance && <InstanceMetadata instance={currentInstance} />}
-                                <List.Item.Detail.Metadata.Label title="Name" text={user.name} />
-                                <List.Item.Detail.Metadata.Label title="ID" text={user.id.toString()} />
-                                {user.email && (
-                                  <List.Item.Detail.Metadata.Link
-                                    title="Email"
-                                    text={user.email}
-                                    target={`mailto:${user.email}`}
-                                  />
-                                )}
-                                {user.alias && <List.Item.Detail.Metadata.Label title="Alias" text={user.alias} />}
-                                {user.phone && <List.Item.Detail.Metadata.Label title="Phone" text={user.phone} />}
-                                {user.role && (
-                                  <List.Item.Detail.Metadata.TagList title="Role">
-                                    <List.Item.Detail.Metadata.TagList.Item
-                                      text={user.role}
-                                      color={getUserRoleColor(user.role)}
-                                    />
-                                  </List.Item.Detail.Metadata.TagList>
-                                )}
-                                {user.tags && user.tags.length > 0 && (
-                                  <List.Item.Detail.Metadata.TagList title="Tags">
-                                    {user.tags.map((tag) => (
-                                      <List.Item.Detail.Metadata.TagList.Item key={tag} text={tag} />
-                                    ))}
-                                  </List.Item.Detail.Metadata.TagList>
-                                )}
-
-                                {hasDetailsOrNotes && (
-                                  <>
-                                    <List.Item.Detail.Metadata.Separator />
-                                    {user.details && (
-                                      <List.Item.Detail.Metadata.Label title="Details" text={user.details} />
-                                    )}
-                                    {user.notes && <List.Item.Detail.Metadata.Label title="Notes" text={user.notes} />}
-                                  </>
-                                )}
-
-                                {hasTimestamps && (
-                                  <>
-                                    <List.Item.Detail.Metadata.Separator />
-                                    {user.created_at && user.updated_at && (
-                                      <TimestampMetadata created_at={user.created_at} updated_at={user.updated_at} />
-                                    )}
-                                  </>
-                                )}
-
-                                <List.Item.Detail.Metadata.Separator />
-                                <List.Item.Detail.Metadata.Link
-                                  title="Open in Zendesk"
-                                  text="View User Profile"
-                                  target={`https://${currentInstance?.subdomain}.zendesk.com/agent/users/${user.id}`}
-                                />
-                              </List.Item.Detail.Metadata>
-                            }
-                          />
-                        ) : undefined
-                      }
-                      actions={
-                        <ZendeskActions
-                          item={user}
-                          searchType="users"
-                          instance={currentInstance}
-                          onInstanceChange={setCurrentInstance}
-                          showDetails={showDetails}
-                          onShowDetailsChange={setShowDetails}
-                        />
-                      }
+                      user={user}
+                      instance={currentInstance}
+                      onInstanceChange={setCurrentInstance}
+                      showDetails={showDetails}
+                      onShowDetailsChange={setShowDetails}
                     />
                   );
                 } else if (searchType === "organizations") {

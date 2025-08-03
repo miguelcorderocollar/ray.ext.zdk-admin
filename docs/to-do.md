@@ -1,3 +1,2 @@
-- fix clean search input issue when changing 
 - test everything
 - publish!
