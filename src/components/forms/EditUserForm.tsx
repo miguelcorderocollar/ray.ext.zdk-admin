@@ -11,13 +11,7 @@ interface EditUserFormProps {
 export default function EditUserForm({ user, instance }: EditUserFormProps) {
   const { pop } = useNavigation();
 
-  async function handleSubmit(values: {
-    name: string;
-    alias: string;
-    notes: string;
-    tags: string[];
-    description: string;
-  }) {
+  async function handleSubmit(values: { name: string; alias: string; notes: string; description: string }) {
     const updatedValues: Record<string, unknown> = {};
 
     if (values.name !== user.name) {
@@ -31,9 +25,6 @@ export default function EditUserForm({ user, instance }: EditUserFormProps) {
     }
     if (values.description !== (user.details || "")) {
       updatedValues.details = values.description;
-    }
-    if (JSON.stringify(values.tags) !== JSON.stringify(user.tags || [])) {
-      updatedValues.tags = values.tags;
     }
 
     if (Object.keys(updatedValues).length === 0) {
