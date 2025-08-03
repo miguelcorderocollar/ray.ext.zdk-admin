@@ -63,15 +63,7 @@ export default function CreateUserForm({ instance }: CreateUserFormProps) {
       navigationTitle={`Create User in ${instance?.name}`}
       actions={
         <ActionPanel>
-          <Action.SubmitForm
-            title="Create User"
-            icon={Icon.AddPerson}
-            onSubmit={handleSubmit}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "enter" },
-              windows: { modifiers: ["ctrl"], key: "enter" },
-            }}
-          />
+          <Action.SubmitForm title="Create User" icon={Icon.AddPerson} onSubmit={handleSubmit} />
         </ActionPanel>
       }
     >
