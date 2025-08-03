@@ -429,7 +429,6 @@ export function getZendeskUrl(instance: ZendeskInstance): string {
 export async function searchZendeskUsers(query: string, instance: ZendeskInstance): Promise<ZendeskUser[]> {
   const searchTerms = query;
   const url = `${getZendeskUrl(instance)}/users/search.json?query=${encodeURIComponent(searchTerms)}&per_page=20`;
-  console.log("Zendesk User Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -465,7 +464,6 @@ export async function searchZendeskOrganizations(
 ): Promise<ZendeskOrganization[]> {
   const searchTerms = query;
   const url = `${getZendeskUrl(instance)}/search.json?query=type:organization ${encodeURIComponent(searchTerms)}&per_page=20`;
-  console.log("Zendesk Organization Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -504,7 +502,6 @@ export async function searchZendeskTriggers(query: string, instance: ZendeskInst
   const url = searchTerms
     ? `${getZendeskUrl(instance)}/triggers/search.json?query=${encodeURIComponent(searchTerms)}`
     : `${getZendeskUrl(instance)}/triggers.json`;
-  console.log("Zendesk Trigger Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -550,7 +547,6 @@ export async function searchZendeskTriggerCategories(
 
   try {
     while (url) {
-      console.log("Zendesk Trigger Categories Search URL:", url);
       const response = await fetch(url, {
         method: "GET",
         headers: headers,
@@ -594,7 +590,6 @@ export async function searchZendeskAutomations(query: string, instance: ZendeskI
   const url = searchTerms
     ? `${getZendeskUrl(instance)}/automations/search.json?query=${encodeURIComponent(searchTerms)}`
     : `${getZendeskUrl(instance)}/automations.json`;
-  console.log("Zendesk Automation Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -634,7 +629,6 @@ export async function updateUser(
   instance: ZendeskInstance,
 ): Promise<ZendeskUser> {
   const url = `${getZendeskUrl(instance)}/users/${userId}.json`;
-  console.log("Zendesk Update User URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -678,7 +672,6 @@ export async function searchZendeskDynamicContent(
 
   try {
     while (url) {
-      console.log("Zendesk Dynamic Content Search URL:", url);
       const response = await fetch(url, {
         method: "GET",
         headers: headers,
@@ -712,7 +705,6 @@ export async function searchZendeskMacros(query: string, instance: ZendeskInstan
   const url = query
     ? `${getZendeskUrl(instance)}/macros/search.json?query=${encodeURIComponent(query)}`
     : `${getZendeskUrl(instance)}/macros.json?per_page=30`;
-  console.log("Zendesk Macro Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -747,7 +739,6 @@ export async function searchZendeskTicketFields(
   instance: ZendeskInstance,
 ): Promise<ZendeskTicketField[]> {
   const url = `${getZendeskUrl(instance)}/ticket_fields.json`;
-  console.log("Zendesk Ticket Fields Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -798,7 +789,6 @@ export async function searchZendeskSupportAddresses(
 
   try {
     while (url) {
-      console.log("Zendesk Support Addresses Search URL:", url);
       const response = await fetch(url, {
         method: "GET",
         headers: headers,
@@ -830,7 +820,6 @@ export async function searchZendeskSupportAddresses(
 
 export async function searchZendeskTicketForms(query: string, instance: ZendeskInstance): Promise<ZendeskTicketForm[]> {
   const url = `${getZendeskUrl(instance)}/ticket_forms.json`;
-  console.log("Zendesk Ticket Forms Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -879,7 +868,6 @@ export async function searchZendeskGroups(instance: ZendeskInstance): Promise<Ze
 
   try {
     while (url) {
-      console.log("Zendesk Groups Search URL:", url);
       const response = await fetch(url, {
         method: "GET",
         headers: headers,
@@ -915,7 +903,6 @@ export async function searchZendeskBrands(
   onPage: (brands: ZendeskBrand[]) => void,
 ): Promise<void> {
   let currentUrl = `${getZendeskUrl(instance)}/brands`;
-  console.log("Zendesk Brands URL:", currentUrl);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -959,7 +946,6 @@ export async function addTicketFieldOption(
   instance: ZendeskInstance,
 ): Promise<void> {
   const url = `${getZendeskUrl(instance)}/ticket_fields/${ticketFieldId}/options.json`;
-  console.log("Zendesk Add Ticket Field Option URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -993,7 +979,6 @@ export async function addTicketFieldOption(
 
 export async function createUser(name: string, email: string, instance: ZendeskInstance): Promise<ZendeskUser> {
   const url = `${getZendeskUrl(instance)}/users.json`;
-  console.log("Zendesk Create User URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -1081,7 +1066,6 @@ export async function searchZendeskTickets(
     searchTerms += ` role:${filters.roleId}`;
   }
   const url = `${getZendeskUrl(instance)}/search.json?query=${encodeURIComponent(searchTerms)}&per_page=30`;
-  console.log("Zendesk Ticket Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -1113,7 +1097,6 @@ export async function searchZendeskTickets(
 
 export async function searchZendeskViews(query: string, instance: ZendeskInstance): Promise<ZendeskView[]> {
   const url = `${getZendeskUrl(instance)}/views.json?active=true`;
-  console.log("Zendesk Views Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -1161,7 +1144,6 @@ export async function searchZendeskGroupMemberships(
 
   try {
     while (url) {
-      console.log("Zendesk Group Memberships Search URL:", url);
       const response = await fetch(url, {
         method: "GET",
         headers: headers,
@@ -1204,7 +1186,6 @@ export async function searchZendeskUserGroupMemberships(
 
   try {
     while (url) {
-      console.log("Zendesk User Group Memberships Search URL:", url);
       const response = await fetch(url, {
         method: "GET",
         headers: headers,
@@ -1239,7 +1220,6 @@ export async function searchZendeskCustomRoles(query: string, instance: ZendeskI
   const url = searchTerms
     ? `${getZendeskUrl(instance)}/custom_roles/search.json?query=${encodeURIComponent(searchTerms)}`
     : `${getZendeskUrl(instance)}/custom_roles.json`;
-  console.log("Zendesk Roles Search URL:", url);
   const headers = {
     Authorization: getZendeskAuthHeader(instance),
     "Content-Type": "application/json",
@@ -1281,7 +1261,6 @@ export async function getGroupUsers(groupId: number, instance: ZendeskInstance):
   };
 
   try {
-    console.log("Zendesk Group Users URL:", url);
     const response = await fetch(url, {
       method: "GET",
       headers: headers,
@@ -1317,7 +1296,6 @@ export async function getUserGroups(userId: number, instance: ZendeskInstance): 
   };
 
   try {
-    console.log("Zendesk User Groups URL:", url);
     const response = await fetch(url, {
       method: "GET",
       headers: headers,

@@ -36,7 +36,6 @@ export default function EditUserForm({ user, instance }: EditUserFormProps) {
     }
 
     if (Object.keys(updatedValues).length === 0) {
-      console.log("No changes detected.");
       pop();
       return;
     }
