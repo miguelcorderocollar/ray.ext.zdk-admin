@@ -67,7 +67,7 @@ export default function GroupMembershipsList({ groupId, groupName, instance }: G
         <List.Item
           key={membership.id}
           title={membership.user ? membership.user.name : `User ID: ${membership.user_id}`}
-          subtitle={membership.user?.email}
+          subtitle={!showDetails ? membership.user?.email : undefined}
           icon={
             membership.user?.photo?.content_url
               ? { source: membership.user.photo.content_url, mask: Image.Mask.Circle }
