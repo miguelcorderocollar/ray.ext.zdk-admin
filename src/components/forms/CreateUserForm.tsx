@@ -1,5 +1,5 @@
 import { Form, ActionPanel, Action, showToast, Toast, useNavigation, Icon } from "@raycast/api";
-import { useForm, FormValidation } from "@raycast/utils";
+import { useForm, FormValidation, showFailureToast } from "@raycast/utils";
 import { useState } from "react";
 import { ZendeskInstance } from "../../utils/preferences";
 import { createUser } from "../../api/zendesk";
@@ -34,11 +34,7 @@ export default function CreateUserForm({ instance }: CreateUserFormProps) {
         });
         pop(); // Close the form on success
       } catch (error) {
-        showToast(
-          Toast.Style.Failure,
-          "Failed to Create User",
-          error instanceof Error ? error.message : "An unknown error occurred.",
-        );
+        showFailureToast(error, { title: "Failed to Create User" });
       } finally {
         setIsLoading(false);
       }
