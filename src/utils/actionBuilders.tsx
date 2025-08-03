@@ -1,7 +1,38 @@
 import { Action, Keyboard } from "@raycast/api";
 
 /**
- * Creates standard "Open in Browser" and "Copy Link" actions for a given URL
+ * Creates standard "Open" and "Copy Link" actions for a given URL
+ * @param url - The URL to open/copy
+ * @param openTitle - The title for the open action (e.g., "Open Ticket", "Open User Profile")
+ * @param copyTitle - Optional custom title for the copy action (defaults to "Copy Link")
+ * @param openShortcut - Optional custom shortcut for the open action
+ * @param copyShortcut - Optional custom shortcut for the copy action
+ */
+export const createEntityOpenAndCopyActions = (
+  url: string,
+  openTitle: string,
+  copyTitle?: string,
+  openShortcut?: Keyboard.Shortcut,
+  copyShortcut?: Keyboard.Shortcut,
+) => (
+  <>
+    <Action.OpenInBrowser
+      key="open"
+      title={openTitle}
+      url={url}
+      shortcut={openShortcut || Keyboard.Shortcut.Common.Open}
+    />
+    <Action.CopyToClipboard
+      key="copy"
+      title={copyTitle || "Copy Link"}
+      content={url}
+      shortcut={copyShortcut || Keyboard.Shortcut.Common.Copy}
+    />
+  </>
+);
+
+/**
+ * @deprecated Use createEntityOpenAndCopyActions instead for better naming and flexibility
  */
 export const createOpenAndCopyActions = (url: string, title: string) => (
   <>
