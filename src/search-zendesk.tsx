@@ -49,6 +49,7 @@ import { TicketFormListItem } from "./components/lists/TicketFormListItem";
 import { GroupListItem } from "./components/lists/GroupListItem";
 import { MacroListItem } from "./components/lists/MacroListItem";
 import { TicketFieldListItem } from "./components/lists/TicketFieldListItem";
+import { DynamicContentListItem } from "./components/lists/DynamicContentListItem";
 import { ZendeskActions } from "./components/actions/ZendeskActions";
 
 export default function SearchZendesk() {
@@ -966,69 +967,14 @@ export default function SearchZendesk() {
                 );
               } else if (searchType === "dynamic_content") {
                 const dynamicContent = item as ZendeskDynamicContent;
-                const nameParts = (dynamicContent.name ?? "").split("::");
-                const title = nameParts?.length > 1 ? nameParts[nameParts.length - 1] : dynamicContent.name;
-                const tags = nameParts?.length > 1 ? nameParts.slice(0, nameParts.length - 1) : [];
-                const defaultVariant = dynamicContent.variants?.find((v) => v.default === true);
-
                 return (
-                  <List.Item
+                  <DynamicContentListItem
                     key={dynamicContent.id}
-                    title={title}
-                    accessories={
-                      tags.length > 2
-                        ? [...tags.slice(0, 2).map((tag) => ({ text: tag })), { text: "..." }]
-                        : tags.map((tag) => ({ text: tag }))
-                    }
-                    detail={
-                      <List.Item.Detail
-                        markdown={
-                          defaultVariant
-                            ? `## ${title}\n\n${defaultVariant.content.replace(/\r\n|\r|\n/g, "\n")}`
-                            : `## ${title}\n\nNo default variant content available.`
-                        }
-                        metadata={
-                          <List.Item.Detail.Metadata>
-                            {currentInstance && (
-                              <>
-                                <List.Item.Detail.Metadata.TagList title="Instance">
-                                  <List.Item.Detail.Metadata.TagList.Item
-                                    text={currentInstance.subdomain}
-                                    color={currentInstance.color || Color.Blue}
-                                  />
-                                </List.Item.Detail.Metadata.TagList>
-                                <List.Item.Detail.Metadata.Separator />
-                              </>
-                            )}
-                            <List.Item.Detail.Metadata.Label title="Name" text={dynamicContent.name} />
-                            <List.Item.Detail.Metadata.Label title="ID" text={dynamicContent.id.toString()} />
-                            <List.Item.Detail.Metadata.Label title="Placeholder" text={dynamicContent.placeholder} />
-                            <TimestampMetadata
-                              created_at={dynamicContent.created_at}
-                              updated_at={dynamicContent.updated_at}
-                            />
-                            <List.Item.Detail.Metadata.TagList title="Locales">
-                              {dynamicContent.variants?.map((variant) => (
-                                <List.Item.Detail.Metadata.TagList.Item
-                                  key={variant.id}
-                                  text={`${variant.locale_id}`}
-                                />
-                              ))}
-                            </List.Item.Detail.Metadata.TagList>
-                          </List.Item.Detail.Metadata>
-                        }
-                      />
-                    }
-                    actions={
-                      <ZendeskActions
-                        item={dynamicContent}
-                        searchType="dynamic_content"
-                        instance={currentInstance}
-                        onInstanceChange={setCurrentInstance}
-                        showDetails={showDetails}
-                        onShowDetailsChange={setShowDetails}
-                      />
-                    }
+                    dynamicContent={dynamicContent}
+                    instance={currentInstance}
+                    onInstanceChange={setCurrentInstance}
+                    showDetails={showDetails}
+                    onShowDetailsChange={setShowDetails}
                   />
                 );
               } else if (searchType === "macros") {
