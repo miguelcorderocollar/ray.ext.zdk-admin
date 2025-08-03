@@ -1,5 +1,6 @@
 import { ActionPanel, Action, Icon, Keyboard, Color } from "@raycast/api";
 import { getZendeskInstances, ZendeskInstance } from "../../utils/preferences";
+import { getZendeskUrls } from "../../utils/zendeskUrls";
 import {
   ZendeskUser,
   ZendeskOrganization,
@@ -74,6 +75,7 @@ export function ZendeskActions({
   onShowDetailsChange,
 }: ZendeskActionsProps) {
   const allInstances = getZendeskInstances();
+  const urls = getZendeskUrls(instance);
 
   const renderViewTicketsAction = (
     entityType: "user" | "organization" | "group" | "recipient" | "form" | "brand" | "role",
@@ -103,49 +105,36 @@ export function ZendeskActions({
   const renderOpenActions = () => {
     if (searchType === "users") {
       const user = item as ZendeskUser;
+      const userUrl = urls.getUserProfile(user.id);
       return (
         <>
-          <Action.OpenInBrowser
-            title="Open in Browser"
-            url={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
-            shortcut={Keyboard.Shortcut.Common.Open}
-          />
-          <Action.CopyToClipboard
-            title="Copy Link"
-            content={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
-            shortcut={Keyboard.Shortcut.Common.Copy}
-          />
+          <Action.OpenInBrowser title="Open in Browser" url={userUrl} shortcut={Keyboard.Shortcut.Common.Open} />
+          <Action.CopyToClipboard title="Copy Link" content={userUrl} shortcut={Keyboard.Shortcut.Common.Copy} />
         </>
       );
     } else if (searchType === "organizations") {
       const organization = item as ZendeskOrganization;
+      const orgUrl = urls.getOrganizationDetails(organization.id);
       return (
         <>
-          <Action.OpenInBrowser
-            title="Open in Browser"
-            url={`https://${instance?.subdomain}.zendesk.com/agent/organizations/${organization.id}`}
-            shortcut={Keyboard.Shortcut.Common.Open}
-          />
-          <Action.CopyToClipboard
-            title="Copy Link"
-            content={`https://${instance?.subdomain}.zendesk.com/agent/organizations/${organization.id}`}
-            shortcut={Keyboard.Shortcut.Common.Copy}
-          />
+          <Action.OpenInBrowser title="Open in Browser" url={orgUrl} shortcut={Keyboard.Shortcut.Common.Open} />
+          <Action.CopyToClipboard title="Copy Link" content={orgUrl} shortcut={Keyboard.Shortcut.Common.Copy} />
         </>
       );
     } else if (searchType === "dynamic_content") {
       const dynamicContent = item as ZendeskDynamicContent;
       const defaultVariant = dynamicContent.variants?.find((v) => v.default === true);
+      const dynamicContentUrl = urls.getDynamicContentItem(dynamicContent.id);
       return (
         <>
           <Action.OpenInBrowser
             title="Open Dynamic Content"
-            url={`https://${instance?.subdomain}.zendesk.com/dynamic_content/items/${dynamicContent.id}`}
+            url={dynamicContentUrl}
             shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
-            content={`https://${instance?.subdomain}.zendesk.com/dynamic_content/items/${dynamicContent.id}`}
+            content={dynamicContentUrl}
             shortcut={Keyboard.Shortcut.Common.Copy}
           />
           {defaultVariant && (
@@ -167,48 +156,39 @@ export function ZendeskActions({
       );
     } else if (searchType === "macros") {
       const macro = item as ZendeskMacro;
+      const macroUrl = urls.getMacroDetails(macro.id);
       return (
         <>
-          <Action.OpenInBrowser
-            title="Open Macro in Zendesk"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/macros/${macro.id}`}
-            shortcut={Keyboard.Shortcut.Common.Open}
-          />
-          <Action.CopyToClipboard
-            title="Copy Macro Link"
-            content={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/macros/${macro.id}`}
-            shortcut={Keyboard.Shortcut.Common.Copy}
-          />
+          <Action.OpenInBrowser title="Open Macro in Zendesk" url={macroUrl} shortcut={Keyboard.Shortcut.Common.Open} />
+          <Action.CopyToClipboard title="Copy Macro Link" content={macroUrl} shortcut={Keyboard.Shortcut.Common.Copy} />
         </>
       );
     } else if (searchType === "triggers") {
       const trigger = item as ZendeskTrigger;
+      const triggerUrl = urls.getTriggerDetails(trigger.id);
       return (
         <>
-          <Action.OpenInBrowser
-            title="Open in Browser"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/triggers/${trigger.id}`}
-            shortcut={Keyboard.Shortcut.Common.Open}
-          />
+          <Action.OpenInBrowser title="Open in Browser" url={triggerUrl} shortcut={Keyboard.Shortcut.Common.Open} />
           <Action.CopyToClipboard
             title="Copy URL to Clipboard"
-            content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/triggers/${trigger.id}`}
+            content={triggerUrl}
             shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
     } else if (searchType === "ticket_fields") {
       const ticketField = item as ZendeskTicketField;
+      const ticketFieldUrl = urls.getTicketFieldDetails(ticketField.id);
       return (
         <>
           <Action.OpenInBrowser
             title="Open Ticket Field"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-fields/${ticketField.id}`}
+            url={ticketFieldUrl}
             shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
-            content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-fields/${ticketField.id}`}
+            content={ticketFieldUrl}
             shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
@@ -226,74 +206,65 @@ export function ZendeskActions({
       );
     } else if (searchType === "ticket_forms") {
       const ticketForm = item as ZendeskTicketForm;
+      const ticketFormUrl = urls.getTicketFormDetails(ticketForm.id);
+      const ticketFormConditionsUrl = urls.getTicketFormConditions(ticketForm.id);
       return (
         <>
-          <Action.OpenInBrowser
-            title="Open Ticket Form"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-forms/edit/${ticketForm.id}`}
-            shortcut={Keyboard.Shortcut.Common.Open}
-          />
+          <Action.OpenInBrowser title="Open Ticket Form" url={ticketFormUrl} shortcut={Keyboard.Shortcut.Common.Open} />
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
-            content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-forms/edit/${ticketForm.id}`}
+            content={ticketFormUrl}
             shortcut={Keyboard.Shortcut.Common.Copy}
           />
           <Action.OpenInBrowser
             title="Open Ticket Form Conditions"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-forms/edit/${ticketForm.id}/conditions`}
+            url={ticketFormConditionsUrl}
             shortcut={Keyboard.Shortcut.Common.Edit}
           />
         </>
       );
     } else if (searchType === "groups") {
       const group = item as ZendeskGroup;
+      const groupUrl = urls.getGroupDetails(group.id);
       return (
         <>
-          <Action.OpenInBrowser
-            title="Open Group Details"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/people/groups/${group.id}`}
-            shortcut={Keyboard.Shortcut.Common.Open}
-          />
+          <Action.OpenInBrowser title="Open Group Details" url={groupUrl} shortcut={Keyboard.Shortcut.Common.Open} />
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
-            content={`https://${instance?.subdomain}.zendesk.com/admin/people/groups/${group.id}`}
+            content={groupUrl}
             shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
     } else if (searchType === "tickets") {
       const ticket = item as ZendeskTicket;
+      const ticketUrl = urls.getTicketDetails(ticket.id);
       return (
         <>
-          <Action.OpenInBrowser
-            title="Open Ticket"
-            url={`https://${instance?.subdomain}.zendesk.com/agent/tickets/${ticket.id}`}
-            shortcut={Keyboard.Shortcut.Common.Open}
-          />
+          <Action.OpenInBrowser title="Open Ticket" url={ticketUrl} shortcut={Keyboard.Shortcut.Common.Open} />
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
-            content={`https://${instance?.subdomain}.zendesk.com/agent/tickets/${ticket.id}`}
+            content={ticketUrl}
             shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
     } else if (searchType === "views") {
       const view = item as ZendeskView;
+      const agentViewUrl = urls.getAgentView(view.id);
+      const adminViewUrl = urls.getAdminViewEdit(view.id);
+      const viewsListUrl = urls.getViewsList();
       return (
         <>
-          <Action.OpenInBrowser
-            title="Open Agent View"
-            url={`https://${instance?.subdomain}.zendesk.com/agent/filters/${view.id}`}
-            shortcut={Keyboard.Shortcut.Common.Open}
-          />
+          <Action.OpenInBrowser title="Open Agent View" url={agentViewUrl} shortcut={Keyboard.Shortcut.Common.Open} />
           <Action.OpenInBrowser
             title="Open Admin Edit View"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/views/${view.id}`}
+            url={adminViewUrl}
             shortcut={Keyboard.Shortcut.Common.Edit}
           />
           <Action.OpenInBrowser
             title="Open Admin Views Page"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/views`}
+            url={viewsListUrl}
             shortcut={{
               macOS: { modifiers: ["cmd"], key: "b" },
               windows: { modifiers: ["ctrl"], key: "b" },
@@ -301,20 +272,17 @@ export function ZendeskActions({
           />
           <Action.CopyToClipboard
             title="Copy Agent View Link"
-            content={`https://${instance?.subdomain}.zendesk.com/agent/views/${view.id}`}
+            content={agentViewUrl}
             shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
     } else if (searchType === "brands") {
       const brand = item as ZendeskBrand;
+      const brandUrl = urls.getBrandDetails(brand.id);
       return (
         <>
-          <Action.OpenInBrowser
-            title="Open in Zendesk"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/account/brand_management/brands/${brand.id}`}
-            shortcut={Keyboard.Shortcut.Common.Open}
-          />
+          <Action.OpenInBrowser title="Open in Zendesk" url={brandUrl} shortcut={Keyboard.Shortcut.Common.Open} />
           {brand.has_help_center && brand.brand_url && (
             <Action.OpenInBrowser
               title="Open Help Center"
@@ -325,41 +293,31 @@ export function ZendeskActions({
               }}
             />
           )}
-          <Action.CopyToClipboard
-            title="Copy Brand Link"
-            content={`https://${instance?.subdomain}.zendesk.com/admin/account/brand_management/brands/${brand.id}`}
-            shortcut={Keyboard.Shortcut.Common.Copy}
-          />
+          <Action.CopyToClipboard title="Copy Brand Link" content={brandUrl} shortcut={Keyboard.Shortcut.Common.Copy} />
         </>
       );
     } else if (searchType === "automations") {
       const automation = item as ZendeskAutomation;
+      const automationUrl = urls.getAutomationDetails(automation.id);
       return (
         <>
-          <Action.OpenInBrowser
-            title="Open in Zendesk"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/automations/${automation.id}`}
-            shortcut={Keyboard.Shortcut.Common.Open}
-          />
+          <Action.OpenInBrowser title="Open in Zendesk" url={automationUrl} shortcut={Keyboard.Shortcut.Common.Open} />
           <Action.CopyToClipboard
             title="Copy Automation Link"
-            content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/automations/${automation.id}`}
+            content={automationUrl}
             shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
     } else if (searchType === "custom_roles") {
       const customRole = item as ZendeskCustomRole;
+      const customRoleUrl = urls.getCustomRoleDetails(customRole.id);
       return (
         <>
-          <Action.OpenInBrowser
-            title="Open in Zendesk"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/people/team/roles/${customRole.id}`}
-            shortcut={Keyboard.Shortcut.Common.Open}
-          />
+          <Action.OpenInBrowser title="Open in Zendesk" url={customRoleUrl} shortcut={Keyboard.Shortcut.Common.Open} />
           <Action.CopyToClipboard
             title="Copy Role Link"
-            content={`https://${instance?.subdomain}.zendesk.com/admin/people/team/roles/${customRole.id}`}
+            content={customRoleUrl}
             shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
@@ -477,12 +435,12 @@ export function ZendeskActions({
         <>
           <Action.OpenInBrowser
             title="Open User Profile"
-            url={`https://${instance?.subdomain}.zendesk.com/agent/users/${membership.user_id}`}
+            url={urls.getUserProfile(membership.user_id)}
             shortcut={Keyboard.Shortcut.Common.Open}
           />
           <Action.OpenInBrowser
             title="Open Group Details"
-            url={`https://${instance?.subdomain}.zendesk.com/admin/people/groups/${membership.group_id}`}
+            url={urls.getGroupDetails(membership.group_id)}
             shortcut={{
               macOS: { modifiers: ["cmd"], key: "g" },
               windows: { modifiers: ["ctrl"], key: "g" },
