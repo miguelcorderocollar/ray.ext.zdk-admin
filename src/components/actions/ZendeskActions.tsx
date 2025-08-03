@@ -322,8 +322,8 @@ export function ZendeskActions({
             title="Open Admin Views Page"
             url={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/views`}
             shortcut={{
-              macOS: { modifiers: ["cmd"], key: "p" },
-              windows: { modifiers: ["ctrl"], key: "p" },
+              macOS: { modifiers: ["cmd"], key: "w" },
+              windows: { modifiers: ["ctrl"], key: "w" },
             }}
           />
           <Action.CopyToClipboard
