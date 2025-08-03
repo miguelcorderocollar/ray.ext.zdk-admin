@@ -19,7 +19,9 @@ type ExtensionPreferences = {
   /** Colors (Optional) - Comma-separated list of hex colors for each instance (e.g., '#007bff, #28a745, #dc3545') */
   "colors"?: string,
   /** Production Flags (Optional) - Comma-separated list of 'true' or 'false' values indicating if each instance is production */
-  "productionFlags"?: string
+  "productionFlags"?: string,
+  /** Enable Mock Data - Enable mock data for screenshots and testing (disables API calls) */
+  "enableMockData": boolean
 }
 
 /** Preferences accessible in all the extension's commands */

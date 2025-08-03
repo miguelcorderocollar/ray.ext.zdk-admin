@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Raycast Extensions QA",
+    "subdomain": "raycast-extensions-qa",
+    "user": "qa-admin@raycast.com/token",
+    "api_key": "mock_api_key_qa_1",
+    "color": "#FF6B35",
+    "production": false
+  },
+  {
+    "name": "Raycast Extensions Staging",
+    "subdomain": "raycast-extensions-staging",
+    "user": "staging-admin@raycast.com/token",
+    "api_key": "mock_api_key_staging_1",
+    "color": "#FFA500",
+    "production": false
+  },
+  {
+    "name": "Raycast Extensions Dev",
+    "subdomain": "raycast-extensions-dev",
+    "user": "dev-admin@raycast.com/token",
+    "api_key": "mock_api_key_dev_1",
+    "color": "#FFD700",
+    "production": false
+  },
+  {
+    "name": "Raycast Extensions Production",
+    "subdomain": "raycast-extensions-prod",
+    "user": "prod-admin@raycast.com/token",
+    "api_key": "mock_api_key_prod_1",
+    "color": "#00FF00",
+    "production": true
+  },
+  {
+    "name": "Raycast Support Production",
+    "subdomain": "raycast-support-prod",
+    "user": "support-admin@raycast.com/token",
+    "api_key": "mock_api_key_support_1",
+    "color": "#0066CC",
+    "production": true
+  },
+  {
+    "name": "Raycast Enterprise Support",
+    "subdomain": "raycast-enterprise-support",
+    "user": "enterprise-admin@raycast.com/token",
+    "api_key": "mock_api_key_enterprise_1",
+    "color": "#9932CC",
+    "production": true
+  }
+] 

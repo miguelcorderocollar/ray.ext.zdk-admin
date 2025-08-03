@@ -1,5 +1,6 @@
 import { showToast, Toast } from "@raycast/api";
-import { ZendeskInstance } from "../utils/preferences";
+import { ZendeskInstance, isMockDataEnabled } from "../utils/preferences";
+import { MockDataService } from "../mock-data/mock-data-service";
 
 export type { ZendeskInstance };
 
@@ -427,6 +428,12 @@ export function getZendeskUrl(instance: ZendeskInstance): string {
 }
 
 export async function searchZendeskUsers(query: string, instance: ZendeskInstance): Promise<ZendeskUser[]> {
+  // Check if mock data is enabled
+  if (isMockDataEnabled()) {
+    const mockService = MockDataService.getInstance();
+    return mockService.searchMockUsers(query);
+  }
+
   const searchTerms = query;
   const url = `${getZendeskUrl(instance)}/users/search.json?query=${encodeURIComponent(searchTerms)}&per_page=20`;
   console.log("Zendesk User Search URL:", url);
@@ -746,6 +753,12 @@ export async function searchZendeskTicketFields(
   query: string,
   instance: ZendeskInstance,
 ): Promise<ZendeskTicketField[]> {
+  // Check if mock data is enabled
+  if (isMockDataEnabled()) {
+    const mockService = MockDataService.getInstance();
+    return mockService.searchMockTicketFields(query);
+  }
+
   const url = `${getZendeskUrl(instance)}/ticket_fields.json`;
   console.log("Zendesk Ticket Fields Search URL:", url);
   const headers = {
@@ -1058,6 +1071,12 @@ export async function searchZendeskTickets(
     roleId?: string;
   },
 ): Promise<ZendeskTicket[]> {
+  // Check if mock data is enabled
+  if (isMockDataEnabled()) {
+    const mockService = MockDataService.getInstance();
+    return mockService.searchMockTickets(query);
+  }
+
   let searchTerms = query ? `type:ticket ${query}` : "type:ticket";
   if (filters?.userEmail) {
     searchTerms += ` requester:${filters.userEmail}`;

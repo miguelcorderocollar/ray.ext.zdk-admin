@@ -70,6 +70,14 @@
       "description": "Comma-separated list of 'true' or 'false' values indicating if each instance is production",
       "type": "textfield",
       "required": false
+    },
+    {
+      "name": "enableMockData",
+      "title": "Enable Mock Data",
+      "description": "Enable mock data for screenshots and testing (disables API calls)",
+      "type": "checkbox",
+      "required": false,
+      "default": false
     }
   ],
   "dependencies": {

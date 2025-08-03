@@ -11,6 +11,7 @@ A Raycast extension for comprehensive Zendesk administration. Search, view, and 
 - **User management**: Create, edit, view tickets, manage group memberships
 - **Ticket management**: View details, open in browser, search related tickets
 - **Configuration management**: View and edit automations, triggers, fields, brands
+- **Mock data support** for screenshots and testing
 
 ## Future Plans
 
@@ -38,6 +39,7 @@ A Raycast extension for comprehensive Zendesk administration. Search, view, and 
 ### Optional Fields:
 - **Colors**: `#007bff, #28a745, #dc3545`
 - **Production Flags**: `true, false, true`
+- **Enable Mock Data**: `true` (for screenshots and testing - disables API calls)
 
 ### Example Configuration:
 For 3 Zendesk instances, you would configure:

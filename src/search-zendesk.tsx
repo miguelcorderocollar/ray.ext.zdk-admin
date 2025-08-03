@@ -417,6 +417,7 @@ export default function SearchZendesk() {
       isShowingDetail={showDetails}
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
+
       searchBarPlaceholder={
         searchType === "users"
           ? "Search Zendesk users by name, email, etc."

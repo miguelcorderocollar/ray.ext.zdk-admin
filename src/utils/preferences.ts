@@ -1,4 +1,5 @@
 import { getPreferenceValues, showToast, Toast } from "@raycast/api";
+import { MockDataService } from "../mock-data/mock-data-service";
 
 export interface ZendeskInstance {
   name: string;
@@ -16,6 +17,7 @@ interface Preferences {
   apiKeys: string;
   colors?: string;
   productionFlags?: string;
+  enableMockData?: boolean;
 }
 
 function parseCommaSeparatedString(value: string): string[] {
@@ -89,6 +91,12 @@ function validatePreferences(preferences: Preferences): { isValid: boolean; erro
 }
 
 export function getZendeskInstances(): ZendeskInstance[] {
+  // Check if mock data is enabled
+  if (isMockDataEnabled()) {
+    const mockService = MockDataService.getInstance();
+    return mockService.getMockInstances();
+  }
+
   const preferences = getPreferenceValues<Preferences>();
 
   // Validate preferences
@@ -134,4 +142,9 @@ export function getZendeskInstances(): ZendeskInstance[] {
   }
 
   return instances;
+}
+
+export function isMockDataEnabled(): boolean {
+  const preferences = getPreferenceValues<Preferences>();
+  return preferences.enableMockData === true;
 }

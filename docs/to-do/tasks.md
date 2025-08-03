@@ -1,4 +1,8 @@
 - Add screenshots
+    - Main Search Interface - Tickets View (Search Zendesk command, default tickets view with sample data)
+    - User Search Results (Search Zendesk command, Users search type with roles and status)
+    - Instance Selection & Quick Access (Open Zendesk Instance command with product dropdown)
+    - Advanced Search - Ticket fields with action
 - Implement basic missing functions (create, delete, etc.)
     - Delete: User, Organization, Ticket, Form, Ticket Field, Ticket field option, Group, Dynamic Content, Views, Macros, Automations
 - Final README check
