@@ -48,10 +48,7 @@ export default function TicketFieldOptionsList({ ticketField, instance }: Ticket
               <Action.CopyToClipboard
                 title="Copy Tag to Clipboard"
                 content={option.value || ""}
-                shortcut={{
-                  macOS: { modifiers: ["cmd"], key: "t" },
-                  windows: { modifiers: ["ctrl"], key: "t" },
-                }}
+                shortcut={Keyboard.Shortcut.Common.Copy}
               />
               <Action.CopyToClipboard
                 title="Copy Name to Clipboard"

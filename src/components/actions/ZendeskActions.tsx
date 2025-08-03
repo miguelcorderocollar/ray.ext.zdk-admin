@@ -113,10 +113,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Link"
             content={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
@@ -132,10 +129,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Link"
             content={`https://${instance?.subdomain}.zendesk.com/agent/organizations/${organization.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
@@ -152,10 +146,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/dynamic_content/items/${dynamicContent.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
           {defaultVariant && (
             <Action.CopyToClipboard
@@ -167,10 +158,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Placeholder to Clipboard"
             content={dynamicContent.placeholder}
-            shortcut={{
-              macOS: { modifiers: ["cmd", "shift"], key: "p" },
-              windows: { modifiers: ["ctrl", "shift"], key: "p" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.CopyName}
           />
         </>
       );
@@ -186,10 +174,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Macro Link"
             content={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/macros/${macro.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
@@ -205,10 +190,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy URL to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/triggers/${trigger.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
@@ -224,10 +206,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-fields/${ticketField.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
@@ -254,10 +233,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/tickets/ticket-forms/edit/${ticketForm.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
           <Action.OpenInBrowser
             title="Open Ticket Form Conditions"
@@ -278,10 +254,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/admin/people/groups/${group.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
@@ -297,10 +270,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Link to Clipboard"
             content={`https://${instance?.subdomain}.zendesk.com/agent/tickets/${ticket.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
@@ -322,17 +292,14 @@ export function ZendeskActions({
             title="Open Admin Views Page"
             url={`https://${instance?.subdomain}.zendesk.com/admin/workspaces/agent-workspace/views`}
             shortcut={{
-              macOS: { modifiers: ["cmd"], key: "w" },
-              windows: { modifiers: ["ctrl"], key: "w" },
+              macOS: { modifiers: ["cmd"], key: "b" },
+              windows: { modifiers: ["ctrl"], key: "b" },
             }}
           />
           <Action.CopyToClipboard
             title="Copy Agent View Link"
             content={`https://${instance?.subdomain}.zendesk.com/agent/views/${view.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
@@ -358,10 +325,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Brand Link"
             content={`https://${instance?.subdomain}.zendesk.com/admin/account/brand_management/brands/${brand.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
@@ -377,10 +341,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Automation Link"
             content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/automations/${automation.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );
@@ -396,10 +357,7 @@ export function ZendeskActions({
           <Action.CopyToClipboard
             title="Copy Role Link"
             content={`https://${instance?.subdomain}.zendesk.com/admin/people/team/roles/${customRole.id}`}
-            shortcut={{
-              macOS: { modifiers: ["cmd"], key: "l" },
-              windows: { modifiers: ["ctrl"], key: "l" },
-            }}
+            shortcut={Keyboard.Shortcut.Common.Copy}
           />
         </>
       );

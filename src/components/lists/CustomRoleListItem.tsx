@@ -188,10 +188,7 @@ export function CustomRoleListItem({
             <Action.CopyToClipboard
               title="Copy Role Link"
               content={`https://${instance?.subdomain}.zendesk.com/admin/people/team/roles/${customRole.id}`}
-              shortcut={{
-                macOS: { modifiers: ["cmd"], key: "l" },
-                windows: { modifiers: ["ctrl"], key: "l" },
-              }}
+              shortcut={Keyboard.Shortcut.Common.Copy}
             />
           </ActionPanel.Section>
           <ActionPanel.Section title="Role Actions">

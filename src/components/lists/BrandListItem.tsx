@@ -120,10 +120,7 @@ export function BrandListItem({
             <Action.CopyToClipboard
               title="Copy Brand Link"
               content={`https://${instance?.subdomain}.zendesk.com/admin/account/brand_management/brands/${brand.id}`}
-              shortcut={{
-                macOS: { modifiers: ["cmd"], key: "l" },
-                windows: { modifiers: ["ctrl"], key: "l" },
-              }}
+              shortcut={Keyboard.Shortcut.Common.Copy}
             />
           </ActionPanel.Section>
           <ActionPanel.Section title="Brand Actions">

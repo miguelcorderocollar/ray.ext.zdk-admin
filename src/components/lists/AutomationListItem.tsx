@@ -64,10 +64,7 @@ export function AutomationListItem({
             <Action.CopyToClipboard
               title="Copy Automation Link"
               content={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/automations/${automation.id}`}
-              shortcut={{
-                macOS: { modifiers: ["cmd"], key: "l" },
-                windows: { modifiers: ["ctrl"], key: "l" },
-              }}
+              shortcut={Keyboard.Shortcut.Common.Copy}
             />
           </ActionPanel.Section>
           <ActionPanel.Section title="General">
