@@ -45,6 +45,9 @@ import { TicketListItem } from "./components/lists/TicketListItem";
 import { BrandListItem } from "./components/lists/BrandListItem";
 import { CustomRoleListItem } from "./components/lists/CustomRoleListItem";
 import { AutomationListItem } from "./components/lists/AutomationListItem";
+import { ViewListItem } from "./components/lists/ViewListItem";
+import { TicketFormListItem } from "./components/lists/TicketFormListItem";
+import { GroupListItem } from "./components/lists/GroupListItem";
 import { ZendeskActions } from "./components/actions/ZendeskActions";
 
 export default function SearchZendesk() {
@@ -1184,117 +1187,26 @@ export default function SearchZendesk() {
                 );
               } else if (searchType === "ticket_forms") {
                 const ticketForm = item as ZendeskTicketForm;
-
                 return (
-                  <List.Item
+                  <TicketFormListItem
                     key={ticketForm.id}
-                    title={ticketForm.name}
-                    accessories={
-                      !ticketForm.active
-                        ? [
-                            {
-                              icon: {
-                                source: Icon.CircleDisabled,
-                              },
-                              tooltip: "Inactive",
-                            },
-                          ]
-                        : []
-                    }
-                    detail={
-                      <List.Item.Detail
-                        metadata={
-                          <List.Item.Detail.Metadata>
-                            <List.Item.Detail.Metadata.Label title="Name" text={ticketForm.name} />
-                            {ticketForm.display_name && (
-                              <List.Item.Detail.Metadata.Label title="Display Name" text={ticketForm.display_name} />
-                            )}
-                            <List.Item.Detail.Metadata.Label title="ID" text={ticketForm.id.toString()} />
-                            <List.Item.Detail.Metadata.TagList title="Active">
-                              <List.Item.Detail.Metadata.TagList.Item
-                                text={ticketForm.active ? "Active" : "Inactive"}
-                                color={getActiveStatusColor(ticketForm.active)}
-                              />
-                            </List.Item.Detail.Metadata.TagList>
-                            <List.Item.Detail.Metadata.Separator />
-                            <List.Item.Detail.Metadata.Label
-                              title="End User Visible"
-                              icon={getBooleanIcon(ticketForm.end_user_visible)}
-                            />
-                            <List.Item.Detail.Metadata.Label
-                              title="In All Brands"
-                              icon={getBooleanIcon(ticketForm.in_all_brands)}
-                            />
-                            {ticketForm.restricted_brand_ids && ticketForm.restricted_brand_ids.length > 0 && (
-                              <List.Item.Detail.Metadata.TagList title="Restricted Brand IDs">
-                                {ticketForm.restricted_brand_ids.map((brandId) => (
-                                  <List.Item.Detail.Metadata.TagList.Item key={brandId} text={brandId.toString()} />
-                                ))}
-                              </List.Item.Detail.Metadata.TagList>
-                            )}
-                            <List.Item.Detail.Metadata.Separator />
-                            <TimestampMetadata created_at={ticketForm.created_at} updated_at={ticketForm.updated_at} />
-                          </List.Item.Detail.Metadata>
-                        }
-                      />
-                    }
-                    actions={
-                      <ZendeskActions
-                        item={ticketForm}
-                        searchType="ticket_forms"
-                        instance={currentInstance}
-                        onInstanceChange={setCurrentInstance}
-                        showDetails={showDetails}
-                        onShowDetailsChange={setShowDetails}
-                      />
-                    }
+                    ticketForm={ticketForm}
+                    instance={currentInstance}
+                    onInstanceChange={setCurrentInstance}
+                    showDetails={showDetails}
+                    onShowDetailsChange={setShowDetails}
                   />
                 );
               } else if (searchType === "groups") {
                 const group = item as ZendeskGroup;
-                const nameParts = (group.name ?? "").split(".");
-                const title = nameParts.length > 1 ? nameParts.slice(1).join(".") : group.name;
-                const accessory = nameParts.length > 1 ? nameParts[0] : "";
-
                 return (
-                  <List.Item
+                  <GroupListItem
                     key={group.id}
-                    title={title}
-                    accessories={[{ text: accessory }]}
-                    detail={
-                      <List.Item.Detail
-                        metadata={
-                          <List.Item.Detail.Metadata>
-                            <List.Item.Detail.Metadata.Label title="Name" text={group.name} />
-                            <List.Item.Detail.Metadata.Label title="ID" text={group.id.toString()} />
-                            {group.description && (
-                              <List.Item.Detail.Metadata.Label title="Description" text={group.description} />
-                            )}
-                            <List.Item.Detail.Metadata.Link
-                              title="Open Group Details"
-                              text="View Group Details"
-                              target={`https://${currentInstance?.subdomain}.zendesk.com/admin/people/groups/${group.id}`}
-                            />
-                            <List.Item.Detail.Metadata.Separator />
-                            <List.Item.Detail.Metadata.Label title="Default" icon={getBooleanIcon(group.default)} />
-                            <List.Item.Detail.Metadata.Label title="Deleted" icon={getBooleanIcon(group.deleted)} />
-                            <List.Item.Detail.Metadata.Label title="Is Public" icon={getBooleanIcon(group.is_public)} />
-                            <List.Item.Detail.Metadata.Separator />
-                            <TimestampMetadata created_at={group.created_at} updated_at={group.updated_at} />
-                          </List.Item.Detail.Metadata>
-                        }
-                      />
-                    }
-                    actions={
-                      <ZendeskActions
-                        item={group}
-                        searchType="groups"
-                        instance={currentInstance}
-                        onInstanceChange={setCurrentInstance}
-                        showDetails={showDetails}
-                        onShowDetailsChange={setShowDetails}
-                      />
-                    }
+                    group={group}
+                    instance={currentInstance}
+                    onInstanceChange={setCurrentInstance}
+                    showDetails={showDetails}
+                    onShowDetailsChange={setShowDetails}
                   />
                 );
               } else if (searchType === "tickets") {
@@ -1312,78 +1224,13 @@ export default function SearchZendesk() {
               } else if (searchType === "views") {
                 const view = item as ZendeskView;
                 return (
-                  <List.Item
+                  <ViewListItem
                     key={view.id}
-                    title={view.title}
-                    icon={undefined}
-                    accessories={
-                      !view.active
-                        ? [
-                            {
-                              icon: {
-                                source: Icon.CircleDisabled,
-                              },
-                              tooltip: "Inactive",
-                            },
-                          ]
-                        : []
-                    }
-                    detail={
-                      <List.Item.Detail
-                        metadata={
-                          <List.Item.Detail.Metadata>
-                            {currentInstance && (
-                              <>
-                                <List.Item.Detail.Metadata.TagList title="Instance">
-                                  <List.Item.Detail.Metadata.TagList.Item
-                                    text={currentInstance.subdomain}
-                                    color={currentInstance.color || Color.Blue}
-                                  />
-                                </List.Item.Detail.Metadata.TagList>
-                                <List.Item.Detail.Metadata.Separator />
-                              </>
-                            )}
-                            <List.Item.Detail.Metadata.Label title="Title" text={view.title} />
-                            <List.Item.Detail.Metadata.Label title="ID" text={view.id.toString()} />
-                            <List.Item.Detail.Metadata.TagList title="Active">
-                              <List.Item.Detail.Metadata.TagList.Item
-                                text={view.active ? "Active" : "Inactive"}
-                                color={getActiveStatusColor(view.active)}
-                              />
-                            </List.Item.Detail.Metadata.TagList>
-                            {view.created_at && view.updated_at && (
-                              <TimestampMetadata created_at={view.created_at} updated_at={view.updated_at} />
-                            )}
-                            <List.Item.Detail.Metadata.Separator />
-                            <List.Item.Detail.Metadata.Link
-                              title="Open Agent View"
-                              text="View in Agent Interface"
-                              target={`https://${currentInstance?.subdomain}.zendesk.com/agent/views/${view.id}`}
-                            />
-                            <List.Item.Detail.Metadata.Link
-                              title="Open Admin Edit View"
-                              text="Edit in Admin Interface"
-                              target={`https://${currentInstance?.subdomain}.zendesk.com/admin/objects-rules/rules/views/${view.id}`}
-                            />
-                            <List.Item.Detail.Metadata.Link
-                              title="Open Admin Views Page"
-                              text="All Views in Admin Interface"
-                              target={`https://${currentInstance?.subdomain}.zendesk.com/admin/objects-rules/rules/views`}
-                            />
-                          </List.Item.Detail.Metadata>
-                        }
-                      />
-                    }
-                    actions={
-                      <ZendeskActions
-                        item={view}
-                        searchType="views"
-                        instance={currentInstance}
-                        onInstanceChange={setCurrentInstance}
-                        showDetails={showDetails}
-                        onShowDetailsChange={setShowDetails}
-                      />
-                    }
+                    view={view}
+                    instance={currentInstance}
+                    onInstanceChange={setCurrentInstance}
+                    showDetails={showDetails}
+                    onShowDetailsChange={setShowDetails}
                   />
                 );
               } else if (searchType === "brands") {
