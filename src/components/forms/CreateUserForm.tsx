@@ -20,7 +20,7 @@ export default function CreateUserForm({ instance }: CreateUserFormProps) {
   const { handleSubmit, itemProps } = useForm<CreateUserFormValues>({
     onSubmit: async (values) => {
       if (!instance) {
-        showToast(Toast.Style.Failure, "Configuration Error", "No Zendesk instances configured.");
+        showFailureToast(new Error("No Zendesk instances configured."), { title: "Configuration Error" });
         return;
       }
 
