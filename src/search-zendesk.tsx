@@ -448,6 +448,7 @@ export default function SearchZendesk() {
       isShowingDetail={showDetails}
       isLoading={isLoading}
       onSearchTextChange={setSearchText}
+      navigationTitle={currentInstance ? `Search Zendesk - ${currentInstance.name}` : "Search Zendesk"}
       searchBarPlaceholder={
         searchType === "users"
           ? "Search Zendesk users by name, email, etc."
