@@ -87,6 +87,7 @@ export function ZendeskActions({
     entityType: "user" | "organization" | "group" | "recipient" | "form" | "brand" | "role",
     entityId?: string,
     entityEmail?: string,
+    entityName?: string,
   ) => {
     return (
       <Action.Push
@@ -97,6 +98,7 @@ export function ZendeskActions({
             entityType={entityType}
             entityId={entityId}
             entityEmail={entityEmail}
+            entityName={entityName}
             instance={instance}
           />
         }
@@ -237,7 +239,7 @@ export function ZendeskActions({
               }}
             />
           )}
-          {user.email && renderViewTicketsAction("user", undefined, user.email)}
+          {user.email && renderViewTicketsAction("user", undefined, user.email, user.name)}
         </>
       );
     } else if (searchType === "ticket_fields") {
@@ -266,13 +268,13 @@ export function ZendeskActions({
       return null;
     } else if (searchType === "organizations") {
       const organization = item as ZendeskOrganization;
-      return <>{renderViewTicketsAction("organization", organization.id.toString())}</>;
+      return <>{renderViewTicketsAction("organization", organization.id.toString(), undefined, organization.name)}</>;
     } else if (searchType === "support_addresses") {
       const supportAddress = item as ZendeskSupportAddress;
-      return <>{renderViewTicketsAction("recipient", undefined, supportAddress.email)}</>;
+      return <>{renderViewTicketsAction("recipient", undefined, supportAddress.email, undefined)}</>;
     } else if (searchType === "ticket_forms") {
       const ticketForm = item as ZendeskTicketForm;
-      return <>{renderViewTicketsAction("form", ticketForm.id.toString())}</>;
+      return <>{renderViewTicketsAction("form", ticketForm.id.toString(), undefined, ticketForm.name)}</>;
     } else if (searchType === "groups") {
       const group = item as ZendeskGroup;
       return (
@@ -288,12 +290,12 @@ export function ZendeskActions({
               windows: { modifiers: ["ctrl"], key: "m" },
             }}
           />
-          {renderViewTicketsAction("group", group.id.toString())}
+          {renderViewTicketsAction("group", group.id.toString(), undefined, group.name)}
         </>
       );
     } else if (searchType === "brands") {
       const brand = item as ZendeskBrand;
-      return <>{renderViewTicketsAction("brand", brand.id.toString())}</>;
+      return <>{renderViewTicketsAction("brand", brand.id.toString(), undefined, brand.name)}</>;
     } else if (searchType === "automations") {
       // Automations don't have specific entity actions like viewing tickets
       return null;
@@ -304,7 +306,14 @@ export function ZendeskActions({
           <Action.Push
             title="View Role Members"
             icon={Icon.Person}
-            target={<EntityTicketsList entityType="role" entityId={customRole.id.toString()} instance={instance} />}
+            target={
+              <EntityTicketsList
+                entityType="role"
+                entityId={customRole.id.toString()}
+                entityName={customRole.name}
+                instance={instance}
+              />
+            }
             shortcut={{
               macOS: { modifiers: ["cmd"], key: "m" },
               windows: { modifiers: ["ctrl"], key: "m" },

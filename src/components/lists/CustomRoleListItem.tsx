@@ -2,7 +2,7 @@ import { List, ActionPanel, Action, Icon, Keyboard, Color } from "@raycast/api";
 import { ZendeskCustomRole, ZendeskInstance } from "../../api/zendesk";
 import { getZendeskInstances } from "../../utils/preferences";
 import { getActiveStatusColor, getRoleAccessLevelColor, getRoleAccessLevelText } from "../../utils/colors";
-import { InstanceMetadata, TimestampMetadata } from "../common/MetadataHelpers";
+import { TimestampMetadata } from "../common/MetadataHelpers";
 import UserMembershipList from "./UserMembershipList";
 
 interface CustomRoleListItemProps {
@@ -36,8 +36,6 @@ export function CustomRoleListItem({
           <List.Item.Detail
             metadata={
               <List.Item.Detail.Metadata>
-                {instance && <InstanceMetadata instance={instance} />}
-
                 <List.Item.Detail.Metadata.Label title="Role ID" text={customRole.id?.toString() || "N/A"} />
                 <List.Item.Detail.Metadata.Label title="Name" text={customRole.name || "N/A"} />
                 <List.Item.Detail.Metadata.Label title="Description" text={customRole.description || "N/A"} />

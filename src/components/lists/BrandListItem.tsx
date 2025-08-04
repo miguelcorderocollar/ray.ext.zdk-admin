@@ -2,7 +2,7 @@ import { List, ActionPanel, Action, Icon, Keyboard, Color } from "@raycast/api";
 import { ZendeskBrand, ZendeskInstance } from "../../api/zendesk";
 import { getZendeskInstances } from "../../utils/preferences";
 import { getActiveStatusColor, getDefaultStatusColor, getHelpCenterStateColor } from "../../utils/colors";
-import { InstanceMetadata, TimestampMetadata } from "../common/MetadataHelpers";
+import { TimestampMetadata } from "../common/MetadataHelpers";
 import EntityTicketsList from "./EntityTicketsList";
 
 interface BrandListItemProps {
@@ -38,8 +38,6 @@ export function BrandListItem({
           <List.Item.Detail
             metadata={
               <List.Item.Detail.Metadata>
-                {instance && <InstanceMetadata instance={instance} />}
-
                 <List.Item.Detail.Metadata.Label title="Brand ID" text={brand.id?.toString() || "N/A"} />
                 <List.Item.Detail.Metadata.Label title="Name" text={brand.name || "N/A"} />
                 <List.Item.Detail.Metadata.Label title="Subdomain" text={brand.subdomain || "N/A"} />
@@ -127,7 +125,14 @@ export function BrandListItem({
             <Action.Push
               title="View Brand Tickets"
               icon={Icon.Ticket}
-              target={<EntityTicketsList entityType="brand" entityId={brand.id.toString()} instance={instance} />}
+              target={
+                <EntityTicketsList
+                  entityType="brand"
+                  entityId={brand.id.toString()}
+                  entityName={brand.name}
+                  instance={instance}
+                />
+              }
               shortcut={{
                 macOS: { modifiers: ["cmd"], key: "t" },
                 windows: { modifiers: ["ctrl"], key: "t" },

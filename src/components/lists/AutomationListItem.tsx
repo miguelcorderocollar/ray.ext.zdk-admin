@@ -1,8 +1,9 @@
-import { List, ActionPanel, Action, Icon, Keyboard, Color } from "@raycast/api";
-import { ZendeskAutomation, ZendeskInstance } from "../../api/zendesk";
-import { getZendeskInstances } from "../../utils/preferences";
+import { List, ActionPanel, Action, Icon, Color, Keyboard } from "@raycast/api";
+import { ZendeskAutomation } from "../../api/zendesk";
 import { getBooleanIcon } from "../../utils/colors";
-import { InstanceMetadata, TimestampMetadata } from "../common/MetadataHelpers";
+import { TimestampMetadata } from "../common/MetadataHelpers";
+import { ZendeskInstance } from "../../utils/preferences";
+import { getZendeskInstances } from "../../utils/preferences";
 
 interface AutomationListItemProps {
   automation: ZendeskAutomation;
@@ -35,8 +36,6 @@ export function AutomationListItem({
           <List.Item.Detail
             metadata={
               <List.Item.Detail.Metadata>
-                {instance && <InstanceMetadata instance={instance} />}
-
                 <List.Item.Detail.Metadata.Label title="Automation ID" text={automation.id?.toString() || "N/A"} />
                 <List.Item.Detail.Metadata.Label title="Title" text={automation.title || "N/A"} />
                 <List.Item.Detail.Metadata.Label title="Position" text={automation.position?.toString() || "N/A"} />

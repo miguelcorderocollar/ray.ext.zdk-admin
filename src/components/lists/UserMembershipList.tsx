@@ -266,8 +266,24 @@ export default function UserMembershipList({ entityId, entityName, entityType, i
     }
   };
 
+  const getNavigationTitle = () => {
+    const maxLen = 15;
+    const truncate = (str: string) => (str.length > maxLen ? str.slice(0, maxLen - 1) + "…" : str);
+    if (entityType === "group") {
+      return `Members of ${truncate(entityName)}`;
+    } else {
+      return `Users with Role: ${truncate(entityName)}`;
+    }
+  };
+
   return (
-    <List isShowingDetail={showDetails} isLoading={isLoading} searchBarPlaceholder={getSearchPlaceholder()} throttle>
+    <List
+      isShowingDetail={showDetails}
+      isLoading={isLoading}
+      searchBarPlaceholder={getSearchPlaceholder()}
+      throttle
+      navigationTitle={getNavigationTitle()}
+    >
       {users.length === 0 && !isLoading && (
         <List.EmptyView title={getEmptyViewTitle()} description={getEmptyViewDescription()} />
       )}

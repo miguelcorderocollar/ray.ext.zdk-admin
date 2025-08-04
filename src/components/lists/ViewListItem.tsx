@@ -1,7 +1,7 @@
 import { List, Icon } from "@raycast/api";
 import { ZendeskView } from "../../api/zendesk";
 import { getActiveStatusColor } from "../../utils/colors";
-import { TimestampMetadata, InstanceMetadata } from "../common/MetadataHelpers";
+import { TimestampMetadata } from "../common/MetadataHelpers";
 import { ZendeskActions } from "../actions/ZendeskActions";
 import { ZendeskInstance } from "../../utils/preferences";
 
@@ -41,7 +41,6 @@ export function ViewListItem({
         <List.Item.Detail
           metadata={
             <List.Item.Detail.Metadata>
-              {instance && <InstanceMetadata instance={instance} />}
               <List.Item.Detail.Metadata.Label title="Title" text={view.title} />
               <List.Item.Detail.Metadata.Label title="ID" text={view.id.toString()} />
               <List.Item.Detail.Metadata.TagList title="Active">
