@@ -87,13 +87,6 @@ export function UserListItem({
                     )}
                   </>
                 )}
-
-                <List.Item.Detail.Metadata.Separator />
-                <List.Item.Detail.Metadata.Link
-                  title="Open in Zendesk"
-                  text="View User Profile"
-                  target={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
-                />
               </List.Item.Detail.Metadata>
             }
           />

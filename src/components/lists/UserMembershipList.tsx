@@ -185,17 +185,6 @@ export default function UserMembershipList({ entityId, entityName, entityType, i
               </List.Item.Detail.Metadata.TagList>
               <List.Item.Detail.Metadata.Separator />
               <TimestampMetadata created_at={membership.created_at} updated_at={membership.updated_at} />
-              <List.Item.Detail.Metadata.Separator />
-              <List.Item.Detail.Metadata.Link
-                title="Open User Profile"
-                text="View User"
-                target={`https://${instance?.subdomain}.zendesk.com/agent/users/${membership.user_id}`}
-              />
-              <List.Item.Detail.Metadata.Link
-                title="Open Group Details"
-                text="View Group"
-                target={`https://${instance?.subdomain}.zendesk.com/admin/people/groups/${membership.group_id}`}
-              />
             </List.Item.Detail.Metadata>
           }
         />
@@ -224,17 +213,6 @@ export default function UserMembershipList({ entityId, entityName, entityType, i
               {user.created_at && user.updated_at && (
                 <TimestampMetadata created_at={user.created_at} updated_at={user.updated_at} />
               )}
-              <List.Item.Detail.Metadata.Separator />
-              <List.Item.Detail.Metadata.Link
-                title="Open User Profile"
-                text="View User"
-                target={`https://${instance?.subdomain}.zendesk.com/agent/users/${user.id}`}
-              />
-              <List.Item.Detail.Metadata.Link
-                title="Open Role Details"
-                text="View Role"
-                target={`https://${instance?.subdomain}.zendesk.com/admin/people/team/roles/${entityId}`}
-              />
             </List.Item.Detail.Metadata>
           }
         />

@@ -52,22 +52,6 @@ export function ViewListItem({
               {view.created_at && view.updated_at && (
                 <TimestampMetadata created_at={view.created_at} updated_at={view.updated_at} />
               )}
-              <List.Item.Detail.Metadata.Separator />
-              <List.Item.Detail.Metadata.Link
-                title="Open Agent View"
-                text="View in Agent Interface"
-                target={`https://${instance?.subdomain}.zendesk.com/agent/views/${view.id}`}
-              />
-              <List.Item.Detail.Metadata.Link
-                title="Open Admin Edit View"
-                text="Edit in Admin Interface"
-                target={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/views/${view.id}`}
-              />
-              <List.Item.Detail.Metadata.Link
-                title="Open Admin Views Page"
-                text="All Views in Admin Interface"
-                target={`https://${instance?.subdomain}.zendesk.com/admin/objects-rules/rules/views`}
-              />
             </List.Item.Detail.Metadata>
           }
         />

@@ -26,7 +26,7 @@ export const createEntityOpenAndCopyActions = (
       key="copy"
       title={copyTitle || "Copy Link"}
       content={url}
-      shortcut={copyShortcut || Keyboard.Shortcut.Common.Copy}
+      shortcut={copyShortcut || Keyboard.Shortcut.Common.CopyDeeplink}
     />
   </>
 );
@@ -37,7 +37,12 @@ export const createEntityOpenAndCopyActions = (
 export const createOpenAndCopyActions = (url: string, title: string) => (
   <>
     <Action.OpenInBrowser key="open" title={title} url={url} shortcut={Keyboard.Shortcut.Common.Open} />
-    <Action.CopyToClipboard key="copy" title={`Copy ${title}`} content={url} shortcut={Keyboard.Shortcut.Common.Copy} />
+    <Action.CopyToClipboard
+      key="copy"
+      title={`Copy ${title}`}
+      content={url}
+      shortcut={Keyboard.Shortcut.Common.CopyDeeplink}
+    />
   </>
 );
 
