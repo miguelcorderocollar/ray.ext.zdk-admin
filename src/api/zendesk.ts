@@ -431,6 +431,7 @@ export async function searchZendeskTickets(
   instance: ZendeskInstance,
   filters?: {
     userEmail?: string;
+    userId?: string;
     groupId?: string;
     organizationId?: string;
     brandId?: string;
@@ -442,6 +443,9 @@ export async function searchZendeskTickets(
   let searchTerms = query ? `type:ticket ${query}` : "type:ticket";
   if (filters?.userEmail) {
     searchTerms += ` requester:${filters.userEmail}`;
+  }
+  if (filters?.userId) {
+    searchTerms += ` requester_id:${filters.userId}`;
   }
   if (filters?.groupId) {
     searchTerms += ` group:${filters.groupId}`;

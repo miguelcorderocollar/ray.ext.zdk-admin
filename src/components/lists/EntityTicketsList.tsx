@@ -48,7 +48,8 @@ export default function EntityTicketsList({
     setIsLoading(true);
     try {
       const fetchedTickets = await searchZendeskTickets(debouncedSearchText, instance, {
-        userEmail: entityType === "user" ? entityEmail : undefined,
+        userEmail: entityType === "user" && entityEmail ? entityEmail : undefined,
+        userId: entityType === "user" && entityId ? entityId : undefined,
         groupId: entityType === "group" ? entityId : undefined,
         organizationId: entityType === "organization" ? entityId : undefined,
         brandId: entityType === "brand" ? entityId : undefined,

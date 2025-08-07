@@ -87,10 +87,14 @@ export function ZendeskActions({
     entityId?: string,
     entityEmail?: string,
     entityName?: string,
+    customTitle?: string,
   ) => {
+    const defaultTitle = `View ${entityType.charAt(0).toUpperCase() + entityType.slice(1)}'s Tickets`;
+    const title = customTitle || defaultTitle;
+
     return (
       <Action.Push
-        title={`View ${entityType.charAt(0).toUpperCase() + entityType.slice(1)}'s Tickets`}
+        title={title}
         icon={Icon.Ticket}
         target={
           <EntityTicketsList
@@ -309,6 +313,23 @@ export function ZendeskActions({
     } else if (searchType === "brands") {
       const brand = item as ZendeskBrand;
       return <>{renderViewTicketsAction("brand", brand.id.toString(), undefined, brand.name)}</>;
+    } else if (searchType === "tickets") {
+      const ticket = item as ZendeskTicket;
+      // Only show action if there is a requester_id
+      if (ticket.requester_id) {
+        return (
+          <>
+            {renderViewTicketsAction(
+              "user",
+              ticket.requester_id.toString(),
+              undefined,
+              `Requester ${ticket.requester_id}`,
+              "Open Requester Tickets",
+            )}
+          </>
+        );
+      }
+      return null;
     } else if (searchType === "automations") {
       // Automations don't have specific entity actions like viewing tickets
       return null;
