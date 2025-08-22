@@ -341,9 +341,9 @@ export function ZendeskActions({
             title="View Role Members"
             icon={Icon.Person}
             target={
-              <EntityTicketsList
+              <UserMembershipList
                 entityType="role"
-                entityId={customRole.id.toString()}
+                entityId={customRole.id}
                 entityName={customRole.name}
                 instance={instance}
               />
