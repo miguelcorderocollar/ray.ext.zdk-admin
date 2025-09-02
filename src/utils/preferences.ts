@@ -10,8 +10,6 @@ export interface ZendeskInstance {
   production?: boolean;
 }
 
-
-
 function parseCommaSeparatedString(value: string): string[] {
   return value
     .split(",")
