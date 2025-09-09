@@ -75,10 +75,12 @@ export default function UserMembershipList({ entityId, entityName, entityType, i
   const getItemTitle = (item: UserWithMembership | MembershipWithUser) => {
     if (entityType === "group") {
       const membership = item as MembershipWithUser;
-      return membership.user ? membership.user.name : `User ID: ${membership.user_id}`;
+      return membership.user
+        ? membership.user.name || "Unknown User"
+        : `User ID: ${membership.user_id}` || "Unknown User";
     } else {
       const user = item as UserWithMembership;
-      return user.name;
+      return user.name || "Unknown User";
     }
   };
 
